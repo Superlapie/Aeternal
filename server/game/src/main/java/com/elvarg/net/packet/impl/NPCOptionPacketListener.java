@@ -3,8 +3,10 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.Server;
 import com.elvarg.game.World;
 import com.elvarg.game.content.PetHandler;
+import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.magic.CombatSpell;
 import com.elvarg.game.content.combat.magic.CombatSpells;
+import com.elvarg.game.content.combat.method.CombatMethod;
 import com.elvarg.game.content.quests.QuestHandler;
 import com.elvarg.game.content.skill.skillable.impl.Fishing;
 import com.elvarg.game.content.skill.skillable.impl.Fishing.FishingTool;
@@ -16,6 +18,7 @@ import com.elvarg.game.model.container.shop.ShopManager;
 import com.elvarg.game.model.dialogues.builders.impl.EmblemTraderDialogue;
 import com.elvarg.game.model.dialogues.builders.impl.NieveDialogue;
 import com.elvarg.game.model.dialogues.builders.impl.ParduDialogue;
+import com.elvarg.game.model.PlayerStatus;
 import com.elvarg.game.model.rights.PlayerRights;
 import com.elvarg.game.entity.impl.npc.NPCInteractionSystem;
 import com.elvarg.game.task.impl.WalkToTask;
@@ -27,16 +30,41 @@ import com.elvarg.util.ShopIdentifiers;
 
 public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExecutor {
 
-    private static boolean isNightmareNpc(int id) {
-        return id >= 9425 && id <= 9433;
+    private static boolean isNightmareNpc(NPC npc) {
+        int id = npc.getId();
+        if (id >= 9425 && id <= 9433) {
+            return true;
+        }
+        String currentName = npc.getCurrentDefinition() != null ? npc.getCurrentDefinition().getName() : null;
+        if (currentName != null && currentName.toLowerCase().contains("nightmare")) {
+            return true;
+        }
+        String baseName = npc.getDefinition() != null ? npc.getDefinition().getName() : null;
+        return baseName != null && baseName.toLowerCase().contains("nightmare");
+    }
+
+    private static String formatCanAttackReason(CombatFactory.CanAttackResponse response) {
+        return switch (response) {
+            case CAN_ATTACK -> "CAN_ATTACK";
+            case CANT_ATTACK_IN_AREA -> "CANT_ATTACK_IN_AREA";
+            case ALREADY_UNDER_ATTACK -> "ALREADY_UNDER_ATTACK";
+            case INVALID_TARGET -> "INVALID_TARGET";
+            case COMBAT_METHOD_NOT_ALLOWED -> "COMBAT_METHOD_NOT_ALLOWED";
+            case LEVEL_DIFFERENCE_TOO_GREAT -> "LEVEL_DIFFERENCE_TOO_GREAT";
+            case NOT_ENOUGH_SPECIAL_ENERGY -> "NOT_ENOUGH_SPECIAL_ENERGY";
+            case STUNNED -> "STUNNED";
+            case DUEL_NOT_STARTED_YET -> "DUEL_NOT_STARTED_YET";
+            case DUEL_MELEE_DISABLED -> "DUEL_MELEE_DISABLED";
+            case DUEL_RANGED_DISABLED -> "DUEL_RANGED_DISABLED";
+            case DUEL_MAGIC_DISABLED -> "DUEL_MAGIC_DISABLED";
+            case DUEL_WRONG_OPPONENT -> "DUEL_WRONG_OPPONENT";
+            case TARGET_IS_IMMUNE -> "TARGET_IS_IMMUNE";
+            case CASTLE_WARS_FRIENDLY_FIRE -> "CASTLE_WARS_FRIENDLY_FIRE";
+        };
     }
 
     @Override
     public void execute(Player player, Packet packet) {
-        if (player.busy()) {
-            return;
-        }
-
         int index = packet.readLEShortA();
 
         if (index < 0 || index > World.getNpcs().capacity()) {
@@ -53,11 +81,64 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
             return;
         }
 
+        boolean nightmareNpc = isNightmareNpc(npc);
+
+        if (player.busy()) {
+            if (nightmareNpc) {
+                // Do not block Nightmare attack interactions on stale player state.
+                player.getPacketSender().sendInterfaceRemoval();
+            } else {
+            // Nightmare can be entered via the teleport UI path. If that interface was not
+            // dismissed yet, allow this interaction once and clear it.
+            boolean nightmareInterfaceOnlyBusy =
+                    nightmareNpc
+                            && player.getInterfaceId() > 0
+                            && player.getStatus() == PlayerStatus.NONE
+                            && !player.isTeleporting()
+                            && !player.isNeedsPlacement()
+                            && player.getForceMovement() == null
+                            && player.getHitpoints() > 0;
+            if (!nightmareInterfaceOnlyBusy) {
+                return;
+            }
+            player.getPacketSender().sendInterfaceRemoval();
+            }
+        }
+
         if (player.getRights() == PlayerRights.DEVELOPER) {
             player.getPacketSender().sendMessage("InteractionInfo Id=" + npc.getId()+" "+npc.getLocation().toString());
         }
 
         player.setPositionToFace(npc.getLocation());
+
+        // Nightmare can be interacted with through mixed opcodes depending on client menu wiring.
+        // Start combat immediately, then retry once pathing settles.
+        if (nightmareNpc && npc.getHitpoints() > 0) {
+            // Ensure stale magic/autocast state does not block combat clicks.
+            player.getCombat().setCastSpell(null);
+            player.getCombat().setAutocastSpell(null);
+
+            CombatMethod method = CombatFactory.getMethod(player);
+            CombatFactory.CanAttackResponse response = CombatFactory.canAttack(player, method, npc);
+            if (response == CombatFactory.CanAttackResponse.COMBAT_METHOD_NOT_ALLOWED) {
+                method = CombatFactory.getMethod(player);
+                response = CombatFactory.canAttack(player, method, npc);
+            }
+
+            player.getPacketSender().sendMessage("NightmareAttackDebug opcode=" + packet.getOpcode()
+                    + " npcId=" + npc.getId()
+                    + " response=" + formatCanAttackReason(response)
+                    + " dist=" + player.calculateDistance(npc)
+                    + " pSize=" + player.size()
+                    + " nSize=" + npc.size()
+                    + " samePrivateArea=" + (player.getPrivateArea() == npc.getPrivateArea())
+                    + " playerArea=" + (player.getArea() == null ? "null" : player.getArea().getName())
+                    + " npcArea=" + (npc.getArea() == null ? "null" : npc.getArea().getName()));
+
+            player.getCombat().attack(npc);
+            WalkToTask.submit(player, npc, () -> player.getCombat().attack(npc));
+            return;
+        }
 
         if (packet.getOpcode() == PacketConstants.ATTACK_NPC_OPCODE || packet.getOpcode() == PacketConstants.MAGE_NPC_OPCODE) {
             if (!npc.getCurrentDefinition().isAttackable()) {
@@ -84,13 +165,6 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 player.getCombat().setCastSpell(spell);
             }
 
-            player.getCombat().attack(npc);
-            return;
-        }
-
-        // Some custom NPC menu setups route "Attack" through standard click opcodes.
-        // Handle Nightmare directly here so large-size route/click quirks don't block combat start.
-        if (isNightmareNpc(npc.getId()) && npc.getCurrentDefinition().isAttackable() && npc.getHitpoints() > 0) {
             player.getCombat().attack(npc);
             return;
         }

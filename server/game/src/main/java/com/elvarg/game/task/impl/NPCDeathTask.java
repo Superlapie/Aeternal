@@ -63,7 +63,7 @@ public class NPCDeathTask extends Task {
                     killer = npc.getCombat().getKiller(true);
 
                     // Start death animation..
-                    npc.performAnimation(new Animation(npc.getCurrentDefinition().getDeathAnim(), Priority.HIGH));
+                    npc.performAnimation(new Animation(npc.getDeathAnim(), Priority.HIGH));
 
                     if (script != null) {
                         script.onDeath(npc, killer);

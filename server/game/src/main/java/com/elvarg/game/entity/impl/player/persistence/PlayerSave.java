@@ -1,6 +1,5 @@
 package com.elvarg.game.entity.impl.player.persistence;
 
-import com.elvarg.game.GameConstants;
 import com.elvarg.game.content.PrayerHandler;
 import com.elvarg.game.content.combat.FightType;
 import com.elvarg.game.content.presets.Presetable;
@@ -534,7 +533,7 @@ public class PlayerSave {
         player.setLoyaltyTitle(this.title);
         player.setRights(this.rights);
         player.setDonatorRights(this.donatorRights);
-        player.setLocation(sanitizeLoginPosition(this.position));
+        player.setLocation(this.position);
         player.setSpellbook(this.spellBook);
         player.setFightType(this.fightType);
         player.setAutoRetaliate(this.autoRetaliate);
@@ -610,35 +609,6 @@ public class PlayerSave {
                 player.setBank(i, new Bank(player)).getBank(i).addItems(bankItems, false);
             }
         }
-    }
-
-    private static Location sanitizeLoginPosition(Location position) {
-        if (position == null) {
-            return GameConstants.DEFAULT_LOCATION.clone();
-        }
-
-        // Legacy Nightmare instance region that references missing map archives in this cache.
-        if (position.getZ() == 0
-                && position.getX() >= 2262 && position.getX() <= 2285
-                && position.getY() >= 4041 && position.getY() <= 4074) {
-            return GameConstants.DEFAULT_LOCATION.clone();
-        }
-
-        // Safety: if a save is in the previously used Edgeville spawn block, move to a guaranteed loaded region.
-        if (position.getZ() == 0
-                && position.getX() >= 3076 && position.getX() <= 3110
-                && position.getY() >= 3508 && position.getY() <= 3540) {
-            return GameConstants.DEFAULT_LOCATION.clone();
-        }
-
-        // Temporary GE-region fallback that may reference corrupted map archives in some cache states.
-        if (position.getZ() == 0
-                && position.getX() >= 3150 && position.getX() <= 3180
-                && position.getY() >= 3470 && position.getY() <= 3500) {
-            return GameConstants.DEFAULT_LOCATION.clone();
-        }
-
-        return position;
     }
 
     public static PlayerSave fromPlayer(Player player) {

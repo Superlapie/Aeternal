@@ -19,10 +19,11 @@ public final class Frame {
             final FrameBase b2 = new FrameBase(ay);
             final int n = ay.readUShort();
             animationlist[file] = new Frame[n * 3];
-            final int[] array2 = new int[500];
-            final int[] array3 = new int[500];
-            final int[] array4 = new int[500];
-            final int[] array5 = new int[500];
+            final int transformCapacity = Math.max(1, b2.transformationType.length);
+            final int[] array2 = new int[transformCapacity];
+            final int[] array3 = new int[transformCapacity];
+            final int[] array4 = new int[transformCapacity];
+            final int[] array5 = new int[transformCapacity];
             for (int j = 0; j < n; ++j) {
                 final int k = ay.readUShort();
                 final Frame[] array6 = animationlist[file];
@@ -34,12 +35,19 @@ public final class Frame {
                 final int f = ay.readUnsignedByte();
                 int c2 = 0;
                 int n3 = -1;
-                for (int l = 0; l < f; ++l) {
+                final int limit = Math.min(f, b2.transformationType.length);
+                for (int l = 0; l < limit; ++l) {
                     final int f2;
                     if ((f2 = ay.readUnsignedByte()) > 0) {
+                        if (c2 >= transformCapacity) {
+                            break;
+                        }
                         if (b2.transformationType[l] != 0) {
                             for (int n4 = l - 1; n4 > n3; --n4) {
                                 if (b2.transformationType[n4] == 0) {
+                                    if (c2 >= transformCapacity) {
+                                        break;
+                                    }
                                     array2[c2] = n4;
                                     array3[c2] = 0;
                                     array5[c2] = (array4[c2] = 0);
@@ -72,6 +80,19 @@ public final class Frame {
                         ++c2;
                     }
                 }
+                // Consume any trailing flag bytes if malformed/extended data advertises more transforms.
+                for (int l = limit; l < f; ++l) {
+                    final int f2 = ay.readUnsignedByte();
+                    if ((f2 & 0x1) != 0) {
+                        ay.readShort2();
+                    }
+                    if ((f2 & 0x2) != 0) {
+                        ay.readShort2();
+                    }
+                    if ((f2 & 0x4) != 0) {
+                        ay.readShort2();
+                    }
+                }
                 q2.transformationCount = c2;
                 q2.transformationIndices = new int[c2];
                 q2.transformX = new int[c2];
@@ -85,8 +106,7 @@ public final class Frame {
                 }
             }
         } catch (Exception ex) {
-
-            //ex.printStackTrace();
+            ex.printStackTrace();
         }
     }
 

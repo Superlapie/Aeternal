@@ -28,6 +28,8 @@ public class TeleportPacketListener implements PacketExecutor {
 			player.getPacketSender().sendInterfaceRemoval();
 			return;
 		}
+		// Any teleport selection should close the UI immediately.
+		player.getPacketSender().sendInterfaceRemoval();
 
 		boolean handled = false;
 		for (Teleportable teleport : Teleportable.values()) {

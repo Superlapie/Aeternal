@@ -1,8 +1,11 @@
 package com.elvarg.game.entity.impl.npc.impl;
 
 import com.elvarg.game.World;
+import com.elvarg.game.content.combat.method.CombatMethod;
+import com.elvarg.game.content.combat.method.impl.npcs.NightmareCombatMethod;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.player.Player;
+import com.elvarg.game.model.Animation;
 import com.elvarg.game.model.Ids;
 import com.elvarg.game.model.Location;
 import com.elvarg.game.model.areas.impl.NightmareArea;
@@ -17,6 +20,12 @@ public class Nightmare extends NPC {
 
     public static final String SKIP_RESPAWN_ATTRIBUTE = "skip_respawn";
     private static final int RESPAWN_TICKS = 30;
+    private static final int MAX_HITPOINTS = 1200;
+    private static final int ATTACK_ANIM = 8594; // NIGHTMARE_ATTACK_MELEE
+    private static final int BLOCK_ANIM = 8593;  // NIGHTMARE_IDLE (best fallback)
+    private static final int DEATH_ANIM = 8612;  // NIGHTMARE_DEATH
+    private static final int SPAWN_ANIM = 8611;  // NIGHTMARE_SPAWN_INITIAL
+    private final CombatMethod combatMethod = new NightmareCombatMethod();
     private boolean respawnQueued;
 
     public Nightmare(int id, Location position) {
@@ -36,11 +45,44 @@ public class Nightmare extends NPC {
         setAttribute(SKIP_RESPAWN_ATTRIBUTE, true);
         getMovementQueue().setBlockMovement(true);
         getMovementCoordinator().setRadius(0);
+        // Some Nightmare variants may not have a loaded npc_def entry in this revision.
+        // Force intended boss hp to avoid falling back to default NPC hp (10).
+        setHitpoints(MAX_HITPOINTS);
     }
 
     @Override
     public int aggressionDistance() {
         return 32;
+    }
+
+    @Override
+    public void onAdd() {
+        performAnimation(new Animation(SPAWN_ANIM));
+    }
+
+    @Override
+    public boolean useProjectileClipping() {
+        return false;
+    }
+
+    @Override
+    public CombatMethod getCombatMethod() {
+        return combatMethod;
+    }
+
+    @Override
+    public int getAttackAnim() {
+        return ATTACK_ANIM;
+    }
+
+    @Override
+    public int getBlockAnim() {
+        return BLOCK_ANIM;
+    }
+
+    @Override
+    public int getDeathAnim() {
+        return DEATH_ANIM;
     }
 
     @Override
@@ -82,4 +124,3 @@ public class Nightmare extends NPC {
         });
     }
 }
-

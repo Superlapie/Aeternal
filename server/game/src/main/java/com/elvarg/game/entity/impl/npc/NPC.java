@@ -350,6 +350,10 @@ public class NPC extends Mobile {
 		return getCurrentDefinition().getDefenceAnim();
 	}
 
+	public int getDeathAnim() {
+		return getCurrentDefinition().getDeathAnim();
+	}
+
 	/*
 	 * Getters and setters
 	 */

@@ -86,6 +86,7 @@ public final class ResourceProvider implements Runnable {
     private int[] areas;
     private int idleTime;
     private final Set<Integer> missingMapArchives = new HashSet<>();
+    private final Set<Long> rawArchiveFallbacks = new HashSet<>();
 
     public ResourceProvider() {
         requested = new Deque();
@@ -413,6 +414,7 @@ public final class ResourceProvider implements Runnable {
         }
         if (resource.buffer == null)
             return resource;
+        byte[] originalData = resource.buffer;
         int read = 0;
         try {
             GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(resource.buffer));
@@ -425,12 +427,21 @@ public final class ResourceProvider implements Runnable {
                 read += in;
             } while (true);
         } catch (IOException _ex) {
-            System.out.println("Failed to unzip model [" + resource.ID + "] type = " + resource.dataType);
             if (resource.dataType == 3 && missingMapArchives.add(resource.ID)) {
+                System.out.println("Failed to unzip model [" + resource.ID + "] type = " + resource.dataType);
                 System.out.println("Corrupt map archive skipped [id = " + resource.ID + "]");
+                _ex.printStackTrace();
+                return null;
             }
-            _ex.printStackTrace();
-            return null;
+            // Compatibility path: some imported caches store a subset of archives already
+            // decoded (non-gzip). Let downstream loaders decide if the payload is usable.
+            long key = (((long) resource.dataType) << 32) | (resource.ID & 0xffffffffL);
+            if (rawArchiveFallbacks.add(key)) {
+                System.out.println("Failed to unzip model [" + resource.ID + "] type = " + resource.dataType);
+                System.out.println("Using raw archive fallback [type=" + resource.dataType + ", id=" + resource.ID + "]");
+            }
+            resource.buffer = originalData;
+            return resource;
         }
         resource.buffer = new byte[read];
         System.arraycopy(gzipInputBuffer, 0, resource.buffer, 0, read);

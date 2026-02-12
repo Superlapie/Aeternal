@@ -3,6 +3,10 @@ package com.runescape.cache.anim;
 import com.runescape.cache.FileArchive;
 import com.runescape.io.Buffer;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public final class Animation {
 
     public static Animation[] animations;
@@ -20,9 +24,17 @@ public final class Animation {
     public int animatingPrecedence;
     public int priority;
     public int replayMode;
+    private int skeletalRangeBegin;
+    private int skeletalRangeEnd;
+    private int skeletalId;
+    private boolean[] masks;
+    public Map<Integer, Integer> skeletalSounds;
 
     private Animation() {
         loopOffset = -1;
+        skeletalId = -1;
+        skeletalRangeEnd = -1;
+        skeletalRangeBegin = -1;
         stretches = false;
         forcedPriority = 5;
         playerOffhand = -1; //Removes shield
@@ -126,6 +138,24 @@ public final class Animation {
 
                 for (int i = 0; i < len; i++) {
                     buffer.read24Int();
+                }
+            } else if (opcode == 14) {
+                skeletalId = buffer.readInt();
+            } else if (opcode == 15) {
+                skeletalSounds = new HashMap<Integer, Integer>();
+                int count = buffer.readUShort();
+                for (int index = 0; index < count; index++) {
+                    skeletalSounds.put(buffer.readUShort(), buffer.read24Int());
+                }
+            } else if (opcode == 16) {
+                skeletalRangeBegin = buffer.readUShort();
+                skeletalRangeEnd = buffer.readUShort();
+            } else if (opcode == 17) {
+                masks = new boolean[256];
+                Arrays.fill(masks, false);
+                int count = buffer.readUnsignedByte();
+                for (int index = 0; index < count; index++) {
+                    masks[buffer.readUnsignedByte()] = true;
                 }
             }
         }

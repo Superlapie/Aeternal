@@ -212,12 +212,13 @@ public final class NpcDefinition {
 				definition.combatLevel = 814;
 				definition.actions = new String[] { null, "Attack", null, null, null };
 				definition.modelId = nightmareModelIdsFor(id);
-				// Use static rendering first; these models need dedicated anim mapping later.
-				definition.standAnim = -1;
-				definition.walkAnim = -1;
-				definition.turn180AnimIndex = -1;
-				definition.turn90CCWAnimIndex = -1;
-				definition.turn90CWAnimIndex = -1;
+				// Nightmare uses custom ids outside this cache's npc.dat range, so wire
+				// its core movement animations explicitly.
+				definition.standAnim = 8593; // NIGHTMARE_IDLE
+				definition.walkAnim = 8592; // NIGHTMARE_WALK
+				definition.turn180AnimIndex = 8592;
+				definition.turn90CCWAnimIndex = 8592;
+				definition.turn90CWAnimIndex = 8592;
 				definition.scaleXZ = 128;
 				definition.scaleY = 128;
 				definition.clickable = true;
@@ -234,23 +235,17 @@ public final class NpcDefinition {
 	private static int[] nightmareModelIdsFor(int id) {
 		switch (id) {
 			case 9425:
-				return new int[] { 39182 };
 			case 9426:
-				return new int[] { 39186 };
 			case 9427:
-				return new int[] { 39188 };
 			case 9428:
-				return new int[] { 39196 };
 			case 9429:
-				return new int[] { 39185 };
 			case 9430:
-				return new int[] { 39195 };
 			case 9431:
-				return new int[] { 39208 };
 			case 9432:
-				return new int[] { 39196 };
 			case 9433:
-				return new int[] { 39196 };
+				// Keep all core Nightmare variants on the same proven-good model.
+				// Several imported variant ids are not reliable in this cache build.
+				return new int[] { 39182 };
 			case 9460:
 				return new int[] { 39184 };
 			case 9461:
@@ -525,8 +520,13 @@ public final class NpcDefinition {
 		}
 		Model model_1 = Model.EMPTY_MODEL;
 		if (isNightmareDefinition(interfaceType)) {
-			primaryFrame = -1;
-			secondaryFrame = -1;
+			// Apply real frames only when present in this cache build.
+			if (primaryFrame != -1 && Frame.method531(primaryFrame) == null) {
+				primaryFrame = -1;
+			}
+			if (secondaryFrame != -1 && Frame.method531(secondaryFrame) == null) {
+				secondaryFrame = -1;
+			}
 		}
 		model_1.method464(model,
 				Frame.noAnimationInProgress(secondaryFrame) & Frame.noAnimationInProgress(primaryFrame));
@@ -537,7 +537,10 @@ public final class NpcDefinition {
 		if (scaleXZ != 128 || scaleY != 128)
 			model_1.scale(scaleXZ, scaleXZ, scaleY);
 		if (isNightmareDefinition(interfaceType)) {
-			model_1.translate(0, 25, 0);
+			// Keep a stable anchor + subtle pulse for readability at distance.
+			int idleBob = (int) Math.round(Math.sin(Client.tick / 7.0D) * 5.0D);
+			int attackPulse = (primaryFrame != -1 || secondaryFrame != -1) ? 4 : 0;
+			model_1.translate(0, 25 + idleBob + attackPulse, 0);
 		}
 		model_1.calculateDistances();
 		model_1.faceGroups = null;
