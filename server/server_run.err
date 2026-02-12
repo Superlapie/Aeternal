@@ -1,0 +1,58 @@
+Feb 11, 2026 5:45:58 AM com.elvarg.Server main
+INFO: Initializing RspsApp in non-production mode..
+Feb 11, 2026 5:45:59 AM com.elvarg.game.definition.loader.DefinitionLoader run
+INFO: Loaded definitions for: ../data/definitions/object_spawns.json. It took 276 milliseconds.
+Loading Plugins  ? % [] 0/0 (0:00:00 / ?) ?/sFeb 11, 2026 5:46:00 AM com.elvarg.game.definition.loader.DefinitionLoader run
+INFO: Loaded definitions for: ../data/definitions/items.json. It took 354 milliseconds.
+Feb 11, 2026 5:46:00 AM com.elvarg.game.definition.loader.DefinitionLoader run
+INFO: Loaded definitions for: ../data/definitions/shops.json. It took 24 milliseconds.
+Feb 11, 2026 5:46:00 AM com.elvarg.game.definition.loader.DefinitionLoader run
+INFO: Loaded definitions for: ../data/definitions/npc_defs.json. It took 48 milliseconds.
+Feb 11, 2026 5:46:00 AM com.elvarg.game.definition.loader.DefinitionLoader run
+INFO: Loaded definitions for: ../data/definitions/npc_drops.json. It took 21 milliseconds.
+Feb 11, 2026 5:46:00 AM com.elvarg.game.definition.loader.DefinitionLoader run
+INFO: Loaded definitions for: ../data/definitions/npc_spawns.json. It took 88 milliseconds.
+Feb 11, 2026 5:46:00 AM com.elvarg.game.definition.loader.impl.GroundItemDefinitionLoader run
+INFO: Loaded definitions for: ../data/definitions/ground_items.json . It took 44 milliseconds. 1807 Ground items Loaded.
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+Feb 11, 2026 5:46:00 AM com.elvarg.Server main
+SEVERE: An error occurred while binding the Bootstrap!
+java.net.BindException: Address already in use: bind
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.Net.bind(Net.java:567)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.netBind(ServerSocketChannelImpl.java:337)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:294)
+	at io.netty.channel.socket.nio.NioServerSocketChannel.doBind(NioServerSocketChannel.java:141)
+	at io.netty.channel.AbstractChannel$AbstractUnsafe.bind(AbstractChannel.java:562)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.bind(DefaultChannelPipeline.java:1334)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeBind(AbstractChannelHandlerContext.java:506)
+	at io.netty.channel.AbstractChannelHandlerContext.bind(AbstractChannelHandlerContext.java:491)
+	at io.netty.channel.DefaultChannelPipeline.bind(DefaultChannelPipeline.java:973)
+	at io.netty.channel.AbstractChannel.bind(AbstractChannel.java:260)
+	at io.netty.bootstrap.AbstractBootstrap$2.run(AbstractBootstrap.java:356)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:174)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:167)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:470)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:503)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:995)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':game:run'.
+> Process 'command 'C:\Program Files\Eclipse Adoptium\jdk-17.0.18.8-hotspot\bin\java.exe'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 13s

@@ -1,0 +1,16 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+
+> Task :run
+Loaded: 1657 maps
+Loaded: 647 sounds
+Loaded: 67136 models
+Sprite cache size=635
+Loaded: 9283 animations
+Loaded: 32537 objects
+Loaded: 150 underlays
+Loaded: 174 overlays
+Loaded: 8196 mobs
+Loaded: 1529 graphics
+Loaded: 26566 items

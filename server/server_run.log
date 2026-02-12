@@ -1,0 +1,11 @@
+Starting a Gradle Daemon, 1 busy Daemon could not be reused, use --status for details
+Type-safe project accessors is an incubating feature.
+> Task :game:compileKotlin UP-TO-DATE
+> Task :game:compileJava UP-TO-DATE
+> Task :game:processResources UP-TO-DATE
+> Task :game:classes UP-TO-DATE
+
+> Task :game:run
+
+> Task :game:run FAILED
+4 actionable tasks: 1 executed, 3 up-to-date
