@@ -426,6 +426,9 @@ public final class ResourceProvider implements Runnable {
             } while (true);
         } catch (IOException _ex) {
             System.out.println("Failed to unzip model [" + resource.ID + "] type = " + resource.dataType);
+            if (resource.dataType == 3 && missingMapArchives.add(resource.ID)) {
+                System.out.println("Corrupt map archive skipped [id = " + resource.ID + "]");
+            }
             _ex.printStackTrace();
             return null;
         }

@@ -270,6 +270,10 @@ public final class NpcDefinition {
 		}
 	}
 
+	private static int[] nightmareFallbackModelPool() {
+		return new int[] {39182, 39186, 39188, 39196, 39185, 39195, 39208, 39184, 39190, 39187, 39192, 39191};
+	}
+
 	private static boolean isNightmareDefinition(long id) {
 		switch ((int) id) {
 			case 9425:
@@ -476,28 +480,48 @@ public final class NpcDefinition {
 				if (!Model.isCached(modelId[index]))
 					flag = true;
 			if (flag) {
-				return null;
-			}
-			Model[] models = new Model[modelId.length];
-			for (int index = 0; index < modelId.length; index++)
-				models[index] = Model.getModel(modelId[index]);
-
-			if (models.length == 1)
-				model = models[0];
-			else
-				model = new Model(models.length, models);
-			if (recolourOriginal != null) {
-				for (int index = 0; index < recolourOriginal.length; index++)
-					model.recolor(recolourOriginal[index], recolourTarget[index]);
-
-			}
-			model.skin();
-			if (isNightmareDefinition(interfaceType)) {
+				if (!isNightmareDefinition(interfaceType)) {
+					return null;
+				}
+				// If the primary Nightmare model is unavailable in this cache build,
+				// render with the first available Nightmare variant instead of disappearing.
+				Model fallback = null;
+				for (int candidate : nightmareFallbackModelPool()) {
+					if (Model.isCached(candidate)) {
+						fallback = Model.getModel(candidate);
+						break;
+					}
+				}
+				if (fallback == null) {
+					return null;
+				}
+				model = fallback;
+				model.skin();
 				model.light(128 + lightModifier, 1400 + shadowModifier, -30, -50, -30, true);
-			} else {
-				model.light(64 + lightModifier, 850 + shadowModifier, -30, -50, -30, true);
+				modelCache.put(model, interfaceType);
 			}
-			modelCache.put(model, interfaceType);
+			if (model == null) {
+				Model[] models = new Model[modelId.length];
+				for (int index = 0; index < modelId.length; index++)
+					models[index] = Model.getModel(modelId[index]);
+
+				if (models.length == 1)
+					model = models[0];
+				else
+					model = new Model(models.length, models);
+				if (recolourOriginal != null) {
+					for (int index = 0; index < recolourOriginal.length; index++)
+						model.recolor(recolourOriginal[index], recolourTarget[index]);
+
+				}
+				model.skin();
+				if (isNightmareDefinition(interfaceType)) {
+					model.light(128 + lightModifier, 1400 + shadowModifier, -30, -50, -30, true);
+				} else {
+					model.light(64 + lightModifier, 850 + shadowModifier, -30, -50, -30, true);
+				}
+				modelCache.put(model, interfaceType);
+			}
 		}
 		Model model_1 = Model.EMPTY_MODEL;
 		if (isNightmareDefinition(interfaceType)) {

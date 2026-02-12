@@ -631,6 +631,13 @@ public class PlayerSave {
             return GameConstants.DEFAULT_LOCATION.clone();
         }
 
+        // Temporary GE-region fallback that may reference corrupted map archives in some cache states.
+        if (position.getZ() == 0
+                && position.getX() >= 3150 && position.getX() <= 3180
+                && position.getY() >= 3470 && position.getY() <= 3500) {
+            return GameConstants.DEFAULT_LOCATION.clone();
+        }
+
         return position;
     }
 
