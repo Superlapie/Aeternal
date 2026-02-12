@@ -3,6 +3,7 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.Server;
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.DepositBox;
+import com.elvarg.game.content.bosses.zulrah.ZulrahEncounter;
 import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.minigames.impl.FightCaves;
@@ -18,6 +19,7 @@ import com.elvarg.game.entity.impl.object.impl.WebHandler;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.*;
 import com.elvarg.game.model.areas.impl.PrivateArea;
+import com.elvarg.game.model.areas.impl.ZulrahArea;
 import com.elvarg.game.model.dialogues.builders.impl.SpellBookDialogue;
 import com.elvarg.game.model.rights.PlayerRights;
 import com.elvarg.game.model.teleportation.TeleportHandler;
@@ -41,7 +43,6 @@ import java.util.Locale;
  */
 
 public class ObjectActionPacketListener extends ObjectIdentifiers implements PacketExecutor {
-
 	/**
 	 * Handles the first click option on an object.
 	 *
@@ -92,6 +93,14 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
                 }
                 WebHandler.handleSlashWeb(player, object, false);
                 break;
+        case SACRIFICIAL_BOAT:
+            boardSacrificialBoat(player);
+            break;
+        case ZUL_ANDRA_TELEPORT:
+            if (player.getArea() instanceof ZulrahArea) {
+                ZulrahEncounter.leave(player);
+            }
+            break;
         case KBD_LADDER_DOWN:
             TeleportHandler.teleport(player, new Location(3069, 10255), TeleportType.LADDER_DOWN, false);
             break;
@@ -372,6 +381,10 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
         }
 
 	return false;
+    }
+
+    private static void boardSacrificialBoat(Player player) {
+        ZulrahEncounter.enter(player);
     }
 
     private static boolean isBankObject(ObjectDefinition defs) {

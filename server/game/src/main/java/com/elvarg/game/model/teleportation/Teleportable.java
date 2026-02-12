@@ -10,6 +10,7 @@ public enum Teleportable {
 	WEST_DRAGONS(TeleportButton.WILDERNESS, 0, 1, new Location(2979, 3592)),
 	EAST_DRAGONS(TeleportButton.WILDERNESS, 0, 2, new Location(3356, 3675)),
 	
+	GODWARS_DUNGEON(TeleportButton.BOSSES, 2, 0, new Location(2831, 5299, 2)),
 	KING_BLACK_DRAGON(TeleportButton.BOSSES, 2, 1, new Location(3005, 3850)),
 	CHAOS_ELEMENTAL(TeleportButton.BOSSES, 2, 2, new Location(3267, 3916)),
 	ELDER_CHAOS_DRUID(TeleportButton.BOSSES, 2, 3, new Location(3236, 3636)),
@@ -18,6 +19,7 @@ public enum Teleportable {
 	VENENATIS(TeleportButton.BOSSES, 2, 6, new Location(3346, 3727)),
 	VET_ION(TeleportButton.BOSSES, 2, 7, new Location(3187, 3787)),
 	CALLISTO(TeleportButton.BOSSES, 2, 8, new Location(3312, 3830)),
+	ZULRAH(TeleportButton.BOSSES, 2, 9, new Location(2202, 3056)),
 	
 	DUEL_ARENA(TeleportButton.MINIGAME, 1, 0, new Location(3370, 3270)),
 	BARROWS(TeleportButton.MINIGAME, 1, 1, new Location(3565, 3313)),

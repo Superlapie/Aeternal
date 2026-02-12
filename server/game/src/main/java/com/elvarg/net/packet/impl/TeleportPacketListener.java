@@ -2,7 +2,6 @@ package com.elvarg.net.packet.impl;
 
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Location;
-import com.elvarg.game.model.rights.PlayerRights;
 import com.elvarg.game.model.teleportation.TeleportHandler;
 import com.elvarg.game.model.teleportation.Teleportable;
 import com.elvarg.net.packet.Packet;
@@ -29,13 +28,10 @@ public class TeleportPacketListener implements PacketExecutor {
 			return;
 		}
 
-		if (player.getRights() == PlayerRights.DEVELOPER) {
-			player.getPacketSender().sendMessage(
-					"Selected a teleport. Type: " + Integer.toString(type) + ", index: " + Integer.toString(index) + ".");
-		}
-
+		boolean handled = false;
 		for (Teleportable teleport : Teleportable.values()) {
 			if (teleport.getType() == type && teleport.getIndex() == index) {
+				handled = true;
 				Location teleportPosition = teleport.getPosition();
 				if (TeleportHandler.checkReqs(player, teleportPosition)) {
 					player.getPreviousTeleports().put(teleport.getTeleportButton(), teleportPosition);
@@ -43,6 +39,10 @@ public class TeleportPacketListener implements PacketExecutor {
 				}
 				break;
 			}
+		}
+
+		if (!handled) {
+			player.getPacketSender().sendMessage("That teleport is not configured yet.");
 		}
 	}
 }

@@ -27,42 +27,15 @@ public class TeleportHandler {
 	public static void teleport(Player player, Location targetLocation, TeleportType teleportType,
 			boolean wildernessWarning) {
 		if (wildernessWarning) {
-			StringBuilder warning = new StringBuilder();
 			Area area = AreaManager.get(targetLocation);
-			boolean wilderness = (area instanceof WildernessArea);
-			int wildernessLevel = WildernessArea.getLevel(targetLocation.getY());
-			if (wilderness) {
-				warning.append("Are you sure you want to teleport there? ");
-				if (wildernessLevel > 0) {
-					warning.append("It's in level @red@" + wildernessLevel + "@bla@ wilderness! ");
-					if (WildernessArea.multi(targetLocation.getX(), targetLocation.getY())) {
-						warning.append(
-								"Additionally, @red@it's a multi zone@bla@. Other players may attack you simultaneously.");
-					} else {
-						warning.append("Other players will be able to attack you.");
-					}
-				} else {
-					warning.append("Other players will be able to attack you.");
-				}
-				/*player.setDialogueContinueAction(new Action() {
-					@Override
-					public void execute() {
-
-						//DialogueManager.start(player, 7);
-						player.setDialogueOptions(new DialogueOptions() {
-							@Override
-							public void handleOption(Player player, int option) {
-								player.getPacketSender().sendInterfaceRemoval();
-								if (option == 1) {
-									teleport(player, targetLocation, teleportType, false);
-								}
-							}
-						});
-					}
-
-				});
-				//DialogueManager.sendStatement(player, warning.toString());*/
-				return;
+			if (area instanceof WildernessArea) {
+				int wildernessLevel = WildernessArea.getLevel(targetLocation.getY());
+				boolean multi = WildernessArea.multi(targetLocation.getX(), targetLocation.getY());
+				String warning = wildernessLevel > 0
+						? "Warning: teleporting to level " + wildernessLevel + " wilderness"
+								+ (multi ? " (multi-combat)." : ".")
+						: "Warning: teleporting to a PvP area.";
+				player.getPacketSender().sendMessage(warning);
 			}
 		}
 		player.getMovementQueue().setBlockMovement(true).reset();
@@ -146,10 +119,6 @@ public class TeleportHandler {
 	public static boolean handleButton(Player player, int buttonId, int menuId) {
 		TeleportButton teleportButton = TeleportButton.get(buttonId);
 		if (teleportButton != null) {
-			if (player.getWildernessLevel() > 0) {
-				player.getPacketSender().sendMessage("You can only use tablet to teleport out from wilderness.");
-				return true;
-			}
 			switch (menuId) {
 			case 0: // Click to teleport
 				if (teleportButton == TeleportButton.HOME) {

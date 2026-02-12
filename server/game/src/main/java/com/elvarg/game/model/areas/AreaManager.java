@@ -11,6 +11,7 @@ import com.elvarg.game.model.areas.impl.BarrowsArea;
 import com.elvarg.game.model.areas.impl.DuelArenaArea;
 import com.elvarg.game.model.areas.impl.GodwarsDungeonArea;
 import com.elvarg.game.model.areas.impl.KingBlackDragonArea;
+import com.elvarg.game.model.areas.impl.PrivateArea;
 import com.elvarg.game.model.areas.impl.WildernessArea;
 
 import java.util.ArrayList;
@@ -45,6 +46,27 @@ public class AreaManager {
         Area area = c.getArea();
 
         Area previousArea = null;
+
+        // Private areas are instance-specific and are not part of the global Area list.
+        // Keep entities in their assigned private area while they remain inside its bounds.
+        if (area instanceof PrivateArea) {
+            if (!inside(position, area)) {
+                area.leave(c, false);
+                previousArea = area;
+                area = null;
+            } else {
+                area.process(c);
+                if (c.isPlayer()) {
+                    Player player = c.getAsPlayer();
+                    int multiIcon = area.isMulti(player) ? 1 : 0;
+                    if (player.getMultiIcon() != multiIcon) {
+                        player.getPacketSender().sendMultiIcon(multiIcon);
+                    }
+                }
+                c.setArea(area);
+                return;
+            }
+        }
 
         if (area != null) {
             if (!inside(position, area)) {

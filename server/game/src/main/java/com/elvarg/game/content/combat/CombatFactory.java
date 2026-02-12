@@ -271,7 +271,8 @@ public class CombatFactory {
 		// Walk back if npc is too far away from spawn position.
 		if (attacker.isNpc()) {
 			NPC npc = attacker.getAsNpc();
-			if (npc.getCurrentDefinition().doesRetreat()) {
+			boolean ignoreRetreat = npc.getRealId() == NpcIdentifiers.ZULRAH;
+			if (!ignoreRetreat && npc.getCurrentDefinition().doesRetreat()) {
 				if (npc.getMovementCoordinator().getCoordinateState() == CoordinateState.RETREATING) {
 					npc.getCombat().reset();
 					return false;

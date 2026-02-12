@@ -24,6 +24,8 @@ import com.elvarg.game.task.TaskManager;
 
 public class NPCDeathTask extends Task {
 
+    private static final String SKIP_RESPAWN_ATTRIBUTE = "skip_respawn";
+
     /**
      * The npc setting off the death task.
      */
@@ -115,7 +117,8 @@ public class NPCDeathTask extends Task {
         npc.setNpcTransformationId(-1);
 
         // Handle respawn..
-        if (npc.getDefinition().getRespawn() > 0) {
+        boolean skipRespawn = Boolean.TRUE.equals(npc.getAttribute(SKIP_RESPAWN_ATTRIBUTE));
+        if (npc.getDefinition().getRespawn() > 0 && !skipRespawn) {
             TaskManager.submit(new NPCRespawnTask(npc, npc.getDefinition().getRespawn()));
         }
 

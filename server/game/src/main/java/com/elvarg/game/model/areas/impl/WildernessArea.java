@@ -83,7 +83,7 @@ public class WildernessArea extends Area {
 		if (player.getWildernessLevel() > 20 && player.getRights() != PlayerRights.DEVELOPER) {
 			player.getPacketSender().sendMessage("Teleport spells are blocked in this level of Wilderness.");
 			player.getPacketSender()
-					.sendMessage("You must be below level 20 of Wilderness to use teleportation spells.");
+					.sendMessage("You must be level 20 Wilderness or lower to teleport.");
 			return false;
 		}
 		return true;

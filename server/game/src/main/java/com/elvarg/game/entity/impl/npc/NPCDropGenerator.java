@@ -1,5 +1,6 @@
 package com.elvarg.game.entity.impl.npc;
 
+import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.definition.NpcDropDefinition;
 import com.elvarg.game.definition.NpcDropDefinition.DropTable;
 import com.elvarg.game.definition.NpcDropDefinition.NPCDrop;
@@ -7,7 +8,9 @@ import com.elvarg.game.definition.NpcDropDefinition.RDT;
 import com.elvarg.game.entity.impl.grounditem.ItemOnGroundManager;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Item;
+import com.elvarg.game.model.Location;
 import com.elvarg.game.model.container.impl.Equipment;
+import com.elvarg.util.NpcIdentifiers;
 import com.elvarg.util.RandomGen;
 
 import java.util.ArrayList;
@@ -47,16 +50,65 @@ public class NPCDropGenerator {
         Optional<NpcDropDefinition> def = NpcDropDefinition.get(npc.getId());
         if (def.isPresent()) {
             NPCDropGenerator gen = new NPCDropGenerator(player, def.get());
+            Location dropLocation = resolveDropLocation(player, npc);
             for (Item item : gen.getDropList()) {
             	if (!item.getDefinition().isStackable()) {
             		for (int i = 0; i < item.getAmount(); i++) {
-            			ItemOnGroundManager.register(player, new Item(item.getId(), 1), npc.getLocation());
+            			ItemOnGroundManager.register(player, new Item(item.getId(), 1), dropLocation);
             		}
             	} else {
-            		ItemOnGroundManager.register(player, item, npc.getLocation());
+            		ItemOnGroundManager.register(player, item, dropLocation);
             	}
             }
         }
+    }
+
+    private static Location resolveDropLocation(Player player, NPC npc) {
+        if (!isZulrah(npc)) {
+            return npc.getLocation().clone();
+        }
+
+        final Location center = npc.getLocation();
+        final var area = npc.getPrivateArea();
+
+        if (!RegionManager.blocked(center, area)) {
+            return center.clone();
+        }
+
+        Location best = null;
+        int bestPlayerDistance = Integer.MAX_VALUE;
+
+        for (int radius = 1; radius <= 10; radius++) {
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dy = -radius; dy <= radius; dy++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dy)) != radius) {
+                        continue;
+                    }
+
+                    Location tile = center.transform(dx, dy);
+                    if (RegionManager.blocked(tile, area)) {
+                        continue;
+                    }
+
+                    int playerDistance = player.getLocation().getDistance(tile);
+                    if (best == null || playerDistance < bestPlayerDistance) {
+                        best = tile;
+                        bestPlayerDistance = playerDistance;
+                    }
+                }
+            }
+
+            if (best != null) {
+                return best;
+            }
+        }
+
+        return center.clone();
+    }
+
+    private static boolean isZulrah(NPC npc) {
+        int id = npc.getId();
+        return id == NpcIdentifiers.ZULRAH || id == NpcIdentifiers.ZULRAH_2 || id == NpcIdentifiers.ZULRAH_3;
     }
 
     /**
