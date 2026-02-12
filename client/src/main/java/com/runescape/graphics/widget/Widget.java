@@ -2312,12 +2312,12 @@ public class Widget {
 		Widget scroll = addInterface(28400);
 		scroll.width = 174;
 		scroll.height = 175;
-		scroll.scrollMax = 491;
+		scroll.scrollMax = 526;
 
 		String[] options = { "Abyssal Sire", "Alter Ego", "Barrelchest", "Cave Kraken", "Cerberus", "Corporeal Beast",
 				"Dagannoth Kings", "Demonic Gorillas", "Godwars", "Giant Mole", "Hydra", "Kalphite Queen",
-				"Lizardman Shaman", "Zulrah" };
-		scroll.totalChildren(28);
+				"Lizardman Shaman", "Zulrah", "Vorkath" };
+		scroll.totalChildren(30);
 
 		teleportOptions(scroll, fonts, options, 28401, 28450);
 	}

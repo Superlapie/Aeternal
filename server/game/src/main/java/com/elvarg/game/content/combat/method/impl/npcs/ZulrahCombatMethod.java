@@ -2,6 +2,7 @@ package com.elvarg.game.content.combat.method.impl.npcs;
 
 import com.elvarg.game.World;
 import com.elvarg.game.collision.RegionManager;
+import com.elvarg.game.content.PrayerHandler;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.hit.HitDamage;
@@ -39,6 +40,10 @@ public class ZulrahCombatMethod extends CombatMethod {
     private static final int TOXIC_CLOUD_OBJECT_ID = 11700;
     private static final int CLOUD_LIFETIME_TICKS = 25;
     private static final int MAX_SNAKELINGS = 3;
+    private static final int MAGMA_ATTACKS_PER_PHASE = 2;
+    private static final int DEFAULT_ATTACKS_PER_PHASE = 8;
+    private static final int JAD_ATTACKS_PER_PHASE = 12;
+    private static final int MAGMA_WINDUP_TICKS = 4;
     private static final PendingHit[] NO_HITS = new PendingHit[0];
 
     private static final Animation SUBMERGE_ANIMATION = new Animation(5072);
@@ -349,7 +354,11 @@ public class ZulrahCombatMethod extends CombatMethod {
     }
 
     private int getMaxAttacksForCurrentPhase() {
-        return getCurrentPhase().form == Form.JAD ? 12 : 8;
+        return switch (getCurrentPhase().form) {
+            case MAGMA -> MAGMA_ATTACKS_PER_PHASE;
+            case JAD -> JAD_ATTACKS_PER_PHASE;
+            default -> DEFAULT_ATTACKS_PER_PHASE;
+        };
     }
 
     private void beginTransition(NPC npc) {
@@ -401,7 +410,7 @@ public class ZulrahCombatMethod extends CombatMethod {
         npc.performAnimation(MAGMA_ATTACK_ANIMATION);
 
         final Location hitTile = target.getLocation().clone();
-        TaskManager.submit(new Task(5, npc, false) {
+        TaskManager.submit(new Task(MAGMA_WINDUP_TICKS, npc, false) {
             @Override
             protected void execute() {
                 if (!npc.isRegistered() || !target.isRegistered() || target.getPrivateArea() != npc.getPrivateArea()) {
@@ -409,9 +418,14 @@ public class ZulrahCombatMethod extends CombatMethod {
                     return;
                 }
 
-                if (target.getLocation().getDistance(hitTile) <= 1) {
-                    target.getCombat().getHitQueue().addPendingDamage(new HitDamage(Misc.inclusive(18, 41), HitMask.RED));
-                    if (Misc.getRandom(99) < 35) {
+                // OSRS-style magma melee is a delayed tile strike: stepping off the called tile avoids it.
+                if (target.getLocation().equals(hitTile)) {
+                    int damage = Misc.inclusive(18, 41);
+                    if (target.getPrayerActive()[PrayerHandler.PROTECT_FROM_MELEE]) {
+                        damage = 0;
+                    }
+                    target.getCombat().getHitQueue().addPendingDamage(new HitDamage(damage, damage > 0 ? HitMask.RED : HitMask.BLUE));
+                    if (damage > 0 && Misc.getRandom(99) < 35) {
                         CombatFactory.poisonEntity(target, PoisonType.VENOM);
                     }
                 }

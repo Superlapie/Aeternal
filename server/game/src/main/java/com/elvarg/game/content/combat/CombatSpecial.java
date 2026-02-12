@@ -33,6 +33,7 @@ import com.elvarg.game.content.combat.method.impl.specials.SaradominGodswordComb
 import com.elvarg.game.content.combat.method.impl.specials.SaradominSwordCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ShoveCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.StatiusWarhammerCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.ToxicBlowpipeCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.VestasLongswordCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.VolatileNightmareStaffCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ZamorakGodswordCombatMethod;
@@ -113,6 +114,8 @@ public enum CombatSpecial {
                     new ZaryteCrossbowCombatMethod(), WeaponInterface.CROSSBOW),
     BALLISTA(new int[]{19478, 19481},
             65, 1.25, 1.25, new BallistaCombatMethod(), WeaponInterface.BALLISTA),
+    TOXIC_BLOWPIPE(new int[]{12926},
+            50, 1.5, 1.5, new ToxicBlowpipeCombatMethod(), WeaponInterface.BLOWPIPE),
     MORRIGANS_JAVELIN(new int[]{22636},
                       50, 1, 1, new MorrigansJavelinCombatMethod(), WeaponInterface.JAVELIN),
     DRAGON_KNIFE(new int[]{22804, 22806, 22808, 28810},

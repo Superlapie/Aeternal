@@ -462,6 +462,10 @@ public class NPC extends Mobile {
 
 	@Override
 	public PendingHit manipulateHit(PendingHit hit) {
+		Mobile attacker = hit.getAttacker();
+		if (attacker != null && attacker.isPlayer() && attacker.getAsPlayer().hasOneHitNpcs() && hit.isAccurate()) {
+			hit.setTotalDamage(getHitpoints());
+		}
 		return hit;
 	}
 

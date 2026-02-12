@@ -1,5 +1,6 @@
 package com.elvarg.game.entity.impl.player.persistence;
 
+import com.elvarg.game.GameConstants;
 import com.elvarg.game.content.PrayerHandler;
 import com.elvarg.game.content.combat.FightType;
 import com.elvarg.game.content.presets.Presetable;
@@ -41,6 +42,7 @@ public class PlayerSave {
     private int recoilDamage;
     private int poisonDamage;
     private int blowpipeScales;
+    private double npcDropRateMultiplier;
     private int barrowsCrypt;
     private int barrowsChests;
     private boolean[] killedBrothers;
@@ -233,6 +235,14 @@ public class PlayerSave {
 
     public void setBlowpipeScales(int blowpipeScales) {
         this.blowpipeScales = blowpipeScales;
+    }
+
+    public double getNpcDropRateMultiplier() {
+        return npcDropRateMultiplier;
+    }
+
+    public void setNpcDropRateMultiplier(double npcDropRateMultiplier) {
+        this.npcDropRateMultiplier = npcDropRateMultiplier;
     }
 
     public int getBarrowsCrypt() {
@@ -524,7 +534,7 @@ public class PlayerSave {
         player.setLoyaltyTitle(this.title);
         player.setRights(this.rights);
         player.setDonatorRights(this.donatorRights);
-        player.setLocation(this.position);
+        player.setLocation(sanitizeLoginPosition(this.position));
         player.setSpellbook(this.spellBook);
         player.setFightType(this.fightType);
         player.setAutoRetaliate(this.autoRetaliate);
@@ -560,6 +570,7 @@ public class PlayerSave {
         player.setPoints(this.points);
         player.setPoisonDamage(this.poisonDamage);
         player.setBlowpipeScales(this.blowpipeScales);
+        player.setNpcDropRateMultiplier(this.npcDropRateMultiplier <= 0 ? 1.0 : this.npcDropRateMultiplier);
 
         player.setBarrowsCrypt(this.barrowsCrypt);
         player.setBarrowsChestsLooted(this.barrowsChests);
@@ -599,6 +610,28 @@ public class PlayerSave {
                 player.setBank(i, new Bank(player)).getBank(i).addItems(bankItems, false);
             }
         }
+    }
+
+    private static Location sanitizeLoginPosition(Location position) {
+        if (position == null) {
+            return GameConstants.DEFAULT_LOCATION.clone();
+        }
+
+        // Legacy Nightmare instance region that references missing map archives in this cache.
+        if (position.getZ() == 0
+                && position.getX() >= 2262 && position.getX() <= 2285
+                && position.getY() >= 4041 && position.getY() <= 4074) {
+            return GameConstants.DEFAULT_LOCATION.clone();
+        }
+
+        // Safety: if a save is in the previously used Edgeville spawn block, move to a guaranteed loaded region.
+        if (position.getZ() == 0
+                && position.getX() >= 3076 && position.getX() <= 3110
+                && position.getY() >= 3508 && position.getY() <= 3540) {
+            return GameConstants.DEFAULT_LOCATION.clone();
+        }
+
+        return position;
     }
 
     public static PlayerSave fromPlayer(Player player) {
@@ -647,6 +680,7 @@ public class PlayerSave {
         playerSave.points = player.getPoints();
         playerSave.poisonDamage = player.getPoisonDamage();
         playerSave.blowpipeScales = player.getBlowpipeScales();
+        playerSave.npcDropRateMultiplier = player.getNpcDropRateMultiplier();
 
         playerSave.barrowsCrypt = player.getBarrowsCrypt();
         playerSave.barrowsChests = player.getBarrowsChestsLooted();

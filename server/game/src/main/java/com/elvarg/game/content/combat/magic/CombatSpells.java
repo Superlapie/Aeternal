@@ -2816,6 +2816,11 @@ public enum CombatSpells {
          }
 
          @Override
+         public int getAttackSpeed() {
+             return 4;
+         }
+
+         @Override
          public Projectile projectile() {
              return new ProjectileBuilder().setId(1252).setStart(23).setEnd(15).setDuration(10).setSpan(5).create();
          }
@@ -2864,6 +2869,11 @@ public enum CombatSpells {
    	 @Override
         public Optional<Animation> castAnimation() {
             return Optional.of(new Animation(1167));
+        }
+
+        @Override
+        public int getAttackSpeed() {
+            return 4;
         }
 
         @Override

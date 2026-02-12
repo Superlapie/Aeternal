@@ -1,5 +1,6 @@
 package com.elvarg.game.content.combat;
 
+import com.elvarg.game.content.combat.magic.TridentData;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Item;
 import com.elvarg.game.model.container.impl.Equipment;
@@ -26,6 +27,9 @@ public final class WeaponInterfaces {
         if (equippedWeapon.getId() > 0) {
             if (equippedWeapon.getDefinition().getWeaponInterface() != null) {
                 weapon = equippedWeapon.getDefinition().getWeaponInterface();
+            } else if (TridentData.isTridentWeapon(equippedWeapon.getId())) {
+                // Tridents are powered staves and should use the staff combat sidebar.
+                weapon = WeaponInterface.STAFF;
             }
         }
 

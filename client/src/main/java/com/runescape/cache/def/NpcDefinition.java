@@ -80,10 +80,15 @@ public final class NpcDefinition {
 
 		anInt56 = (anInt56 + 1) % 20;
 		NpcDefinition definition = cache[anInt56] = new NpcDefinition();
-		dataBuf.currentPosition = offsets[id];
 		definition.interfaceType = id;
 		definition.id = id;
-		definition.readValues(dataBuf);
+		if (id >= 0 && id < offsets.length) {
+			dataBuf.currentPosition = offsets[id];
+			definition.readValues(dataBuf);
+		} else {
+			applyCustomDefinition(definition, id);
+			return definition;
+		}
 
 		switch (id) {
 		// Pets
@@ -180,6 +185,114 @@ public final class NpcDefinition {
 
 		}
 		return definition;
+	}
+
+	private static void applyCustomDefinition(NpcDefinition definition, int id) {
+		switch (id) {
+			case 9425:
+			case 9426:
+			case 9427:
+			case 9428:
+			case 9429:
+			case 9430:
+			case 9431:
+			case 9432:
+			case 9433:
+			case 9460:
+			case 9461:
+			case 9462:
+			case 9463:
+			case 9464:
+			case 11153:
+			case 11154:
+			case 11155:
+				definition.name = "The Nightmare";
+				definition.description = "An ancient evil from the dream realm.".getBytes();
+				definition.size = 5;
+				definition.combatLevel = 814;
+				definition.actions = new String[] { null, "Attack", null, null, null };
+				definition.modelId = nightmareModelIdsFor(id);
+				// Use static rendering first; these models need dedicated anim mapping later.
+				definition.standAnim = -1;
+				definition.walkAnim = -1;
+				definition.turn180AnimIndex = -1;
+				definition.turn90CCWAnimIndex = -1;
+				definition.turn90CWAnimIndex = -1;
+				definition.scaleXZ = 128;
+				definition.scaleY = 128;
+				definition.clickable = true;
+				definition.drawMinimapDot = false;
+				break;
+			default:
+				definition.name = "Unknown";
+				definition.actions = new String[7];
+				definition.modelId = new int[] { 0 };
+				break;
+		}
+	}
+
+	private static int[] nightmareModelIdsFor(int id) {
+		switch (id) {
+			case 9425:
+				return new int[] { 39182 };
+			case 9426:
+				return new int[] { 39186 };
+			case 9427:
+				return new int[] { 39188 };
+			case 9428:
+				return new int[] { 39196 };
+			case 9429:
+				return new int[] { 39185 };
+			case 9430:
+				return new int[] { 39195 };
+			case 9431:
+				return new int[] { 39208 };
+			case 9432:
+				return new int[] { 39196 };
+			case 9433:
+				return new int[] { 39196 };
+			case 9460:
+				return new int[] { 39184 };
+			case 9461:
+				return new int[] { 39190 };
+			case 9462:
+				return new int[] { 39187 };
+			case 9463:
+				return new int[] { 39192 };
+			case 9464:
+				return new int[] { 39191 };
+			case 11153:
+			case 11154:
+			case 11155:
+				return new int[] { 39188 };
+			default:
+				return new int[] { 39182 };
+		}
+	}
+
+	private static boolean isNightmareDefinition(long id) {
+		switch ((int) id) {
+			case 9425:
+			case 9426:
+			case 9427:
+			case 9428:
+			case 9429:
+			case 9430:
+			case 9431:
+			case 9432:
+			case 9433:
+			case 9460:
+			case 9461:
+			case 9462:
+			case 9463:
+			case 9464:
+			case 11153:
+			case 11154:
+			case 11155:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	public static int TOTAL_NPCS;
@@ -379,10 +492,18 @@ public final class NpcDefinition {
 
 			}
 			model.skin();
-			model.light(64 + lightModifier, 850 + shadowModifier, -30, -50, -30, true);
+			if (isNightmareDefinition(interfaceType)) {
+				model.light(128 + lightModifier, 1400 + shadowModifier, -30, -50, -30, true);
+			} else {
+				model.light(64 + lightModifier, 850 + shadowModifier, -30, -50, -30, true);
+			}
 			modelCache.put(model, interfaceType);
 		}
 		Model model_1 = Model.EMPTY_MODEL;
+		if (isNightmareDefinition(interfaceType)) {
+			primaryFrame = -1;
+			secondaryFrame = -1;
+		}
 		model_1.method464(model,
 				Frame.noAnimationInProgress(secondaryFrame) & Frame.noAnimationInProgress(primaryFrame));
 		if (secondaryFrame != -1 && primaryFrame != -1)
@@ -391,6 +512,9 @@ public final class NpcDefinition {
 			model_1.applyTransform(secondaryFrame);
 		if (scaleXZ != 128 || scaleY != 128)
 			model_1.scale(scaleXZ, scaleXZ, scaleY);
+		if (isNightmareDefinition(interfaceType)) {
+			model_1.translate(0, 25, 0);
+		}
 		model_1.calculateDistances();
 		model_1.faceGroups = null;
 		model_1.vertexGroups = null;

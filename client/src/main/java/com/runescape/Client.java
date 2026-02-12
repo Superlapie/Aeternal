@@ -15844,24 +15844,143 @@ public class Client extends GameApplet {
     /**
      * If toggled, render ground item names and lootbeams
      */
+    private static final long GROUND_ITEM_LOW_VALUE = 20_000L;
+    private static final long GROUND_ITEM_MEDIUM_VALUE = 100_000L;
+    private static final long GROUND_ITEM_HIGH_VALUE = 1_000_000L;
+    private static final long GROUND_ITEM_INSANE_VALUE = 10_000_000L;
+    private static final long LOOTBEAM_MIN_VALUE = GROUND_ITEM_HIGH_VALUE;
+
+    private static final int GROUND_ITEM_LOW_COLOR = 0x66B2FF;
+    private static final int GROUND_ITEM_MEDIUM_COLOR = 0x99FF99;
+    private static final int GROUND_ITEM_HIGH_COLOR = 0xFF9600;
+    private static final int GROUND_ITEM_INSANE_COLOR = 0xFF66B2;
+    private static final int GROUND_ITEM_NO_COLOR = -1;
+
     private void renderGroundItemNames() {
         for (int x = 0; x < 104; x++) {
             for (int y = 0; y < 104; y++) {
                 Deque node = groundItems[plane][x][y];
-                int offset = 12;
                 if (node != null) {
+                    calcEntityScreenPos((x << 7) + 64, 64, (y << 7) + 64);
+                    if (spriteDrawX <= 0 || spriteDrawY <= 0) {
+                        continue;
+                    }
+
+                    long highestStackValue = 0L;
+                    int lootbeamColor = GROUND_ITEM_NO_COLOR;
                     for (Item item = (Item) node.getFirst(); item != null; item = (Item) node.getNext()) {
                         ItemDefinition itemDef = ItemDefinition.lookup(item.ID);
-                        calcEntityScreenPos((x << 7) + 64, 64, (y << 7) + 64);
-                        // Red if default value is >= 50k || amount >= 100k
-                        newSmallFont.drawCenteredString((itemDef.value >= 0xC350 || item.itemCount >= 0x186A0 ? "<col=ff0000>" : "<trans=120>") +
-                                        itemDef.name + (item.itemCount > 1 ? "</col> (" + StringUtils.insertCommasToNumber(item.itemCount + "") + "</col>)" : ""),
-                                spriteDrawX, spriteDrawY - offset, 0xffffff, 1);
+                        if (itemDef == null) {
+                            continue;
+                        }
+
+                        long stackValue = ItemPriceLookup.getBestPrice(itemDef, item.itemCount);
+                        if (stackValue >= highestStackValue) {
+                            highestStackValue = stackValue;
+                            lootbeamColor = getGroundItemTierColor(stackValue);
+                        }
+                    }
+
+                    if (shouldShowLootbeam(highestStackValue) && lootbeamColor != GROUND_ITEM_NO_COLOR) {
+                        drawGroundItemLootbeam(spriteDrawX, spriteDrawY, lootbeamColor);
+                    }
+
+                    int offset = 12;
+                    for (Item item = (Item) node.getFirst(); item != null; item = (Item) node.getNext()) {
+                        ItemDefinition itemDef = ItemDefinition.lookup(item.ID);
+                        if (itemDef == null) {
+                            continue;
+                        }
+
+                        long stackValue = ItemPriceLookup.getBestPrice(itemDef, item.itemCount);
+                        int textColor = getGroundItemTierColor(stackValue);
+                        String colorTag = getGroundItemColorTag(textColor);
+                        String itemName = itemDef.name != null ? itemDef.name : ("item " + item.ID);
+                        String amount = item.itemCount > 1 ? " (" + StringUtils.insertCommasToNumber(Integer.toString(item.itemCount)) + ")" : "";
+                        newSmallFont.drawCenteredString(colorTag + itemName + amount, spriteDrawX, spriteDrawY - offset, 0xffffff, 1);
                         offset += 12;
                     }
                 }
             }
         }
+    }
+
+    private int getGroundItemTierColor(long stackValue) {
+        if (stackValue >= GROUND_ITEM_INSANE_VALUE) {
+            return GROUND_ITEM_INSANE_COLOR;
+        }
+        if (stackValue >= GROUND_ITEM_HIGH_VALUE) {
+            return GROUND_ITEM_HIGH_COLOR;
+        }
+        if (stackValue >= GROUND_ITEM_MEDIUM_VALUE) {
+            return GROUND_ITEM_MEDIUM_COLOR;
+        }
+        if (stackValue >= GROUND_ITEM_LOW_VALUE) {
+            return GROUND_ITEM_LOW_COLOR;
+        }
+        return GROUND_ITEM_NO_COLOR;
+    }
+
+    private boolean shouldShowLootbeam(long stackValue) {
+        return stackValue >= LOOTBEAM_MIN_VALUE;
+    }
+
+    private String getGroundItemColorTag(int tierColor) {
+        switch (tierColor) {
+            case GROUND_ITEM_LOW_COLOR:
+                return "<col=66b2ff>";
+            case GROUND_ITEM_MEDIUM_COLOR:
+                return "<col=99ff99>";
+            case GROUND_ITEM_HIGH_COLOR:
+                return "<col=ff9600>";
+            case GROUND_ITEM_INSANE_COLOR:
+                return "<col=ff66b2>";
+            default:
+                return "<trans=120>";
+        }
+    }
+
+    private void drawGroundItemLootbeam(int screenX, int screenY, int color) {
+        final int groundY = screenY + 22;
+        final int phase = (screenX * 31 + screenY * 17) & 0xFF;
+        final double pulse = Math.sin((tick + phase) / 8.0D);
+        final int beamHeight = 132 + (int) (pulse * 16D);
+        final int topY = groundY - beamHeight;
+
+        for (int step = 0; step < beamHeight; step++) {
+            double progress = step / (double) beamHeight;
+            int y = topY + step;
+
+            int halfWidth = 1 + (int) (progress * 8.0D);
+            int alpha = 36 + (int) (progress * 86.0D) + (int) (pulse * 8.0D);
+            alpha = Math.max(10, Math.min(170, alpha));
+
+            Rasterizer2D.drawTransparentHorizontalLine(screenX - halfWidth, y, (halfWidth * 2) + 1, color, alpha);
+
+            if (halfWidth >= 2) {
+                int coreAlpha = Math.max(24, Math.min(140, alpha + 24));
+                Rasterizer2D.drawTransparentHorizontalLine(screenX - 1, y, 3, 0xFFFFFF, coreAlpha);
+            }
+        }
+
+        Rasterizer2D.drawTransparentVerticalLine(screenX, topY, beamHeight, 0xFFFFFF, 130);
+        Rasterizer2D.drawTransparentVerticalLine(screenX, topY, beamHeight, color, 105);
+
+        for (int band = 0; band < 3; band++) {
+            int shimmerOffset = Math.floorMod((tick * 3) + phase + (band * (beamHeight / 3)), beamHeight);
+            int shimmerY = groundY - shimmerOffset;
+            if (shimmerY > topY && shimmerY < groundY) {
+                Rasterizer2D.drawTransparentHorizontalLine(screenX - 7, shimmerY, 15, 0xFFFFFF, 110);
+                Rasterizer2D.drawTransparentHorizontalLine(screenX - 5, shimmerY, 11, color, 130);
+            }
+        }
+
+        int groundPulse = (tick + phase) & 4;
+        Rasterizer2D.drawFilledCircle(screenX, groundY, 20 + groundPulse, color, 24);
+        Rasterizer2D.drawFilledCircle(screenX, groundY, 14 + groundPulse, color, 40);
+        Rasterizer2D.drawFilledCircle(screenX, groundY, 8 + (groundPulse / 2), 0xFFFFFF, 88);
+        Rasterizer2D.drawTransparentHorizontalLine(screenX - 13, groundY, 27, color, 78);
+        Rasterizer2D.drawTransparentVerticalLine(screenX, groundY - 10, 20, color, 62);
     }
 
     private void menuActionsRow(String action, int index, int actionId, int row) {

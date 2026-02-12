@@ -64,7 +64,7 @@ public class NPCDropGenerator {
     }
 
     private static Location resolveDropLocation(Player player, NPC npc) {
-        if (!isZulrah(npc)) {
+        if (!requiresWalkableDropTile(npc)) {
             return npc.getLocation().clone();
         }
 
@@ -106,9 +106,15 @@ public class NPCDropGenerator {
         return center.clone();
     }
 
-    private static boolean isZulrah(NPC npc) {
+    private static boolean requiresWalkableDropTile(NPC npc) {
         int id = npc.getId();
-        return id == NpcIdentifiers.ZULRAH || id == NpcIdentifiers.ZULRAH_2 || id == NpcIdentifiers.ZULRAH_3;
+        return id == NpcIdentifiers.ZULRAH
+                || id == NpcIdentifiers.ZULRAH_2
+                || id == NpcIdentifiers.ZULRAH_3
+                || id == 8058
+                || id == 8059
+                || id == 8060
+                || id == 8061;
     }
 
     /**
@@ -138,13 +144,13 @@ public class NPCDropGenerator {
         // given.
         // There are 128 slots in the rdt, many empty. When a player is wearing ring of
         // wealth, the empty slots are not counted.
-        if (def.getRdtChance() > 0 && random.get().nextInt(def.getRdtChance()) == 0) {
+        if (def.getRdtChance() > 0 && rollWithMultiplier(random, def.getRdtChance())) {
             int rdtLength = RDT.values().length;
             int slots = wearingRingOfWealth() ? rdtLength : 128;
             int slot = random.get().nextInt(slots);
             if (slot < rdtLength) {
                 RDT rdtDrop = RDT.values()[slot];
-                if (random.get().nextInt(rdtDrop.getChance()) == 0) {
+                if (rollWithMultiplier(random, rdtDrop.getChance())) {
                     items.add(new Item(rdtDrop.getItemId(), rdtDrop.getAmount()));
                     return items;
                 }
@@ -162,7 +168,7 @@ public class NPCDropGenerator {
             if (def.getSpecialDrops() != null && !parsedTables.contains(DropTable.SPECIAL)) {
                 if (def.getSpecialDrops().length > 0) {
                     NPCDrop drop = def.getSpecialDrops()[random.get().nextInt(def.getSpecialDrops().length)];
-                    if (random.get().nextInt(drop.getChance()) == 0) {
+                    if (drop.getChance() > 0 && rollWithMultiplier(random, drop.getChance())) {
                         items.add(drop.toItem(random));
                         parsedTables.add(DropTable.SPECIAL);
                         continue;
@@ -172,7 +178,7 @@ public class NPCDropGenerator {
 
             // If we didn't get a special drop, attempt to find a different table..
             if (!table.isPresent()) {
-                double chance = random.get().nextDouble(100);
+                double chance = random.get().nextDouble(100) / getDropRateMultiplier();
                 if ((table = getDropTable(chance)).isPresent()) {
                     // Make sure we haven't already parsed this table.
                     if (parsedTables.contains(table.get())) {
@@ -249,5 +255,17 @@ public class NPCDropGenerator {
             }
         }
         return table;
+    }
+
+    private boolean rollWithMultiplier(RandomGen random, int baseChance) {
+        int adjustedChance = (int) Math.ceil(baseChance / getDropRateMultiplier());
+        if (adjustedChance < 1) {
+            adjustedChance = 1;
+        }
+        return random.get().nextInt(adjustedChance) == 0;
+    }
+
+    private double getDropRateMultiplier() {
+        return Math.max(0.1, player.getNpcDropRateMultiplier());
     }
 }

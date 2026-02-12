@@ -8,6 +8,7 @@ import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.hit.PendingHit;
 import com.elvarg.game.content.combat.magic.CombatAncientSpell;
 import com.elvarg.game.content.combat.magic.CombatSpell;
+import com.elvarg.game.content.combat.magic.TridentData;
 import com.elvarg.game.content.combat.method.CombatMethod;
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.npc.NPC;
@@ -159,10 +160,11 @@ public class MagicCombatMethod extends CombatMethod {
 		// Update previousCastSpell so effects can be handled.
 
 		final CombatSpell current = character.getCombat().getCastSpell();
+        final boolean tridentCast = TridentData.isTridentSpell(current);
 
 		character.getCombat().setCastSpell(null);
 
-		if (character.getCombat().getAutocastSpell() == null) {
+		if (character.getCombat().getAutocastSpell() == null && !tridentCast) {
 			character.getCombat().reset();
 			character.setMobileInteraction(target);
 			character.getMovementQueue().reset();

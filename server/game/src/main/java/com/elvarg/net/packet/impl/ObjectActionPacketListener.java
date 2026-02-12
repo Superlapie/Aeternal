@@ -4,6 +4,7 @@ import com.elvarg.Server;
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.DepositBox;
 import com.elvarg.game.content.bosses.zulrah.ZulrahEncounter;
+import com.elvarg.game.content.bosses.vorkath.VorkathEncounter;
 import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.minigames.impl.FightCaves;
@@ -19,6 +20,7 @@ import com.elvarg.game.entity.impl.object.impl.WebHandler;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.*;
 import com.elvarg.game.model.areas.impl.PrivateArea;
+import com.elvarg.game.model.areas.impl.VorkathArea;
 import com.elvarg.game.model.areas.impl.ZulrahArea;
 import com.elvarg.game.model.dialogues.builders.impl.SpellBookDialogue;
 import com.elvarg.game.model.rights.PlayerRights;
@@ -68,6 +70,10 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 
         final ObjectDefinition defs = object.getDefinition();
         if (defs != null) {
+            if (handleVorkathEntrance(player, object, defs)) {
+                return;
+            }
+
             if (defs.name != null && Objects.equals(defs.name, "Bank Deposit Box")) {
                 DepositBox.open(player);
                 return;
@@ -351,13 +357,34 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
     }
 
     private static boolean doorHandler(Player player, GameObject object) {
-        if (object.getDefinition().getName() != null && object.getDefinition().getName().contains("Door") ) {
+        if (object.getDefinition() == null || object.getDefinition().interactions == null) {
+            return false;
+        }
+
+        final String objectName = object.getDefinition().getName();
+        if (objectName != null && (objectName.contains("Door") || objectName.contains("Gate"))) {
+            boolean hasOpenOrClose = false;
+            for (String interaction : object.getDefinition().interactions) {
+                if (interaction != null && (interaction.contains("Open") || interaction.contains("Close"))) {
+                    hasOpenOrClose = true;
+                    break;
+                }
+            }
+
+            if (!hasOpenOrClose) {
+                return false;
+            }
+
             final int[][] openOffset = new int[][] { new int[] { -1, 0 }, new int[] { 0, 1 }, new int[] { 1, 0 }, new int[] { 0, -1 },
                     new int[] { 0, -1 } };
             final int[][] closeOffset = new int[][] { new int[] { 1, 0 }, new int[] { 1, 0 }, new int[] { 0, 1 }, new int[] { -1, 0 },
                     new int[] { 0, 1 } };
             /* check if its an open or closed door */
-            boolean open = object.getDefinition().interactions[0].contains("Open");
+            boolean open = false;
+            String firstInteraction = object.getDefinition().interactions[0];
+            if (firstInteraction != null) {
+                open = firstInteraction.contains("Open");
+            }
 
             /* gets offset coords based on door face */
             int[] offset = open? openOffset[object.getFace()] :closeOffset[object.getFace()] ;
@@ -385,6 +412,44 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 
     private static void boardSacrificialBoat(Player player) {
         ZulrahEncounter.enter(player);
+    }
+
+    private static boolean handleVorkathEntrance(Player player, GameObject object, ObjectDefinition defs) {
+        if (!isNearVorkathEntrance(object.getLocation())) {
+            return false;
+        }
+
+        final String name = defs.name == null ? "" : defs.name.toLowerCase(Locale.ROOT);
+        final boolean isIceChunks = name.contains("ice") && name.contains("chunk");
+        final boolean isRockLike = name.contains("rock");
+        final boolean hardcodedVorkathChunks = object.getId() == 31990;
+
+        boolean hasClimbOver = false;
+        if (defs.interactions != null) {
+            for (String interaction : defs.interactions) {
+                if (interaction != null && interaction.toLowerCase(Locale.ROOT).contains("climb")) {
+                    hasClimbOver = true;
+                    break;
+                }
+            }
+        }
+
+        if (!(hardcodedVorkathChunks || hasClimbOver || isIceChunks || isRockLike)) {
+            return false;
+        }
+
+        if (player.getArea() instanceof VorkathArea) {
+            VorkathEncounter.leave(player);
+            return true;
+        }
+
+        return VorkathEncounter.enter(player);
+    }
+
+    private static boolean isNearVorkathEntrance(Location objectLocation) {
+        return objectLocation.getZ() == VorkathArea.ENTRANCE_LOCATION.getZ()
+                && Math.abs(objectLocation.getX() - VorkathArea.ENTRANCE_LOCATION.getX()) <= 8
+                && Math.abs(objectLocation.getY() - VorkathArea.ENTRANCE_LOCATION.getY()) <= 8;
     }
 
     private static boolean isBankObject(ObjectDefinition defs) {

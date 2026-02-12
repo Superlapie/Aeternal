@@ -6,6 +6,7 @@ import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.FightStyle;
 import com.elvarg.game.content.combat.magic.CombatSpell;
+import com.elvarg.game.content.combat.magic.TridentData;
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.player.Player;
@@ -111,7 +112,10 @@ public class DamageFormulas {
         CombatSpell spell = c.getCombat().getSelectedSpell();
 
         if (spell != null) {
-            if (spell.maximumHit() > 0) {
+            if (c.isPlayer() && TridentData.isTridentSpell(spell)) {
+                maxHit = TridentData.getMaxHit(c.getAsPlayer(), spell);
+            }
+            else if (spell.maximumHit() > 0) {
                 maxHit = spell.maximumHit();
             }
             else if (c.isNpc()) {

@@ -368,6 +368,8 @@ public class TeleportChatBox {
 			VETION(KeyEvent.VK_T, "Vet'ion"),
 			CALLISTO(KeyEvent.VK_A, "Callisto"),
 			ZULRAH(KeyEvent.VK_Z, "Zulrah"),
+			VORKATH(KeyEvent.VK_O, "Vorkath"),
+			NIGHTMARE(KeyEvent.VK_N, "Nightmare Lair"),
 			;
 
 			Option(int shortcutKey, String name) {

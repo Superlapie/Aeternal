@@ -27,6 +27,10 @@ import com.elvarg.util.ShopIdentifiers;
 
 public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExecutor {
 
+    private static boolean isNightmareNpc(int id) {
+        return id >= 9425 && id <= 9433;
+    }
+
     @Override
     public void execute(Player player, Packet packet) {
         if (player.busy()) {
@@ -80,6 +84,13 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 player.getCombat().setCastSpell(spell);
             }
 
+            player.getCombat().attack(npc);
+            return;
+        }
+
+        // Some custom NPC menu setups route "Attack" through standard click opcodes.
+        // Handle Nightmare directly here so large-size route/click quirks don't block combat start.
+        if (isNightmareNpc(npc.getId()) && npc.getCurrentDefinition().isAttackable() && npc.getHitpoints() > 0) {
             player.getCombat().attack(npc);
             return;
         }

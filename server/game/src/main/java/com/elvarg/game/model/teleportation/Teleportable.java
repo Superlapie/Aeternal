@@ -20,6 +20,8 @@ public enum Teleportable {
 	VET_ION(TeleportButton.BOSSES, 2, 7, new Location(3187, 3787)),
 	CALLISTO(TeleportButton.BOSSES, 2, 8, new Location(3312, 3830)),
 	ZULRAH(TeleportButton.BOSSES, 2, 9, new Location(2202, 3056)),
+	VORKATH(TeleportButton.BOSSES, 2, 10, new Location(2272, 4052)),
+	NIGHTMARE_LAIR(TeleportButton.BOSSES, 2, 11, new Location(2272, 4052, 0)),
 	
 	DUEL_ARENA(TeleportButton.MINIGAME, 1, 0, new Location(3370, 3270)),
 	BARROWS(TeleportButton.MINIGAME, 1, 1, new Location(3565, 3313)),

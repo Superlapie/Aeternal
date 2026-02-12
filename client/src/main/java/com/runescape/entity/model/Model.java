@@ -9,7 +9,12 @@ import com.runescape.entity.Renderable;
 import com.runescape.io.Buffer;
 import com.runescape.scene.SceneGraph;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.zip.GZIPInputStream;
+
 public class Model extends Renderable {
+    private static final boolean DEBUG_COMPAT = Boolean.getBoolean("model.debugcompat");
 
     public static int anInt1620;
     public static Model EMPTY_MODEL = new Model(true);
@@ -101,15 +106,100 @@ public class Model extends Renderable {
 
     public Model(int modelId) {
         byte[] data = modelHeader[modelId].aByteArray368;
-        if (data[data.length - 1] == -3 && data[data.length - 2] == -1) {
-            readType3Model(data, modelId);
-        } else if (data[data.length - 1] == -2 && data[data.length - 2] == -1) {
-            decodeType2(data, modelId);
-        } else if (data[data.length - 1] == -1 && data[data.length - 2] == -1) {
-            readNewModel(data, modelId);
-        } else {
-            readOldModel(data, modelId);
+        if (DEBUG_COMPAT) {
+            System.out.println("[ModelCompat] model=" + modelId + " len=" + (data == null ? -1 : data.length));
         }
+        try {
+            if (data[data.length - 1] == -3 && data[data.length - 2] == -1) {
+                if (DEBUG_COMPAT) System.out.println("[ModelCompat] fast path type3");
+                readType3Model(data, modelId);
+                return;
+            } else if (data[data.length - 1] == -2 && data[data.length - 2] == -1) {
+                if (DEBUG_COMPAT) System.out.println("[ModelCompat] fast path type2");
+                decodeType2(data, modelId);
+                return;
+            } else if (data[data.length - 1] == -1 && data[data.length - 2] == -1) {
+                if (DEBUG_COMPAT) System.out.println("[ModelCompat] fast path new");
+                readNewModel(data, modelId);
+                return;
+            } else {
+                if (DEBUG_COMPAT) System.out.println("[ModelCompat] fast path old");
+                readOldModel(data, modelId);
+                return;
+            }
+        } catch (Throwable ignored) {
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fast path failed: " + ignored.getClass().getSimpleName());
+            // Fall through to compatibility decode probes below.
+        }
+
+        // Compatibility fallback for models imported from newer cache formats.
+        // Try all known decoders before giving up.
+        try {
+            resetDecodeState();
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback type3");
+            readType3Model(data, modelId);
+            return;
+        } catch (Throwable ignored) {
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback type3 failed: " + ignored.getClass().getSimpleName());
+        }
+        try {
+            resetDecodeState();
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback type2");
+            decodeType2(data, modelId);
+            return;
+        } catch (Throwable ignored) {
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback type2 failed: " + ignored.getClass().getSimpleName());
+        }
+        try {
+            resetDecodeState();
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback new");
+            readNewModel(data, modelId);
+            return;
+        } catch (Throwable ignored) {
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback new failed: " + ignored.getClass().getSimpleName());
+        }
+        try {
+            resetDecodeState();
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback old");
+            readOldModel(data, modelId);
+            return;
+        } catch (Throwable ignored) {
+            if (DEBUG_COMPAT) System.out.println("[ModelCompat] fallback old failed: " + ignored.getClass().getSimpleName());
+        }
+
+        // Leave a safe empty model instead of crashing the client render loop.
+        resetDecodeState();
+    }
+
+    private void resetDecodeState() {
+        numVertices = 0;
+        vertexX = null;
+        vertexY = null;
+        vertexZ = null;
+        numTriangles = 0;
+        facePointA = null;
+        facePointB = null;
+        facePointC = null;
+        faceHslA = null;
+        faceHslB = null;
+        faceHslC = null;
+        faceDrawType = null;
+        face_render_priorities = null;
+        face_alpha = null;
+        triangleColours = null;
+        texture = null;
+        texture_coordinates = null;
+        texture_type = null;
+        numberOfTexturesFaces = 0;
+        textures_face_a = null;
+        textures_face_b = null;
+        textures_face_c = null;
+        vertexVSkin = null;
+        triangleTSkin = null;
+        vertexGroups = null;
+        faceGroups = null;
+        animayaGroups = null;
+        animayaScales = null;
     }
 
     private Model(boolean flag) {
@@ -647,8 +737,14 @@ public class Model extends Renderable {
         if (modelHeader == null)
             return null;
 
+        if (file < 0 || file >= modelHeader.length)
+            return null;
+
         ModelHeader class21 = modelHeader[file];
         if (class21 == null) {
+            if (tryLoadModelFromLocalCache(file)) {
+                return new Model(file);
+            }
             Client.instance.resourceProvider.provide(0, file);
             return null;
         } else {
@@ -660,13 +756,54 @@ public class Model extends Renderable {
         if (modelHeader == null)
             return false;
 
+        if (file < 0 || file >= modelHeader.length)
+            return false;
+
         ModelHeader class21 = modelHeader[file];
         if (class21 == null) {
+            if (tryLoadModelFromLocalCache(file)) {
+                return true;
+            }
             Client.instance.resourceProvider.provide(0, file);
             return false;
         } else {
             return true;
         }
+    }
+
+    private static boolean tryLoadModelFromLocalCache(int file) {
+        try {
+            if (Client.instance == null || Client.instance.indices == null || Client.instance.indices.length < 2 || Client.instance.indices[1] == null) {
+                return false;
+            }
+            byte[] payload = Client.instance.indices[1].decompress(file);
+            if (payload == null || payload.length == 0) {
+                return false;
+            }
+            byte[] decoded = maybeGunzip(payload);
+            method460(decoded, file);
+            return modelHeader[file] != null && modelHeader[file].aByteArray368 != null;
+        } catch (Throwable t) {
+            if (DEBUG_COMPAT) {
+                System.out.println("[ModelCompat] direct load failed for " + file + ": " + t.getClass().getSimpleName());
+            }
+            return false;
+        }
+    }
+
+    private static byte[] maybeGunzip(byte[] data) throws Exception {
+        if (data.length >= 2 && (data[0] & 0xFF) == 0x1F && (data[1] & 0xFF) == 0x8B) {
+            try (GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(data));
+                 ByteArrayOutputStream out = new ByteArrayOutputStream(data.length * 2)) {
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = in.read(buf)) != -1) {
+                    out.write(buf, 0, n);
+                }
+                return out.toByteArray();
+            }
+        }
+        return data;
     }
 
     public static final int method481(int i, int j, int k) {

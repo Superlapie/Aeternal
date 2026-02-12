@@ -191,6 +191,10 @@ public final class ItemDefinition {
                 itemDef.actions[1] = "Wield";
                 itemDef.actions[2] = "Check";
                 break;
+            case 24423:
+                // Harmonised nightmare staff: fallback inventory model while 39070 is missing in this cache.
+                itemDef.inventory_model = 39073;
+                break;
         }
         return itemDef;
     }

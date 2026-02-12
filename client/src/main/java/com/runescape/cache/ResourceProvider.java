@@ -9,6 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public final class ResourceProvider implements Runnable {
@@ -83,6 +85,7 @@ public final class ResourceProvider implements Runnable {
     private Resource current;
     private int[] areas;
     private int idleTime;
+    private final Set<Integer> missingMapArchives = new HashSet<>();
 
     public ResourceProvider() {
         requested = new Deque();
@@ -290,6 +293,9 @@ public final class ResourceProvider implements Runnable {
     public void provide(int type, int file) {
         if (type < 0 || file < 0)
             return;
+        if (type == 3 && missingMapArchives.contains(file)) {
+            return;
+        }
         synchronized (requests) {
             for (Resource resource = (Resource) requests.reverseGetFirst(); resource != null; resource = (Resource) requests.reverseGetNext())
                 if (resource.dataType == type && resource.ID == file) {
@@ -544,7 +550,17 @@ public final class ResourceProvider implements Runnable {
 
             synchronized (mandatoryRequests) {
                 if (data == null) {
-                    unrequested.insertHead(resource);
+                    if (resource.dataType == 3) {
+                        if (missingMapArchives.add(resource.ID)) {
+                            System.out.println("Missing map archive skipped [id = " + resource.ID + "]");
+                        }
+                        synchronized (requests) {
+                            resource.unlinkCacheable();
+                        }
+                        resource.unlink();
+                    } else {
+                        unrequested.insertHead(resource);
+                    }
                 } else {
                     resource.buffer = data;
                     synchronized (complete) {

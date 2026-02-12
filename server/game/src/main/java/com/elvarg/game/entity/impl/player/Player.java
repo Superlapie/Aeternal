@@ -196,6 +196,7 @@ public class Player extends Mobile {
 	private int amountDonated;
 	// Blowpipe
 	private int blowpipeScales;
+	private double npcDropRateMultiplier = 1.0;
 	// Bounty hunter
 	private int targetKills;
 	private int normalKills;
@@ -221,6 +222,7 @@ public class Player extends Mobile {
 	private String searchSyntax = "";
 	private boolean placeholders = true;
     private boolean infiniteHealth;
+    private boolean oneHitNpcs;
     private FightType fightType = FightType.UNARMED_KICK;
     private WeaponInterface weapon;
     private boolean autoRetaliate = true;
@@ -1386,6 +1388,14 @@ public class Player extends Mobile {
 		return this.blowpipeScales--;
 	}
 
+	public double getNpcDropRateMultiplier() {
+		return npcDropRateMultiplier;
+	}
+
+	public void setNpcDropRateMultiplier(double npcDropRateMultiplier) {
+		this.npcDropRateMultiplier = Math.max(0.1, npcDropRateMultiplier);
+	}
+
 	public NPC getCurrentPet() {
 		return currentPet;
 	}
@@ -1457,6 +1467,14 @@ public class Player extends Mobile {
 
 	public void setInfiniteHealth(boolean infiniteHealth) {
 		this.infiniteHealth = infiniteHealth;
+	}
+
+	public boolean hasOneHitNpcs() {
+		return oneHitNpcs;
+	}
+
+	public void setOneHitNpcs(boolean oneHitNpcs) {
+		this.oneHitNpcs = oneHitNpcs;
 	}
 
 	public DonatorRights getDonatorRights() {

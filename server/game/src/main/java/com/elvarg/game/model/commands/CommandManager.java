@@ -34,6 +34,7 @@ public class CommandManager {
         put(new GroundItemCommand(), "ground");
         put(new Store(), "store", "donate");
         put(new MaxHit(), "maxhit", "mh");
+        put(new DropRateCommand(), "droprate");
 
         /**
          * Donators Command
@@ -106,6 +107,7 @@ public class CommandManager {
         put(new UpdateServer(), "update");
         put(new AreaDebug(), "area");
         put(new InfiniteHealth(), "infhp");
+        put(new OneHitCommand(), "onehit", "oneshot");
         put(new TaskDebug(), "taskdebug");
         put(new Noclip(), "noclip");
         put(new Up(), "up");
@@ -116,6 +118,8 @@ public class CommandManager {
         put(new AttackRange(), "atkrange", "attackrange");
         put(new Donator(), "donator");
         put(new GiveDonator(), "givedonator");
+        put(new SetDropRateCommand(), "setdroprate");
+        put(new IdCommand(), "id");
 
         if (!Server.PRODUCTION) {
             put(new DebugCommand(), "t");

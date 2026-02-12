@@ -39,4 +39,9 @@ public class ZulrahArea extends PrivateArea {
     public boolean canTrade(Player player, Player target) {
         return false;
     }
+
+    @Override
+    public boolean isMulti(Mobile character) {
+        return true;
+    }
 }

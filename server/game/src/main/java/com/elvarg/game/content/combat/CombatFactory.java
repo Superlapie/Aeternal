@@ -15,6 +15,8 @@ import com.elvarg.game.content.combat.formula.DamageFormulas;
 import com.elvarg.game.content.combat.hit.HitDamage;
 import com.elvarg.game.content.combat.hit.HitMask;
 import com.elvarg.game.content.combat.hit.PendingHit;
+import com.elvarg.game.content.combat.magic.CombatSpell;
+import com.elvarg.game.content.combat.magic.TridentData;
 import com.elvarg.game.content.combat.method.CombatMethod;
 import com.elvarg.game.content.combat.method.impl.MagicCombatMethod;
 import com.elvarg.game.content.combat.method.impl.MeleeCombatMethod;
@@ -112,6 +114,14 @@ public class CombatFactory {
 			// Update ranged ammo / weapon
 			p.getCombat().setAmmunition(Ammunition.getFor(p));
 			p.getCombat().setRangedWeapon(RangedWeapon.getFor(p));
+
+            final int weaponId = p.getEquipment().getWeapon().getId();
+            final CombatSpell tridentSpell = TridentData.spellForWeapon(weaponId);
+            if (tridentSpell != null) {
+                // Powered staves do not require selecting a spell from the spellbook.
+                p.getCombat().setCastSpell(tridentSpell);
+                return MAGIC_COMBAT;
+            }
 
 			// Check if player is maging..
 			if (p.getCombat().getCastSpell() != null ||
