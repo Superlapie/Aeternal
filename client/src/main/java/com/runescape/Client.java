@@ -2241,9 +2241,11 @@ public class Client extends GameApplet {
                     int i4 = (mapCoordinates[i3] >> 8) * 64 - regionBaseX;
                     int k5 = (mapCoordinates[i3] & 0xff) * 64 - regionBaseY;
                     byte[] abyte0 = terrainData[i3];
-                    if (abyte0 != null)
+                    if (abyte0 != null) {
+                        boolean extendedTerrain = useExtendedTerrainFormat(terrainIndices[i3], abyte0);
                         objectManager.method180(abyte0, k5, i4, (currentRegionX - 6) * 8, (currentRegionY - 6) * 8,
-                                collisionMaps);
+                                collisionMaps, extendedTerrain);
+                    }
                 }
                 for (int j4 = 0; j4 < k2; j4++) {
                     int l5 = (mapCoordinates[j4] >> 8) * 64 - regionBaseX;
@@ -2280,8 +2282,9 @@ public class Client extends GameApplet {
                                 for (int idx = 0; idx < mapCoordinates.length; idx++) {
                                     if (mapCoordinates[idx] != mapRegion || terrainData[idx] == null)
                                         continue;
+                                    boolean extendedTerrain = useExtendedTerrainFormat(terrainIndices[idx], terrainData[idx]);
                                     objectManager.loadMapChunk(z, rotation, collisionMaps, x * 8, (xCoord & 7) * 8,
-                                            terrainData[idx], (yCoord & 7) * 8, plane, y * 8);
+                                            terrainData[idx], (yCoord & 7) * 8, plane, y * 8, extendedTerrain);
                                     break;
                                 }
 
@@ -2387,6 +2390,19 @@ public class Client extends GameApplet {
                     }
                 }
             }
+        }
+    }
+
+    private boolean useExtendedTerrainFormat(int archiveId, byte[] payload) {
+        // Sisterhood Sanctuary / Nightmare region uses extended terrain even though
+        // one of its terrain archives is below the generic threshold.
+        switch (archiveId) {
+            case 2976:
+            case 5247:
+            case 6078:
+                return true;
+            default:
+                return archiveId > 3535;
         }
     }
 
@@ -5154,14 +5170,25 @@ public class Client extends GameApplet {
             floorMaps = "";
             objectMaps = "";
         }
+        long mapLoadElapsed = System.currentTimeMillis() - loadingStartTime;
+        final long forceLoadAfterMs = 15000L;
 
         for (int i = 0; i < terrainData.length; i++) {
             floorMaps += "  " + terrainIndices[i];
             objectMaps += "  " + objectIndices[i];
-            if (terrainData[i] == null && terrainIndices[i] != -1)
-                return -1;
-            if (objectData[i] == null && objectIndices[i] != -1)
-                return -2;
+            if (terrainData[i] == null && terrainIndices[i] != -1) {
+                if (mapLoadElapsed < forceLoadAfterMs) {
+                    return -1;
+                }
+                // Prevent infinite "Loading - please wait" loops on incomplete region sets.
+                terrainIndices[i] = -1;
+            }
+            if (objectData[i] == null && objectIndices[i] != -1) {
+                if (mapLoadElapsed < forceLoadAfterMs) {
+                    return -2;
+                }
+                objectIndices[i] = -1;
+            }
         }
         boolean flag = true;
         for (int j = 0; j < terrainData.length; j++) {
@@ -5176,17 +5203,25 @@ public class Client extends GameApplet {
                 flag &= MapRegion.method189(k, abyte0, l);
             }
         }
-        if (!flag)
-            return -3;
-        if (loadingMap) {
-            return -4;
-        } else {
-            loadingStage = 2;
-            MapRegion.anInt131 = plane;
-            loadRegion();
-            packetSender.sendFinalizedRegionChange();
-            return 0;
+        if (!flag) {
+            if (mapLoadElapsed < forceLoadAfterMs) {
+                return -3;
+            }
+            System.out.println("Map loading fallback: bypassing unresolved object-model precheck after " + mapLoadElapsed + "ms");
         }
+        if (loadingMap) {
+            if (mapLoadElapsed < forceLoadAfterMs) {
+                return -4;
+            }
+            System.out.println("Map loading fallback: forcing loadingMap=false after " + mapLoadElapsed + "ms");
+            loadingMap = false;
+        }
+
+        loadingStage = 2;
+        MapRegion.anInt131 = plane;
+        loadRegion();
+        packetSender.sendFinalizedRegionChange();
+        return 0;
     }
 
     private void createProjectiles() {

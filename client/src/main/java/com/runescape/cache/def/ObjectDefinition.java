@@ -2,13 +2,20 @@ package com.runescape.cache.def;
 
 import com.runescape.Client;
 import com.runescape.cache.FileArchive;
+import com.runescape.cache.anim.Animation;
 import com.runescape.cache.anim.Frame;
 import com.runescape.cache.config.VariableBits;
 import com.runescape.collection.ReferenceCache;
 import com.runescape.entity.model.Model;
 import com.runescape.io.Buffer;
+import com.runescape.sign.SignLink;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class ObjectDefinition {
 
@@ -61,6 +68,9 @@ public final class ObjectDefinition {
     public String[] interactions;
     private short[] originalModelTexture;
     private short[] modifiedModelTexture;
+    private static final int INVALID_ANIMATION_LOG_LIMIT = 40;
+    private static int invalidAnimationLogCount;
+    private static final Set<Integer> invalidAnimationLoggedObjects = new HashSet<>();
 
     public ObjectDefinition() {
         type = -1;
@@ -88,6 +98,16 @@ public final class ObjectDefinition {
         objectDef.type = id;
         objectDef.reset();
         objectDef.readValues(stream);
+        if (!isValidAnimationId(objectDef.animation)) {
+            if (objectDef.animation != -1
+                    && invalidAnimationLogCount < INVALID_ANIMATION_LOG_LIMIT
+                    && invalidAnimationLoggedObjects.add(id)) {
+                System.out.println("ObjectDefinition: clamped unsupported animation "
+                        + objectDef.animation + " on object " + id);
+                invalidAnimationLogCount++;
+            }
+            objectDef.animation = -1;
+        }
         if (objectDef.type > 14500) {
 			if (objectDef.delayShading) {
 				objectDef.delayShading = false;
@@ -166,6 +186,14 @@ public final class ObjectDefinition {
         return objectDef;
     }
 
+    private static boolean isValidAnimationId(int animationId) {
+        return animationId == -1
+                || (Animation.animations != null
+                && animationId >= 0
+                && animationId < Animation.animations.length
+                && Animation.animations[animationId] != null);
+    }
+
     public static void clear() {
         baseModels = null;
         models = null;
@@ -175,8 +203,19 @@ public final class ObjectDefinition {
     }
 
     public static void init(FileArchive archive) throws IOException {
-        stream = new Buffer(archive.readFile("loc.dat"));
-        Buffer stream = new Buffer(archive.readFile("loc.idx"));
+        byte[] locDat = archive.readFile("loc.dat");
+        byte[] locIdx = archive.readFile("loc.idx");
+        Path cacheDir = Paths.get(SignLink.findcachedir());
+        Path extLocDat = cacheDir.resolve("loc.dat");
+        Path extLocIdx = cacheDir.resolve("loc.idx");
+        if (Files.exists(extLocDat) && Files.exists(extLocIdx)) {
+            locDat = Files.readAllBytes(extLocDat);
+            locIdx = Files.readAllBytes(extLocIdx);
+            System.out.println("Loaded external object defs: " + extLocDat.toAbsolutePath());
+        }
+
+        stream = new Buffer(locDat);
+        Buffer stream = new Buffer(locIdx);
         TOTAL_OBJECTS = stream.readUShort();
         streamIndices = new int[TOTAL_OBJECTS];
         int offset = 2;
@@ -277,8 +316,11 @@ public final class ObjectDefinition {
         if (modelIds == null)
             return true;
         boolean flag1 = true;
-        for (int i = 0; i < modelIds.length; i++)
-            flag1 &= Model.isCached(modelIds[i] & 0xffff);
+        for (int i = 0; i < modelIds.length; i++) {
+            int modelId = modelIds[i] & 0xffff;
+            boolean cached = Model.isCached(modelId);
+            flag1 &= cached;
+        }
         return flag1;
     }
 
@@ -427,6 +469,8 @@ public final class ObjectDefinition {
                 }
             } else if (opcode == 2) {
                 name = buffer.readString();
+            } else if (opcode == 3) {
+                description = buffer.readString();
             } else if (opcode == 5) {
                 int len = buffer.readUnsignedByte();
                 if (len > 0) {
@@ -493,7 +537,8 @@ public final class ObjectDefinition {
                     modifiedModelTexture[i] = (short) buffer.readUShort();
                     originalModelTexture[i] = (short) buffer.readUShort();
                 }
-
+            } else if (opcode == 61) {
+                buffer.readUShort(); // category (unused)
             } else if (opcode == 62) {
                 inverted = true;
             } else if (opcode == 64) {
@@ -526,7 +571,7 @@ public final class ObjectDefinition {
             } else if (opcode == 79) {
                 buffer.readUShort();
                 buffer.readUShort();
-                buffer.readUnsignedByte();
+                buffer.readUShort();
                 int len = buffer.readUnsignedByte();
 
                 for (int i = 0; i < len; i++) {
@@ -540,6 +585,8 @@ public final class ObjectDefinition {
                 if (minimapFunction == 0xFFFF) {
                     minimapFunction = -1;
                 }
+            } else if (opcode == 89) {
+                // random animation start flag (unused)
             } else if (opcode == 77 || opcode == 92) {
                 varp = buffer.readUShort();
 
@@ -573,8 +620,21 @@ public final class ObjectDefinition {
                     }
                 }
                 childrenIDs[len + 1] = value;
+            } else if (opcode == 249) {
+                int len = buffer.readUnsignedByte();
+                for (int i = 0; i < len; i++) {
+                    boolean isString = buffer.readUnsignedByte() == 1;
+                    buffer.read24Int(); // key
+                    if (isString) {
+                        buffer.readString();
+                    } else {
+                        buffer.readInt();
+                    }
+                }
             } else {
-                System.out.println("invalid opcode: " + opcode);
+                // Stop decoding this object if we hit an unsupported opcode.
+                // This avoids stream desync spam from interpreting payload bytes as opcodes.
+                break;
             }
 
         }

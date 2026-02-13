@@ -4,11 +4,15 @@ import com.runescape.Client;
 import com.runescape.collection.Deque;
 import com.runescape.collection.Queue;
 import com.runescape.io.Buffer;
+import com.runescape.sign.SignLink;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
@@ -87,6 +91,7 @@ public final class ResourceProvider implements Runnable {
     private int idleTime;
     private final Set<Integer> missingMapArchives = new HashSet<>();
     private final Set<Long> rawArchiveFallbacks = new HashSet<>();
+    private final Set<Long> staleMandatoryWarnings = new HashSet<>();
 
     public ResourceProvider() {
         requested = new Deque();
@@ -205,6 +210,15 @@ public final class ResourceProvider implements Runnable {
 
 
         byte[] data = archive.readFile("map_index");
+        Path externalMapIndex = Paths.get(SignLink.findcachedir(), "map_index");
+        if (Files.exists(externalMapIndex)) {
+            try {
+                data = Files.readAllBytes(externalMapIndex);
+                System.out.println("Loaded external map_index: " + externalMapIndex.toAbsolutePath());
+            } catch (IOException ex) {
+                System.out.println("Failed reading external map_index, falling back to archive copy.");
+            }
+        }
         Buffer stream = new Buffer(data);
         int j1 = stream.readUShort();//data.length / 6;
         areas = new int[j1];
@@ -428,7 +442,7 @@ public final class ResourceProvider implements Runnable {
             } while (true);
         } catch (IOException _ex) {
             if (resource.dataType == 3 && missingMapArchives.add(resource.ID)) {
-                System.out.println("Failed to unzip model [" + resource.ID + "] type = " + resource.dataType);
+                System.out.println("Failed to unzip archive [" + resource.ID + "] type = " + resource.dataType);
                 System.out.println("Corrupt map archive skipped [id = " + resource.ID + "]");
                 _ex.printStackTrace();
                 return null;
@@ -437,7 +451,6 @@ public final class ResourceProvider implements Runnable {
             // decoded (non-gzip). Let downstream loaders decide if the payload is usable.
             long key = (((long) resource.dataType) << 32) | (resource.ID & 0xffffffffL);
             if (rawArchiveFallbacks.add(key)) {
-                System.out.println("Failed to unzip model [" + resource.ID + "] type = " + resource.dataType);
                 System.out.println("Using raw archive fallback [type=" + resource.dataType + ", id=" + resource.ID + "]");
             }
             resource.buffer = originalData;
@@ -450,52 +463,17 @@ public final class ResourceProvider implements Runnable {
     }
 
     public int resolve(int landscapeOrObject, int regionY, int regionX) {
-        /*int code = (regionX << 8) + regionY;
-        for (int area = 0; area < areas.length; area++) {
-			if (areas[area] == code) {
-				if (landscapeOrObject == 0) {
-					return mapFiles[area] > 3535 ? -1 : mapFiles[area];
-				} else {
-					return landscapes[area] > 3535 ? -1 : landscapes[area];
-				}
-			}
-		}
-*/
-        int mapNigga2;
-        int mapNigga3;
         int regionId = (regionX << 8) + regionY;
-        for (int j1 = 0; j1 < areas.length; j1++)
+        for (int j1 = 0; j1 < areas.length; j1++) {
             if (areas[j1] == regionId) {
                 if (landscapeOrObject == 0) {
-                    //Soulwars
-                    if (mapFiles[j1] >= 3700 && mapFiles[j1] <= 3840)
-                        return mapFiles[j1];
-                    for (int cheapHax : mapFiles)
-                        if (mapFiles[j1] == cheapHax)
-                            return mapFiles[j1];
-                    mapNigga2 = mapFiles[j1] > 3535 ? -1 : mapFiles[j1];
-                    return mapNigga2;
+                    return mapFiles[j1];
                 } else {
-                    if (landscapes[j1] >= 3700 && landscapes[j1] <= 3840)
-                        return landscapes[j1];
-                    for (int cheapHax : cheapHaxValues)
-                        if (landscapes[j1] == cheapHax)
-                            return landscapes[j1];
-                    mapNigga3 = landscapes[j1] > 3535 ? -1 : landscapes[j1];
-                    return mapNigga3;
+                    return landscapes[j1];
                 }
             }
+        }
         return -1;
-
-		/*int regionId = (regionX << 8) + regionY;
-		for(int j1 = 0; j1 < areas.length; j1++)
-			if(areas[j1] == regionId) {
-				if(landscapeOrObject == 0) {
-					return mapFiles[j1];
-				} else {
-					return landscapes[j1];
-				}
-			}*/
     }
 
     public boolean landscapePresent(int landscape) {
@@ -511,9 +489,12 @@ public final class ResourceProvider implements Runnable {
         for (Resource resource = (Resource) requested.reverseGetFirst(); resource != null; resource = (Resource) requested.reverseGetNext())
             if (resource.incomplete) {
                 uncompletedCount++;
-                //if (!Configuration.JAGCACHED_ENABLED) {
-                System.out.println("Error: model is incomplete or missing  [ type = " + resource.dataType + "]  [id = " + resource.ID + "]");
-                //  }
+                if (resource.loopCycle > 50) {
+                    long key = (((long) resource.dataType) << 32) | (resource.ID & 0xffffffffL);
+                    if (staleMandatoryWarnings.add(key)) {
+                        System.out.println("Stale archive request [type=" + resource.dataType + " (" + resourceTypeName(resource.dataType) + "), id=" + resource.ID + "]");
+                    }
+                }
             } else
                 completedCount++;
 
@@ -534,6 +515,23 @@ public final class ResourceProvider implements Runnable {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    private static String resourceTypeName(int dataType) {
+        switch (dataType) {
+            case 0:
+                return "model";
+            case 1:
+                return "animation";
+            case 2:
+                return "midi";
+            case 3:
+                return "map";
+            case 93:
+                return "map-passive";
+            default:
+                return "unknown";
         }
     }
 

@@ -153,7 +153,7 @@ public class NPCUpdating {
         if (flag.flagged(Flag.DOUBLE_HIT)) {
             mask |= 0x40;
         }
-        if (flag.flagged(Flag.APPEARANCE) && npc.getNpcTransformationId() != -1) {
+        if (flag.flagged(Flag.APPEARANCE)) {
             mask |= 0x2;
         }
         if (flag.flagged(Flag.FACE_POSITION) && npc.getPositionToFace() != null) {
@@ -235,7 +235,9 @@ public class NPCUpdating {
         builder.putShort(npc.getPrimaryHit().getDamage());
         builder.put(npc.getPrimaryHit().getHitmask().ordinal());
         builder.putShort(npc.getHitpoints());
-        builder.putShort(npc.getDefinition().getHitpoints());
+        builder.putShort(npc.getCurrentDefinition() != null
+                ? npc.getCurrentDefinition().getHitpoints()
+                : npc.getHitpoints());
 
     }
 
@@ -250,6 +252,8 @@ public class NPCUpdating {
         builder.putShort(npc.getSecondaryHit().getDamage());
         builder.put(npc.getSecondaryHit().getHitmask().ordinal());
         builder.putShort(npc.getHitpoints());
-        builder.putShort(npc.getDefinition().getHitpoints());
+        builder.putShort(npc.getCurrentDefinition() != null
+                ? npc.getCurrentDefinition().getHitpoints()
+                : npc.getHitpoints());
     }
 }

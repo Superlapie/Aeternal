@@ -74,9 +74,12 @@ public abstract class PrivateArea extends Area {
         for (GameObject object : getObjects()) {
             ObjectManager.deregister(object, false);
         }
-        for (ItemOnGround item : World.getItems()) {
-            if (item.getPrivateArea() == this) {
-                ItemOnGroundManager.deregister(item);
+        List<ItemOnGround> items = World.getItems();
+        synchronized (items) {
+            for (ItemOnGround item : items) {
+                if (item.getPrivateArea() == this) {
+                    ItemOnGroundManager.deregister(item);
+                }
             }
         }
         entities.clear();

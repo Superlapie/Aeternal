@@ -429,6 +429,9 @@ public abstract class Mobile extends Entity {
 	}
 
 	public Mobile setNpcTransformationId(int npcTransformationId) {
+		if (this.npcTransformationId == npcTransformationId) {
+			return this;
+		}
 		this.npcTransformationId = npcTransformationId;
 		getUpdateFlag().flag(Flag.APPEARANCE);
 		return this;

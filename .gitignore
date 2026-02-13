@@ -1,3 +1,8 @@
 .DS_Store
 out/
 _scaffold_backup/
+_ext/
+client/Cache_backup_before_restore_*/
+client/Cache_corrupt_backup_*/
+client/Cache/*.backup*
+client/Cache/map_index.sanctuary_backup

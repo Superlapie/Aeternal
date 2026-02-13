@@ -269,6 +269,8 @@ public final class ObjectDefinition extends ObjectIdentifiers {
                 }
             } else if (opcode == 2) {
                 name = buffer.readString();
+            } else if (opcode == 3) {
+                description = buffer.readString();
             } else if (opcode == 5) {
                 int len = buffer.readUnsignedByte();
                 if (len > 0) {
@@ -335,7 +337,8 @@ public final class ObjectDefinition extends ObjectIdentifiers {
                     modifiedModelTexture[i] = (short) buffer.readUShort();
                     originalModelTexture[i] = (short) buffer.readUShort();
                 }
-
+            } else if (opcode == 61) {
+                buffer.readUShort(); // category (unused)
             } else if (opcode == 62) {
                 inverted = true;
             } else if (opcode == 64) {
@@ -368,7 +371,7 @@ public final class ObjectDefinition extends ObjectIdentifiers {
             } else if (opcode == 79) {
                 buffer.readUShort();
                 buffer.readUShort();
-                buffer.readUnsignedByte();
+                buffer.readUShort();
                 int len = buffer.readUnsignedByte();
 
                 for (int i = 0; i < len; i++) {
@@ -382,6 +385,8 @@ public final class ObjectDefinition extends ObjectIdentifiers {
                 if (minimapFunction == 0xFFFF) {
                     minimapFunction = -1;
                 }
+            } else if (opcode == 89) {
+                // random animation start flag (unused)
             } else if (opcode == 77 || opcode == 92) {
                 varp = buffer.readUShort();
 
@@ -415,8 +420,23 @@ public final class ObjectDefinition extends ObjectIdentifiers {
                     }
                 }
                 childrenIDs[len + 1] = value;
+            } else if (opcode == 249) {
+                int len = buffer.readUnsignedByte();
+                for (int i = 0; i < len; i++) {
+                    boolean isString = buffer.readUnsignedByte() == 1;
+                    buffer.readUnsignedByte(); // key high
+                    buffer.readUnsignedByte(); // key mid
+                    buffer.readUnsignedByte(); // key low
+                    if (isString) {
+                        buffer.readString();
+                    } else {
+                        buffer.getInt();
+                    }
+                }
             } else {
-                System.out.println("invalid opcode: " + opcode);
+                // Stop decoding this object if we hit an unsupported opcode.
+                // This avoids stream desync spam from interpreting payload bytes as opcodes.
+                break;
             }
 
         }

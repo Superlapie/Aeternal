@@ -30,10 +30,13 @@ public class ItemOnGroundManager {
 	 *            The player whose changing region.
 	 */
 	public static void onRegionChange(Player player) {
-		Iterator<ItemOnGround> iterator = World.getItems().iterator();
-		for (; iterator.hasNext();) {
-			ItemOnGround item = iterator.next();
-			perform(player, item, OperationType.CREATE);
+		List<ItemOnGround> items = World.getItems();
+		synchronized (items) {
+			Iterator<ItemOnGround> iterator = items.iterator();
+			for (; iterator.hasNext();) {
+				ItemOnGround item = iterator.next();
+				perform(player, item, OperationType.CREATE);
+			}
 		}
 	}
 
@@ -41,24 +44,27 @@ public class ItemOnGroundManager {
 	 * Processes all active {@link ItemOnGround}.
 	 */
 	public static void process() {
-		Iterator<ItemOnGround> iterator = World.getItems().iterator();
-		while (iterator.hasNext()) {
-			ItemOnGround i = iterator.next();
+		List<ItemOnGround> items = World.getItems();
+		synchronized (items) {
+			Iterator<ItemOnGround> iterator = items.iterator();
+			while (iterator.hasNext()) {
+				ItemOnGround i = iterator.next();
 
-			// Process item..
-			i.process();
+				// Process item..
+				i.process();
 
-			// Check if the item needs to be removed..
-			if (i.isPendingRemoval()) {
+				// Check if the item needs to be removed..
+				if (i.isPendingRemoval()) {
 
-				// If it respawns, make sure we fire off a respawn task before
-				// we remove it..
-				if (i.respawns()) {
-					TaskManager.submit(new GroundItemRespawnTask(i, i.getRespawnTimer()));
+					// If it respawns, make sure we fire off a respawn task before
+					// we remove it..
+					if (i.respawns()) {
+						TaskManager.submit(new GroundItemRespawnTask(i, i.getRespawnTimer()));
+					}
+
+					// Remove!
+					iterator.remove();
 				}
-
-				// Remove!
-				iterator.remove();
 			}
 		}
 	}
@@ -143,7 +149,10 @@ public class ItemOnGroundManager {
 
 		// We didn't need to modify a previous item.
 		// Simply register the given item to the world..
-		World.getItems().add(item);
+		List<ItemOnGround> items = World.getItems();
+		synchronized (items) {
+			items.add(item);
+		}
 		ItemOnGroundManager.perform(item, OperationType.CREATE);
 	}
 
@@ -156,38 +165,41 @@ public class ItemOnGroundManager {
 	 * @return
 	 */
 	public static boolean merge(ItemOnGround item) {
-		Iterator<ItemOnGround> iterator = World.getItems().iterator();
-		for (; iterator.hasNext();) {
-			ItemOnGround item_ = iterator.next();
-			if (item_ == null || item_.isPendingRemoval() || item_.equals(item)) {
-				continue;
-			}
-			if (!item_.getLocation().equals(item.getLocation())) {
-				continue;
-			}
-
-			// Check if the ground item is private...
-			// If we aren't the owner, we shouldn't modify it.
-			if (item_.getState() == State.SEEN_BY_PLAYER) {
-				boolean flag = true;
-				if (item_.getOwner().isPresent() && item.getOwner().isPresent()) {
-					if (item_.getOwner().get().equals(item.getOwner().get())) {
-						flag = false;
-					}
-				}
-				if (flag) {
+		List<ItemOnGround> items = World.getItems();
+		synchronized (items) {
+			Iterator<ItemOnGround> iterator = items.iterator();
+			for (; iterator.hasNext();) {
+				ItemOnGround item_ = iterator.next();
+				if (item_ == null || item_.isPendingRemoval() || item_.equals(item)) {
 					continue;
 				}
-			}
+				if (!item_.getLocation().equals(item.getLocation())) {
+					continue;
+				}
 
-			// Modify the existing item.
-			if (item_.getItem().getId() == item.getItem().getId()) {
-				int oldAmount = item_.getItem().getAmount();
-				item_.getItem().incrementAmountBy(item.getItem().getAmount());
-				item_.setOldAmount(oldAmount);
-				item_.setTick(0);
-				ItemOnGroundManager.perform(item_, OperationType.ALTER);
-				return true;
+				// Check if the ground item is private...
+				// If we aren't the owner, we shouldn't modify it.
+				if (item_.getState() == State.SEEN_BY_PLAYER) {
+					boolean flag = true;
+					if (item_.getOwner().isPresent() && item.getOwner().isPresent()) {
+						if (item_.getOwner().get().equals(item.getOwner().get())) {
+							flag = false;
+						}
+					}
+					if (flag) {
+						continue;
+					}
+				}
+
+				// Modify the existing item.
+				if (item_.getItem().getId() == item.getItem().getId()) {
+					int oldAmount = item_.getItem().getAmount();
+					item_.getItem().incrementAmountBy(item.getItem().getAmount());
+					item_.setOldAmount(oldAmount);
+					item_.setTick(0);
+					ItemOnGroundManager.perform(item_, OperationType.ALTER);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -280,24 +292,27 @@ public class ItemOnGroundManager {
 	 * @return
 	 */
 	public static Optional<ItemOnGround> getGroundItem(Optional<String> owner, int id, Location position) {
-		Iterator<ItemOnGround> iterator = World.getItems().iterator();
-		for (; iterator.hasNext();) {
-			ItemOnGround item = iterator.next();
-			if (item == null || item.isPendingRemoval()) {
-				continue;
-			}
-			if (item.getState() == State.SEEN_BY_PLAYER) {
-				if (!owner.isPresent() || !isOwner(owner.get(), item)) {
+		List<ItemOnGround> items = World.getItems();
+		synchronized (items) {
+			Iterator<ItemOnGround> iterator = items.iterator();
+			for (; iterator.hasNext();) {
+				ItemOnGround item = iterator.next();
+				if (item == null || item.isPendingRemoval()) {
 					continue;
 				}
+				if (item.getState() == State.SEEN_BY_PLAYER) {
+					if (!owner.isPresent() || !isOwner(owner.get(), item)) {
+						continue;
+					}
+				}
+				if (id != item.getItem().getId()) {
+					continue;
+				}
+				if (!item.getLocation().equals(position)) {
+					continue;
+				}
+				return Optional.of(item);
 			}
-			if (id != item.getItem().getId()) {
-				continue;
-			}
-			if (!item.getLocation().equals(position)) {
-				continue;
-			}
-			return Optional.of(item);
 		}
 		return Optional.empty();
 	}

@@ -10,6 +10,8 @@ import com.runescape.entity.model.Model;
 public final class SceneObject extends Renderable {
 
     public static Client clientInstance;
+    private static final int INVALID_ANIMATION_LOG_LIMIT = 25;
+    private static int invalidAnimationLogs;
     private final int[] anIntArray1600;
     private final int anInt1601;
     private final int anInt1602;
@@ -33,18 +35,30 @@ public final class SceneObject extends Renderable {
         anInt1605 = i1;
         anInt1606 = k1;
         if (l1 != -1) {
-            aAnimation_1607 = Animation.animations[l1];
-            anInt1599 = 0;
-            anInt1608 = Client.tick;
-            if (flag && aAnimation_1607.loopOffset != -1) {
-                anInt1599 = (int) (Math.random() * (double) aAnimation_1607.frameCount);
-                anInt1608 -= (int) (Math.random() * (double) aAnimation_1607.duration(anInt1599));
+            if (isValidAnimationId(l1)) {
+                aAnimation_1607 = Animation.animations[l1];
+                anInt1599 = 0;
+                anInt1608 = Client.tick;
+                if (flag && aAnimation_1607.loopOffset != -1) {
+                    anInt1599 = (int) (Math.random() * (double) aAnimation_1607.frameCount);
+                    anInt1608 -= (int) (Math.random() * (double) aAnimation_1607.duration(anInt1599));
+                }
+            } else if (invalidAnimationLogs < INVALID_ANIMATION_LOG_LIMIT) {
+                System.out.println("SceneObject: skipping invalid animation id " + l1 + " for object " + i);
+                invalidAnimationLogs++;
             }
         }
         ObjectDefinition objectDef = ObjectDefinition.lookup(anInt1610);
         anInt1601 = objectDef.varbit;
         anInt1602 = objectDef.varp;
         anIntArray1600 = objectDef.childrenIDs;
+    }
+
+    private static boolean isValidAnimationId(int animationId) {
+        return Animation.animations != null
+                && animationId >= 0
+                && animationId < Animation.animations.length
+                && Animation.animations[animationId] != null;
     }
 
     private ObjectDefinition method457() {

@@ -1,8 +1,12 @@
 package com.runescape.cache.def;
 
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.runescape.cache.FileArchive;
+import com.runescape.sign.SignLink;
 
 public class FloorDefinition {
 
@@ -28,7 +32,17 @@ public class FloorDefinition {
     }
 
     public static void init(FileArchive archive) {
-        ByteBuffer buffer = ByteBuffer.wrap(archive.readFile("flo.dat"));
+        byte[] floData = archive.readFile("flo.dat");
+        Path extFloDat = Paths.get(SignLink.findcachedir(), "flo.dat");
+        if (Files.exists(extFloDat)) {
+            try {
+                floData = Files.readAllBytes(extFloDat);
+                System.out.println("Loaded external floor defs: " + extFloDat.toAbsolutePath());
+            } catch (Exception ignored) {
+            }
+        }
+
+        ByteBuffer buffer = ByteBuffer.wrap(floData);
         int underlayAmount = buffer.getShort();
         System.out.println("Loaded: " + underlayAmount + " underlays");
         underlays = new FloorDefinition[underlayAmount];

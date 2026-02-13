@@ -13,11 +13,11 @@ import java.util.Optional;
  */
 public class NightmareArea extends PrivateArea {
 
-    // Temporary stable arena coordinates on a known-good loaded region.
-    public static final Boundary BOUNDARY = new Boundary(2262, 2285, 4041, 4074, 0);
-    public static final Location PLAYER_START = new Location(2272, 4054, 0);
-    public static final Location NIGHTMARE_SPAWN = new Location(2269, 4062, 0);
-    public static final Location EXIT_LOCATION = new Location(2272, 4052, 0);
+    // Sisterhood Sanctuary / Nightmare lair region block.
+    public static final Boundary BOUNDARY = new Boundary(3784, 3835, 9748, 9800, 1);
+    public static final Location PLAYER_START = new Location(3808, 9756, 1);
+    public static final Location NIGHTMARE_SPAWN = new Location(3808, 9774, 1);
+    public static final Location EXIT_LOCATION = new Location(3808, 9754, 1);
 
     public NightmareArea() {
         super(Arrays.asList(BOUNDARY));
