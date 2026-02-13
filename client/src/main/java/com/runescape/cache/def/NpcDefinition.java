@@ -189,6 +189,23 @@ public final class NpcDefinition {
 
 	private static void applyCustomDefinition(NpcDefinition definition, int id) {
 		switch (id) {
+			case 9433:
+				definition.name = "The Nightmare";
+				definition.description = "An ancient evil from the dream realm.".getBytes();
+				definition.size = 5;
+				definition.combatLevel = 0;
+				definition.actions = new String[] { "Wake", null, null, null, null };
+				definition.modelId = nightmareModelIdsFor(id);
+				definition.standAnim = 8593;
+				definition.walkAnim = 8592;
+				definition.turn180AnimIndex = 8592;
+				definition.turn90CCWAnimIndex = 8592;
+				definition.turn90CWAnimIndex = 8592;
+				definition.scaleXZ = 128;
+				definition.scaleY = 128;
+				definition.clickable = true;
+				definition.drawMinimapDot = false;
+				break;
 			case 9425:
 			case 9426:
 			case 9427:
@@ -197,7 +214,6 @@ public final class NpcDefinition {
 			case 9430:
 			case 9431:
 			case 9432:
-			case 9433:
 			case 9460:
 			case 9461:
 			case 9462:

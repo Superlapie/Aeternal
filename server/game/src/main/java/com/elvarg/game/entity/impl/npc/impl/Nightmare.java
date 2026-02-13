@@ -15,7 +15,7 @@ import com.elvarg.game.task.TaskManager;
 /**
  * Minimal Nightmare boss scaffold for private instances.
  */
-@Ids({9425, 9426, 9427, 9428, 9429, 9430, 9431, 9432, 9433})
+@Ids({9425, 9426, 9427, 9428, 9429, 9430, 9431, 9432})
 public class Nightmare extends NPC {
 
     public static final String SKIP_RESPAWN_ATTRIBUTE = "skip_respawn";
@@ -112,7 +112,7 @@ public class Nightmare extends NPC {
 
                 boolean nightmareAlive = area.getNpcs().stream()
                         .anyMatch(n -> n != null && n.isRegistered()
-                                && n.getId() >= 9425 && n.getId() <= 9433);
+                                && n.getId() >= 9425 && n.getId() <= 9432);
 
                 if (!nightmareAlive) {
                     Nightmare respawned = new Nightmare(owner, area, 9425, NightmareArea.NIGHTMARE_SPAWN.clone());

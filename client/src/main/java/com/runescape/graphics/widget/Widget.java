@@ -433,6 +433,7 @@ public class Widget {
 		clanSetup();
 		barrowsRewards();
 		godwarsDungeon();
+		nightmareOverlays();
 		OSRSCreationMenu.build();
 		spriteCache = null;
 		
@@ -495,6 +496,19 @@ public class Widget {
 			addItemOnInterface(itemFrameId + i, 42560, new String[] {});
 			widget.child(childId++, itemFrameId + i, x, y);
 		}
+	}
+
+	private static void nightmareOverlays() {
+		buildNightmareFadeOverlay(56951, 56957, 96);
+		buildNightmareFadeOverlay(56952, 56958, 176);
+		buildNightmareFadeOverlay(56953, 56959, 255);
+	}
+
+	private static void buildNightmareFadeOverlay(int interfaceId, int childId, int alpha) {
+		Widget fade = addInterface(interfaceId);
+		addPixels(childId, 0x000000, 512, 334, alpha, true);
+		fade.totalChildren(1);
+		fade.child(0, childId, 0, 0);
 	}
 	
 	public static void editSkillTab() {

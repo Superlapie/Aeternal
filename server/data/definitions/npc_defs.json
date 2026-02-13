@@ -176770,15 +176770,15 @@
     "examine": "An ancient evil from the dream realm.",
     "size": 5,
     "walkRadius": 0,
-    "attackable": true,
+    "attackable": false,
     "retreats": false,
-    "aggressive": true,
-    "fightsBack": true,
+    "aggressive": false,
+    "fightsBack": false,
     "respawn": 0,
-    "maxHit": 65,
+    "maxHit": 0,
     "hitpoints": 1200,
     "attackSpeed": 6,
-    "combatLevel": 814,
+    "combatLevel": 0,
     "stats": [300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300]
   }
 ]

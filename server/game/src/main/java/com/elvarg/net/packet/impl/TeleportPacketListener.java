@@ -1,6 +1,5 @@
 package com.elvarg.net.packet.impl;
 
-import com.elvarg.game.content.bosses.nightmare.NightmareEncounter;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Location;
 import com.elvarg.game.model.teleportation.TeleportHandler;
@@ -35,10 +34,6 @@ public class TeleportPacketListener implements PacketExecutor {
 		for (Teleportable teleport : Teleportable.values()) {
 			if (teleport.getType() == type && teleport.getIndex() == index) {
 				handled = true;
-				if (teleport == Teleportable.NIGHTMARE_LAIR) {
-					NightmareEncounter.enter(player);
-					break;
-				}
 				Location teleportPosition = teleport.getPosition();
 				if (TeleportHandler.checkReqs(player, teleportPosition)) {
 					player.getPreviousTeleports().put(teleport.getTeleportButton(), teleportPosition);

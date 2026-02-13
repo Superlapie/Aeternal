@@ -1,6 +1,7 @@
 package com.elvarg.net.packet.impl;
 
 import com.elvarg.Server;
+import com.elvarg.game.content.bosses.nightmare.NightmareEncounter;
 import com.elvarg.game.World;
 import com.elvarg.game.content.PetHandler;
 import com.elvarg.game.content.combat.CombatFactory;
@@ -21,6 +22,8 @@ import com.elvarg.game.model.dialogues.builders.impl.ParduDialogue;
 import com.elvarg.game.model.PlayerStatus;
 import com.elvarg.game.model.rights.PlayerRights;
 import com.elvarg.game.entity.impl.npc.NPCInteractionSystem;
+import com.elvarg.game.model.Location;
+import com.elvarg.game.model.areas.impl.NightmareArea;
 import com.elvarg.game.task.impl.WalkToTask;
 import com.elvarg.net.packet.Packet;
 import com.elvarg.net.packet.PacketConstants;
@@ -29,6 +32,9 @@ import com.elvarg.util.NpcIdentifiers;
 import com.elvarg.util.ShopIdentifiers;
 
 public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExecutor {
+
+    private static final int SANCTUARY_NIGHTMARE_ID = 9433;
+    private static final Location SANCTUARY_NIGHTMARE_LOCATION = NightmareArea.SANCTUARY_WAKE_TILE;
 
     private static boolean isNightmareNpc(NPC npc) {
         int id = npc.getId();
@@ -41,6 +47,16 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
         }
         String baseName = npc.getDefinition() != null ? npc.getDefinition().getName() : null;
         return baseName != null && baseName.toLowerCase().contains("nightmare");
+    }
+
+    private static boolean isSanctuaryNightmareTrigger(NPC npc) {
+        if (npc.getId() != SANCTUARY_NIGHTMARE_ID || npc.getPrivateArea() != null) {
+            return false;
+        }
+        Location loc = npc.getLocation();
+        return loc.getX() == SANCTUARY_NIGHTMARE_LOCATION.getX()
+                && loc.getY() == SANCTUARY_NIGHTMARE_LOCATION.getY()
+                && loc.getZ() == SANCTUARY_NIGHTMARE_LOCATION.getZ();
     }
 
     private static String formatCanAttackReason(CombatFactory.CanAttackResponse response) {
@@ -110,6 +126,11 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
         }
 
         player.setPositionToFace(npc.getLocation());
+
+        if (isSanctuaryNightmareTrigger(npc)) {
+            WalkToTask.submit(player, npc, () -> NightmareEncounter.enter(player, npc.getLocation().clone()));
+            return;
+        }
 
         // Nightmare can be interacted with through mixed opcodes depending on client menu wiring.
         // Start combat immediately, then retry once pathing settles.

@@ -3188,6 +3188,17 @@
   },
   {
     "facing": "SOUTH",
+    "radius": 0,
+    "description": "Nightmare Sanctuary Trigger",
+    "id": 9433,
+    "position": {
+      "x": 3806,
+      "y": 9758,
+      "z": 1
+    }
+  },
+  {
+    "facing": "SOUTH",
     "radius": 2,
     "description": "Castlewars Lanthus",
     "id": 5721,
