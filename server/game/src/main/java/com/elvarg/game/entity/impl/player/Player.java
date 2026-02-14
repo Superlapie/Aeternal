@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.elvarg.game.content.skill.slayer.SlayerMaster;
+import com.elvarg.game.content.skill.slayer.SlayerTask;
 import com.elvarg.game.GameConstants;
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.cannon.DwarfCannon;
@@ -182,6 +184,8 @@ public class Player extends Mobile {
 			new PouchContainer(Pouch.GIANT_POUCH), };
 	// Slayer
 	private ActiveSlayerTask slayerTask;
+	private ActiveSlayerTask storedSlayerTask;
+	private Map<SlayerMaster, List<SlayerTask>> blockedSlayerTasks = new HashMap<>();
 	private int slayerPoints;
 	private int consecutiveTasks;
 	
@@ -1636,6 +1640,18 @@ public class Player extends Mobile {
     public void setSlayerTask(ActiveSlayerTask slayerTask) {
         this.slayerTask = slayerTask;
     }
+
+	public ActiveSlayerTask getStoredSlayerTask() {
+		return storedSlayerTask;
+	}
+
+	public void setStoredSlayerTask(ActiveSlayerTask storedSlayerTask) {
+		this.storedSlayerTask = storedSlayerTask;
+	}
+
+	public Map<SlayerMaster, List<SlayerTask>> getBlockedSlayerTasks() {
+		return blockedSlayerTasks;
+	}
 
     public int getConsecutiveTasks() {
         return consecutiveTasks;

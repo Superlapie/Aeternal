@@ -118,6 +118,16 @@ public class Mining extends DefaultSkillable {
     }
 
     @Override
+    public boolean loopRequirements() {
+        return true;
+    }
+
+    @Override
+    public boolean allowFullInventory() {
+        return false;
+    }
+
+    @Override
     public boolean hasRequirements(Player player) {
         //Attempt to find a pickaxe..
         pickaxe = Optional.empty();
@@ -165,16 +175,6 @@ public class Mining extends DefaultSkillable {
         }
 
         return super.hasRequirements(player);
-    }
-
-    @Override
-    public boolean loopRequirements() {
-        return true;
-    }
-
-    @Override
-    public boolean allowFullInventory() {
-        return false;
     }
 
     public GameObject getTreeObject() {

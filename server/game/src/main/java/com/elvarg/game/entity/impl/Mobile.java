@@ -5,6 +5,7 @@ import com.elvarg.game.content.minigames.impl.pestcontrol.PestControl;
 import com.elvarg.game.content.sound.Sound;
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.combat.Combat;
+import com.elvarg.game.content.skill.slayer.Slayer;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.hit.HitDamage;
 import com.elvarg.game.content.combat.hit.PendingHit;
@@ -449,6 +450,14 @@ public abstract class Mobile extends Entity {
 		int outcome = getHitpoints() - hit.getDamage();
 		if (outcome < 0)
 			outcome = 0;
+		
+		if (outcome == 0 && isNpc() && Slayer.requiresFinishingOff(getAsNpc())) {
+			outcome = 1;
+			if (hit.getAttacker() != null && hit.getAttacker().isPlayer()) {
+				hit.getAttacker().sendMessage("This creature needs to be finished off with a special item!");
+			}
+		}
+
 		setHitpoints(outcome);
 		return hit;
 	}

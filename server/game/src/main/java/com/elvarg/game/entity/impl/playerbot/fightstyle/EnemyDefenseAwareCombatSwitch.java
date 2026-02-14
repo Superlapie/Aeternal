@@ -68,14 +68,14 @@ public abstract class EnemyDefenseAwareCombatSwitch implements CombatAction {
         bestSwitch.setHitSpeed(playerBot.getBaseAttackSpeed());
 
         if (bestSwitch.getCombatType() == CombatType.MELEE) {
-            bestSwitch.setAttackRoll(AccuracyFormulasDpsCalc.attackMeleeRoll(playerBot));
-            bestSwitch.setMaxHit(DamageFormulas.calculateMaxMeleeHit(playerBot));
+            bestSwitch.setAttackRoll(AccuracyFormulasDpsCalc.attackMeleeRoll(playerBot, enemy));
+            bestSwitch.setMaxHit(DamageFormulas.calculateMaxMeleeHit(playerBot, enemy));
         } else if (bestSwitch.getCombatType() == CombatType.RANGED) {
-            bestSwitch.setAttackRoll(AccuracyFormulasDpsCalc.attackRangedRoll(playerBot));
-            bestSwitch.setMaxHit(DamageFormulas.calculateMaxRangedHit(playerBot));
+            bestSwitch.setAttackRoll(AccuracyFormulasDpsCalc.attackRangedRoll(playerBot, enemy));
+            bestSwitch.setMaxHit(DamageFormulas.calculateMaxRangedHit(playerBot, enemy));
         } else if (bestSwitch.getCombatType() == CombatType.MAGIC) {
-            bestSwitch.setAttackRoll(AccuracyFormulasDpsCalc.attackMagicRoll(playerBot));
-            bestSwitch.setMaxHit(DamageFormulas.getMagicMaxhit(playerBot));
+            bestSwitch.setAttackRoll(AccuracyFormulasDpsCalc.attackMagicRoll(playerBot, enemy));
+            bestSwitch.setMaxHit(DamageFormulas.getMagicMaxhit(playerBot, enemy));
         }
     }
 

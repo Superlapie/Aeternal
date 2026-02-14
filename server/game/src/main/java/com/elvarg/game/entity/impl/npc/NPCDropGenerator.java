@@ -51,7 +51,12 @@ public class NPCDropGenerator {
         if (def.isPresent()) {
             NPCDropGenerator gen = new NPCDropGenerator(player, def.get());
             Location dropLocation = resolveDropLocation(player, npc);
-            for (Item item : gen.getDropList()) {
+            List<Item> drops = gen.getDropList();
+            
+            // Slayer special drops
+            com.elvarg.game.content.skill.slayer.Slayer.handleSpecialKeyDrops(player, npc, drops);
+
+            for (Item item : drops) {
             	if (!item.getDefinition().isStackable()) {
             		for (int i = 0; i < item.getAmount(); i++) {
             			ItemOnGroundManager.register(player, new Item(item.getId(), 1), dropLocation);

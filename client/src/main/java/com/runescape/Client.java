@@ -1610,14 +1610,14 @@ public class Client extends GameApplet {
                 go_on = false;
 
                 for (int i = 0; i < xp_added.length; i++) {
-                    if (xp_added[i][0] == -1 || list.contains(new Integer(i)))
+                    if (xp_added[i][0] == -1 || list.contains(Integer.valueOf(i)))
                         continue;
 
                     if (xp_added[i][2] < y) {
                         xp_added[i][2] = y;
                         y += font_height;
                         go_on = true;
-                        list.add(new Integer(i));
+                        list.add(Integer.valueOf(i));
                     }
                 }
             }

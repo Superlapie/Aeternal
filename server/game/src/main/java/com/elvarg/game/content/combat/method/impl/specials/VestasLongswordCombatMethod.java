@@ -19,7 +19,7 @@ public class VestasLongswordCombatMethod extends MeleeCombatMethod {
     public PendingHit[] hits(Mobile character, Mobile target) {
         // VLS does 20-120% of max damage (if accurate), and rolls against 25% of opponent defense
 
-        final int attRoll = AccuracyFormulasDpsCalc.attackMeleeRoll(character);
+        final int attRoll = AccuracyFormulasDpsCalc.attackMeleeRoll(character, target);
         final int defRoll = AccuracyFormulasDpsCalc.defenseMeleeRoll(target, BonusManager.ATTACK_STAB);
 
         // Roll against 25% of opponent defense
@@ -30,7 +30,7 @@ public class VestasLongswordCombatMethod extends MeleeCombatMethod {
 
         if (accurate) {
             // Roll hit in [0.2, 1.2] of max hit
-            final int maxHit = DamageFormulas.calculateMaxMeleeHit(character);
+            final int maxHit = DamageFormulas.calculateMaxMeleeHit(character, target);
             final int lowerRoll = (int) (0.2 * maxHit);
             final int upperRoll = maxHit + lowerRoll;
             final int newDamage = Misc.random(lowerRoll, upperRoll);

@@ -16,4 +16,5 @@ public class ShopIdentifiers {
     public static final int POINTS_SHOP = 10;
     public static final int VOID_MAGIC_SHOP = 11;
     public static final int VOID_RANGED_SHOP = 12;
+    public static final int SLAYER_SHOP = 13;
 }

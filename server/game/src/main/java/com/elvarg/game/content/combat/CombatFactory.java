@@ -48,6 +48,7 @@ import com.elvarg.game.model.rights.PlayerRights;
 import com.elvarg.game.task.Task;
 import com.elvarg.game.task.TaskManager;
 import com.elvarg.game.task.impl.CombatPoisonEffect;
+import com.elvarg.game.content.skill.slayer.Slayer;
 import com.elvarg.game.task.impl.CombatPoisonEffect.CombatPoisonData;
 import com.elvarg.game.task.impl.CombatPoisonEffect.PoisonType;
 import com.elvarg.util.ItemIdentifiers;
@@ -82,6 +83,7 @@ public class CombatFactory {
 		TARGET_IS_IMMUNE,
 		CAN_ATTACK,
 		CASTLE_WARS_FRIENDLY_FIRE,
+		SLAYER_EQUIPMENT_MISSING,
 	}
 
 	/**
@@ -169,7 +171,7 @@ public class CombatFactory {
 		int damage = 0;
 
 		if (type == CombatType.MELEE) {
-			damage = Misc.inclusive(0, DamageFormulas.calculateMaxMeleeHit(entity));
+			damage = Misc.inclusive(0, DamageFormulas.calculateMaxMeleeHit(entity, victim));
 
 			// Do melee effects with the calculated damage..
 			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MELEE]) {
@@ -177,14 +179,14 @@ public class CombatFactory {
 			}
 
 		} else if (type == CombatType.RANGED) {
-			damage = Misc.inclusive(0, DamageFormulas.calculateMaxRangedHit(entity));
+			damage = Misc.inclusive(0, DamageFormulas.calculateMaxRangedHit(entity, victim));
 
 			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MISSILES]) {
 				damage *= damageMultiplier;
 			}
 
 		} else if (type == CombatType.MAGIC) {
-			damage = Misc.inclusive(0, DamageFormulas.getMagicMaxhit(entity));
+			damage = Misc.inclusive(0, DamageFormulas.getMagicMaxhit(entity, victim));
 			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MAGIC]) {
 				damage *= damageMultiplier;
 			}
@@ -194,7 +196,7 @@ public class CombatFactory {
 
 		// We've got our damage. We can now create a HitDamage
 		// instance.
-		HitDamage hitDamage = new HitDamage(damage, damage == 0 ? HitMask.BLUE : HitMask.RED);
+		HitDamage hitDamage = new HitDamage(entity, damage, damage == 0 ? HitMask.BLUE : HitMask.RED);
 
 		// Check elysian spirit shield damage reduction
 		if (victim.isPlayer() && Misc.getRandom(100) <= 70) {
@@ -435,6 +437,12 @@ public class CombatFactory {
 			NPC npc = (NPC) target;
 			if (npc.getTimers().has(TimerKey.ATTACK_IMMUNITY)) {
 				return CanAttackResponse.TARGET_IS_IMMUNE;
+			}
+			
+			if (attacker.isPlayer()) {
+				if (!Slayer.checkEquipment(attacker.getAsPlayer(), npc)) {
+					return CanAttackResponse.SLAYER_EQUIPMENT_MISSING;
+				}
 			}
 		}
 

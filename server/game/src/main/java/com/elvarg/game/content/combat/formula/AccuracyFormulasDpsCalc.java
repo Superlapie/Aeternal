@@ -9,6 +9,7 @@ import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Skill;
 import com.elvarg.game.model.equipment.BonusManager;
+import com.elvarg.game.content.skill.slayer.Slayer;
 import com.elvarg.util.Misc;
 
 import java.security.SecureRandom;
@@ -26,15 +27,15 @@ public class AccuracyFormulasDpsCalc {
         int attRoll;
         int defRoll;
         if (style == CombatType.MELEE) {
-            attRoll = attackMeleeRoll(entity);
+            attRoll = attackMeleeRoll(entity, enemy);
             defRoll = defenseMeleeRoll(entity, enemy);
         }
         else if (style == CombatType.RANGED) {
-            attRoll = attackRangedRoll(entity);
+            attRoll = attackRangedRoll(entity, enemy);
             defRoll = defenseRangedRoll(enemy);
         }
         else if (style == CombatType.MAGIC) {
-            attRoll = attackMagicRoll(entity);
+            attRoll = attackMagicRoll(entity, enemy);
             defRoll = defenseMagicRoll(enemy);
         }
         else {
@@ -112,7 +113,7 @@ public class AccuracyFormulasDpsCalc {
         return (int) Math.floor(att);
     }
 
-    public static int attackMeleeRoll(Mobile entity) {
+    public static int attackMeleeRoll(Mobile entity, Mobile enemy) {
         int attRoll = effectiveAttackLevel(entity);
 
         if (entity.isNpc()) {
@@ -144,8 +145,15 @@ public class AccuracyFormulasDpsCalc {
         }
 
         // Include any target specific gear here if/when supported (ex. salve amulet)
+        if (entity.isPlayer() && enemy != null && Slayer.isWearingSlayerGear(entity.getAsPlayer(), enemy)) {
+            attRoll *= 1.1666f;
+        }
 
         return attRoll;
+    }
+
+    public static int attackMeleeRoll(Mobile entity) {
+        return attackMeleeRoll(entity, null);
     }
 
     private static int effectiveDefenseLevel(Mobile enemy) {
@@ -288,7 +296,7 @@ public class AccuracyFormulasDpsCalc {
         return (int) Math.floor(rangeAccuracy);
     }
 
-    public static int attackRangedRoll(Mobile entity) {
+    public static int attackRangedRoll(Mobile entity, Mobile enemy) {
         int accuracyBonus =
                 entity.isNpc() ? 0 : entity.getAsPlayer().getBonusManager().getAttackBonus()[BonusManager.ATTACK_RANGE];
 
@@ -296,8 +304,15 @@ public class AccuracyFormulasDpsCalc {
         int attRoll = attLevel * (accuracyBonus + 64);
 
         // Salve amulet/twisted bow bonus if/when added
+        if (entity.isPlayer() && enemy != null && Slayer.isWearingImbuedSlayerGear(entity.getAsPlayer(), enemy)) {
+            attRoll *= 1.15f;
+        }
 
         return attRoll;
+    }
+
+    public static int attackRangedRoll(Mobile entity) {
+        return attackRangedRoll(entity, null);
     }
 
     // Magic
@@ -361,7 +376,7 @@ public class AccuracyFormulasDpsCalc {
         return defLevel * (defBonus + 64);
     }
 
-    public static int attackMagicRoll(Mobile entity) {
+    public static int attackMagicRoll(Mobile entity, Mobile enemy) {
         int accuracyBonus = (entity.isNpc() ? 0 :
                            entity.getAsPlayer().getBonusManager().getAttackBonus()[BonusManager.ATTACK_MAGIC]);
 
@@ -370,10 +385,18 @@ public class AccuracyFormulasDpsCalc {
 
         // If/when supported: multiply by 1.15 if wearing a slayer helm on task or killing undead monsters with an
         // imbued salve amulet.
+        if (entity.isPlayer() && enemy != null && Slayer.isWearingImbuedSlayerGear(entity.getAsPlayer(), enemy)) {
+            attRoll *= 1.15f;
+        }
+
         if (entity.getCombat().getCastSpell() != null) {
             attRoll = (int) Math.floor(attRoll * entity.getCombat().getCastSpell().getAccuracyMultiplier(entity));
         }
 
         return attRoll;
+    }
+
+    public static int attackMagicRoll(Mobile entity) {
+        return attackMagicRoll(entity, null);
     }
 }

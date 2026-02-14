@@ -20,7 +20,9 @@ import java.util.logging.Level;
 public class JSONFilePlayerPersistence extends PlayerPersistence {
 
     private static final String PATH = "../data/saves/characters/";
-    private static final Gson BUILDER = new GsonBuilder().create();
+    private static final Gson BUILDER = new GsonBuilder()
+            .registerTypeAdapterFactory(new OptionalTypeAdapter.Factory())
+            .create();
 
     @Override
     public PlayerSave load(String username) {
@@ -46,7 +48,10 @@ public class JSONFilePlayerPersistence extends PlayerPersistence {
         File file = path.toFile();
         setupDirectory(file);
 
-        Gson builder = new GsonBuilder().setPrettyPrinting().create();
+        Gson builder = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapterFactory(new OptionalTypeAdapter.Factory())
+                .create();
 
 		try (FileWriter writer = new FileWriter(file)) {
 			writer.write(builder.toJson(save));

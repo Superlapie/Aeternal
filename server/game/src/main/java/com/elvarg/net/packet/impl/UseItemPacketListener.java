@@ -5,6 +5,7 @@ import com.elvarg.game.content.cannon.DwarfCannon;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.minigames.impl.CastleWars;
 import com.elvarg.game.content.skill.skillable.impl.*;
+import com.elvarg.game.content.skill.slayer.Slayer;
 import com.elvarg.game.content.skill.skillable.impl.Cooking.Cookable;
 import com.elvarg.game.content.skill.skillable.impl.Firemaking.LightableLog;
 import com.elvarg.game.content.skill.skillable.impl.Prayer.AltarOffering;
@@ -137,6 +138,10 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
         WalkToTask.submit(player, npc, () -> {
             if (NPCInteractionSystem.handleUseItem(player, npc, id, slot)) {
                 // Player is using an item on a defined NPC
+                return;
+            }
+            
+            if (Slayer.finishOff(player, npc, id)) {
                 return;
             }
 

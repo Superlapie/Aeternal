@@ -13,6 +13,9 @@ import com.elvarg.game.model.SkullType;
 import com.elvarg.game.model.container.impl.Bank;
 import com.elvarg.game.model.rights.DonatorRights;
 import com.elvarg.game.model.rights.PlayerRights;
+import com.elvarg.game.content.skill.slayer.ActiveSlayerTask;
+import com.elvarg.game.content.skill.slayer.SlayerMaster;
+import com.elvarg.game.content.skill.slayer.SlayerTask;
 
 import java.util.HashMap;
 import java.util.List;
@@ -75,6 +78,11 @@ public class PlayerSave {
     private Presetable[] presets;
     private int questPoints;
     private Map<Integer, Integer> questProgress;
+    private ActiveSlayerTask slayerTask;
+    private ActiveSlayerTask storedSlayerTask;
+    private Map<SlayerMaster, List<SlayerTask>> blockedSlayerTasks;
+    private int slayerPoints;
+    private int consecutiveTasks;
 
     public String getPasswordHashWithSalt() {
         return passwordHashWithSalt;
@@ -529,8 +537,6 @@ public class PlayerSave {
         player.setDiscordLogin(this.isDiscordLogin);
         player.setCachedDiscordAccessToken(this.cachedDiscordAccessToken);
         player.setLoyaltyTitle(this.title);
-
-        player.setLoyaltyTitle(this.title);
         player.setRights(this.rights);
         player.setDonatorRights(this.donatorRights);
         player.setLocation(this.position);
@@ -609,6 +615,15 @@ public class PlayerSave {
                 player.setBank(i, new Bank(player)).getBank(i).addItems(bankItems, false);
             }
         }
+
+        // Slayer
+        player.setSlayerTask(this.slayerTask);
+        player.setStoredSlayerTask(this.storedSlayerTask);
+        if (this.blockedSlayerTasks != null) {
+            player.getBlockedSlayerTasks().putAll(this.blockedSlayerTasks);
+        }
+        player.setSlayerPoints(this.slayerPoints);
+        player.setConsecutiveTasks(this.consecutiveTasks);
     }
 
     public static PlayerSave fromPlayer(Player player) {
@@ -693,6 +708,13 @@ public class PlayerSave {
             }
         }
         playerSave.banks = banks;
+
+        // Slayer
+        playerSave.slayerTask = player.getSlayerTask();
+        playerSave.storedSlayerTask = player.getStoredSlayerTask();
+        playerSave.blockedSlayerTasks = player.getBlockedSlayerTasks();
+        playerSave.slayerPoints = player.getSlayerPoints();
+        playerSave.consecutiveTasks = player.getConsecutiveTasks();
 
         return playerSave;
     }

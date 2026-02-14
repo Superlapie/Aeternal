@@ -47,12 +47,12 @@ public class DragonHastaCombatMethod extends CombatMethod {
 		// SoundManager.sendSound(character.getAsPlayer(), 0);
 
 		//multiply accuracy for the special attack.
-		int attRoll = (int) (AccuracyFormulasDpsCalc.attackMeleeRoll(character) * (1.0 + (0.05 * boosts)));
+		int attRoll = (int) (AccuracyFormulasDpsCalc.attackMeleeRoll(character, target) * (1.0 + (0.05 * boosts)));
 
 		boolean accurate = AccuracyFormulasDpsCalc.rollMeleeAccuracy(character, target, attRoll);
 		
 		//multiply damage for the special attack.
-		int damage = accurate ? (int) (Misc.inclusive(0, DamageFormulas.calculateMaxMeleeHit(character)) * (1.0 + (0.025 * boosts))) : 0;
+		int damage = accurate ? (int) (Misc.inclusive(0, DamageFormulas.calculateMaxMeleeHit(character, target)) * (1.0 + (0.025 * boosts))) : 0;
 		
 		//PendingHit.create is used for bypassing protection prayers.
 		//doing it this way bypasses spirit shields.

@@ -12,12 +12,13 @@ import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Skill;
 import com.elvarg.game.model.container.impl.Equipment;
+import com.elvarg.game.content.skill.slayer.Slayer;
 import com.elvarg.game.model.equipment.BonusManager;
 import com.elvarg.util.ItemIdentifiers;
 
 public class DamageFormulas {
 
-    private static int effectiveStrengthLevel(Player player) {
+    private static int effectiveStrengthLevel(Player player, Mobile victim) {
         float str = player.getSkillManager().getCurrentLevel(Skill.STRENGTH);
 
         float prayerBonus = 1f;
@@ -60,12 +61,16 @@ public class DamageFormulas {
             str *= 1.2f; // obisidian bonuses stack
         }
 
+        if (victim != null && Slayer.isWearingSlayerGear(player, victim)) {
+            str *= 1.1666f;
+        }
+
         return (int) Math.floor(str);
     }
 
-    private static int maximumMeleeHitDpsCalc(Player player) {
+    private static int maximumMeleeHitDpsCalc(Player player, Mobile victim) {
         int strengthBonus = player.getBonusManager().getOtherBonus()[BonusManager.STRENGTH];
-        float maxHit = effectiveStrengthLevel(player) * (strengthBonus + 64);
+        float maxHit = effectiveStrengthLevel(player, victim) * (strengthBonus + 64);
         maxHit += 320;
         maxHit /= 640;
         maxHit = (float) Math.floor(maxHit);
@@ -83,10 +88,10 @@ public class DamageFormulas {
         return (int) Math.floor(maxHit);
     }
 
-    public static int calculateMaxMeleeHit(Mobile entity) {
+    public static int calculateMaxMeleeHit(Mobile entity, Mobile victim) {
         if (entity.isPlayer()) {
             Player player = (Player) entity;
-            return maximumMeleeHitDpsCalc(player);
+            return maximumMeleeHitDpsCalc(player, victim);
         }
         NPC npc = (NPC) entity;
         float maxHit = npc.getCurrentDefinition().getMaxHit();
@@ -100,13 +105,17 @@ public class DamageFormulas {
         return (int) Math.floor(maxHit);
     }
 
+    public static int calculateMaxMeleeHit(Mobile entity) {
+        return calculateMaxMeleeHit(entity, null);
+    }
+
     /**
      * Calculates a player's magic max hit
      *
      * @param player The player to calculate magic max hit for
      * @return The player's magic max hit damage
      */
-    public static int getMagicMaxhit(Mobile c) {
+    public static int getMagicMaxhit(Mobile c, Mobile victim) {
         float maxHit = 0;
 
         CombatSpell spell = c.getCombat().getSelectedSpell();
@@ -136,11 +145,18 @@ public class DamageFormulas {
         maxHit *= equipmentBonus;
 
         // Add spell/target specific gear (tome of fire, salve amulet)
+        if (c.isPlayer() && victim != null && Slayer.isWearingImbuedSlayerGear(c.getAsPlayer(), victim)) {
+            maxHit *= 1.15f;
+        }
 
         return (int) Math.floor(maxHit);
     }
 
-    private static float effectiveRangedStrength(Player player) {
+    public static int getMagicMaxhit(Mobile c) {
+        return getMagicMaxhit(c, null);
+    }
+
+    private static float effectiveRangedStrength(Player player, Mobile victim) {
         float rngStrength = player.getSkillManager().getCurrentLevel(Skill.RANGED);
 
         // Prayers
@@ -174,13 +190,17 @@ public class DamageFormulas {
 
         }
 
+        if (victim != null && Slayer.isWearingImbuedSlayerGear(player, victim)) {
+            rngStrength *= 1.15f;
+        }
+
         return rngStrength;
     }
 
-    private static int maximumRangeHitDpsCalc(Player player) {
+    private static int maximumRangeHitDpsCalc(Player player, Mobile victim) {
         int strengthBonus = player.getBonusManager().getOtherBonus()[BonusManager.RANGED_STRENGTH];
 
-        float maxHit = effectiveRangedStrength(player);
+        float maxHit = effectiveRangedStrength(player, victim);
         maxHit *= (strengthBonus + 64);
         maxHit += 320;
         maxHit /= 640;
@@ -202,7 +222,7 @@ public class DamageFormulas {
      * @param victim the victim being attacked.
      * @return the maximum ranged hit that this entity can deal.
      */
-    public static int calculateMaxRangedHit(Mobile entity) {
+    public static int calculateMaxRangedHit(Mobile entity, Mobile victim) {
         if (entity.isNpc()) {
             NPC npc = (NPC) entity;
             return npc.getCurrentDefinition().getMaxHit();
@@ -210,6 +230,10 @@ public class DamageFormulas {
 
         Player player = (Player) entity;
 
-        return maximumRangeHitDpsCalc(player);
+        return maximumRangeHitDpsCalc(player, victim);
+    }
+
+    public static int calculateMaxRangedHit(Mobile entity) {
+        return calculateMaxRangedHit(entity, null);
     }
 }

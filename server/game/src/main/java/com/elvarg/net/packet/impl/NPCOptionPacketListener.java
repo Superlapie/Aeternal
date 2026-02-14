@@ -17,7 +17,8 @@ import com.elvarg.game.entity.impl.npc.impl.Barricades;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.container.shop.ShopManager;
 import com.elvarg.game.model.dialogues.builders.impl.EmblemTraderDialogue;
-import com.elvarg.game.model.dialogues.builders.impl.NieveDialogue;
+import com.elvarg.game.content.skill.slayer.SlayerDialogue;
+import com.elvarg.game.content.skill.slayer.SlayerMaster;
 import com.elvarg.game.model.dialogues.builders.impl.ParduDialogue;
 import com.elvarg.game.model.PlayerStatus;
 import com.elvarg.game.model.rights.PlayerRights;
@@ -76,6 +77,7 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
             case DUEL_WRONG_OPPONENT -> "DUEL_WRONG_OPPONENT";
             case TARGET_IS_IMMUNE -> "TARGET_IS_IMMUNE";
             case CASTLE_WARS_FRIENDLY_FIRE -> "CASTLE_WARS_FRIENDLY_FIRE";
+            case SLAYER_EQUIPMENT_MISSING -> "SLAYER_EQUIPMENT_MISSING";
         };
     }
 
@@ -262,7 +264,24 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                     // Removed
                     break;
                 case NIEVE:
-                    player.getDialogueManager().start(new NieveDialogue());
+                case 6798: // Steve
+                case 401: // Turael
+                case 402: // Mazchna
+                case 403: // Vannaka
+                case 404: // Chaeldar
+                case 7663: // Krystilia
+                case 8623: // Konar
+                case 9085: // Kuradal
+                    SlayerMaster master = null;
+                    for (SlayerMaster m : SlayerMaster.MASTERS) {
+                        if (m.getNpcId() == npc.getId()) {
+                            master = m;
+                            break;
+                        }
+                    }
+                    if (master != null) {
+                        player.getDialogueManager().start(new SlayerDialogue(master));
+                    }
                     break;
             }
             return;
@@ -287,7 +306,15 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 
             switch (npc.getId()) {
                 case NIEVE:
-                    player.getDialogueManager().start(new NieveDialogue(), 2);
+                case 6798:
+                case 401:
+                case 402:
+                case 403:
+                case 404:
+                case 7663:
+                case 8623:
+                case 9085:
+                    ShopManager.open(player, ShopIdentifiers.SLAYER_SHOP);
                     break;
                 case BANKER:
                 case BANKER_2:
