@@ -420,7 +420,6 @@ public final class WeaponInterfaces {
             case 29188:
             case 29213:
             case 29238:
-            case 30007:
             case 48023:
             case 33033:
             case 30108:

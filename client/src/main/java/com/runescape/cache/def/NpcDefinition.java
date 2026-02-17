@@ -1,6 +1,7 @@
 package com.runescape.cache.def;
 
 import com.runescape.Client;
+import com.runescape.cache.anim.Animation;
 import com.runescape.cache.FileArchive;
 import com.runescape.cache.anim.Frame;
 import com.runescape.cache.config.VariableBits;
@@ -85,6 +86,10 @@ public final class NpcDefinition {
 		if (id >= 0 && id < offsets.length) {
 			dataBuf.currentPosition = offsets[id];
 			definition.readValues(dataBuf);
+			if (isYamaDefinition(id)) {
+				applyCustomDefinition(definition, id);
+				return definition;
+			}
 		} else {
 			applyCustomDefinition(definition, id);
 			return definition;
@@ -240,12 +245,43 @@ public final class NpcDefinition {
 				definition.clickable = true;
 				definition.drawMinimapDot = false;
 				break;
+			case 13243:
+			case 14176:
+			case 15555:
+				definition.name = "Yama";
+				definition.description = "A terrifying demonic entity.".getBytes();
+				definition.size = 5;
+				definition.combatLevel = 1024;
+				definition.actions = new String[] { null, "Attack", null, null, null };
+				// Use imported 2446 donor copies to avoid collisions with legacy low-id models.
+				definition.modelId = new int[] { 65298, 65299, 65300 };
+				definition.standAnim = resolvePlayableAnimation(12140, 8593);
+				definition.walkAnim = resolvePlayableAnimation(12141, 8592);
+				definition.turn180AnimIndex = definition.walkAnim;
+				definition.turn90CCWAnimIndex = definition.walkAnim;
+				definition.turn90CWAnimIndex = definition.walkAnim;
+				definition.scaleXZ = 128;
+				definition.scaleY = 128;
+				definition.clickable = true;
+				definition.drawMinimapDot = false;
+				break;
 			default:
 				definition.name = "Unknown";
 				definition.actions = new String[7];
 				definition.modelId = new int[] { 0 };
 				break;
 		}
+	}
+
+	private static int resolvePlayableAnimation(int preferred, int fallback) {
+		if (preferred < 0 || Animation.animations == null || preferred >= Animation.animations.length) {
+			return fallback;
+		}
+		Animation anim = Animation.animations[preferred];
+		if (anim == null || anim.primaryFrames == null || anim.primaryFrames.length == 0 || anim.primaryFrames[0] == -1) {
+			return fallback;
+		}
+		return preferred;
 	}
 
 	private static int[] nightmareModelIdsFor(int id) {
@@ -304,6 +340,17 @@ public final class NpcDefinition {
 			case 11153:
 			case 11154:
 			case 11155:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	private static boolean isYamaDefinition(long id) {
+		switch ((int) id) {
+			case 13243:
+			case 14176:
+			case 15555:
 				return true;
 			default:
 				return false;

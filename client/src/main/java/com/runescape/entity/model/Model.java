@@ -26,16 +26,16 @@ public class Model extends Renderable {
     public static int[] SINE;
     public static int[] COSINE;
     static ModelHeader[] modelHeader;
-    static boolean[] hasAnEdgeToRestrict = new boolean[4700];
-    static boolean[] outOfReach = new boolean[4700];
-    static int[] projected_vertex_x = new int[4700];
-    static int[] projected_vertex_y = new int[4700];
-    static int[] projected_vertex_z = new int[4700];
-    static int[] camera_vertex_x = new int[4700];
-    static int[] camera_vertex_y = new int[4700];
-    static int[] camera_vertex_z = new int[4700];
-    static int[] depthListIndices = new int[1600];
-    static int[][] faceLists = new int[1600][512];
+    static boolean[] hasAnEdgeToRestrict = new boolean[100000];
+    static boolean[] outOfReach = new boolean[100000];
+    static int[] projected_vertex_x = new int[100000];
+    static int[] projected_vertex_y = new int[100000];
+    static int[] projected_vertex_z = new int[100000];
+    static int[] camera_vertex_x = new int[100000];
+    static int[] camera_vertex_y = new int[100000];
+    static int[] camera_vertex_z = new int[100000];
+    static int[] depthListIndices = new int[10000];
+    static int[][] faceLists = new int[10000][512];
     static int[] anIntArray1673 = new int[12];
     static int[][] anIntArrayArray1674 = new int[12][2000];
     static int[] anIntArray1675 = new int[2000];
@@ -49,10 +49,10 @@ public class Model extends Renderable {
     static int zAnimOffset;
     static int[] modelIntArray3;
     static int[] modelIntArray4;
-    private static int[] anIntArray1622 = new int[2000];
-    private static int[] anIntArray1623 = new int[2000];
-    private static int[] anIntArray1624 = new int[2000];
-    private static int[] anIntArray1625 = new int[2000];
+    private static int[] anIntArray1622 = new int[50000];
+    private static int[] anIntArray1623 = new int[50000];
+    private static int[] anIntArray1624 = new int[50000];
+    private static int[] anIntArray1625 = new int[50000];
 
     static {
         SINE = Rasterizer3D.anIntArray1470;
@@ -792,8 +792,18 @@ public class Model extends Renderable {
     }
 
     private static byte[] maybeGunzip(byte[] data) throws Exception {
-        if (data.length >= 2 && (data[0] & 0xFF) == 0x1F && (data[1] & 0xFF) == 0x8B) {
-            try (GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(data));
+        if (data == null || data.length < 2) {
+            return data;
+        }
+
+        int offset = 0;
+        // Detect moon model header (02 ... 1F 8B 08 at offset 9)
+        if (data.length > 12 && data[0] == 2 && (data[9] & 0xFF) == 0x1F && (data[10] & 0xFF) == 0x8B) {
+            offset = 9;
+        }
+
+        if ((data[offset] & 0xFF) == 0x1F && (data[offset + 1] & 0xFF) == 0x8B) {
+            try (GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(data, offset, data.length - offset));
                  ByteArrayOutputStream out = new ByteArrayOutputStream(data.length * 2)) {
                 byte[] buf = new byte[8192];
                 int n;
@@ -2600,6 +2610,12 @@ public class Model extends Renderable {
         int i4 = COSINE[l];
         int j4 = j1 * l3 + k1 * i4 >> 16;
         for (int k4 = 0; k4 < numVertices; k4++) {
+            // Check bounds to prevent ArrayIndexOutOfBoundsException
+            if (k4 >= projected_vertex_x.length || k4 >= projected_vertex_y.length || k4 >= projected_vertex_z.length) {
+                System.err.println("Model has too many vertices (" + numVertices + ") for arrays (" + projected_vertex_x.length + ")");
+                return; // Skip rendering this model
+            }
+            
             int l4 = vertexX[k4];
             int i5 = vertexY[k4];
             int j5 = vertexZ[k4];

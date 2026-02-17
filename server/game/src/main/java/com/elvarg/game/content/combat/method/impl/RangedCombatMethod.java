@@ -16,6 +16,8 @@ import com.elvarg.game.model.Animation;
 import com.elvarg.game.model.Projectile;
 
 public class RangedCombatMethod extends CombatMethod {
+    private static final int ECLIPSE_ATLATL_ID = 29000;
+    private static final int ECLIPSE_ATLATL_ATTACK_ANIMATION = 11057;
 
     @Override
     public CombatType type() {
@@ -57,9 +59,13 @@ public class RangedCombatMethod extends CombatMethod {
     public void start(Mobile character, Mobile target) {
         final Ammunition ammo = character.getCombat().getAmmunition();
         final RangedWeapon rangedWeapon = character.getCombat().getRangedWeapon();
-        final int animation = ammo != null && ammo.getAnimationId() != -1
+        final boolean usingEclipseAtlatl = character.isPlayer()
+                && character.getAsPlayer().getEquipment().hasAt(com.elvarg.game.model.container.impl.Equipment.WEAPON_SLOT, ECLIPSE_ATLATL_ID);
+        final int animation = usingEclipseAtlatl
+                              ? ECLIPSE_ATLATL_ATTACK_ANIMATION
+                              : (ammo != null && ammo.getAnimationId() != -1
                               ? ammo.getAnimationId()
-                              : character.getAttackAnim();
+                              : character.getAttackAnim());
 
         if (animation != -1) {
             character.performAnimation(new Animation(animation));

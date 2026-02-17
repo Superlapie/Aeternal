@@ -316,6 +316,8 @@ public class RangedData {
 
         TOXIC_BLOWPIPE(new int[]{12926}, new Ammunition[]{Ammunition.DRAGON_DART}, RangedWeaponType.BLOWPIPE),
 
+        ECLIPSE_ATLATL(new int[]{29000}, new Ammunition[]{Ammunition.ATLATL_DART, Ammunition.ATLATL_DART_ALT}, RangedWeaponType.ATLATL),
+
         MORRIGANS_JAVELIN(new int[] {22636}, new Ammunition[]{Ammunition.MORRIGANS_JAVELIN}, RangedWeaponType.MORRIGANS_JAVELIN);
 
         static {
@@ -403,6 +405,8 @@ public class RangedData {
         ADAMANT_DART(810, new Graphic(236, GraphicHeight.HIGH), 230, 13, -1),
         RUNE_DART(811, new Graphic(237, GraphicHeight.HIGH), 231, 17, -1),
         DRAGON_DART(11230, new Graphic(1123, GraphicHeight.HIGH), 226, 24, -1),
+        ATLATL_DART(28991, null, 2795, 18, -1),
+        ATLATL_DART_ALT(29002, null, 2795, 18, -1),
 
         BRONZE_KNIFE(864, new Graphic(219, GraphicHeight.HIGH), 212, 3, -1),
         BRONZE_KNIFE_P1(870, new Graphic(219, GraphicHeight.HIGH), 212, 3, -1),
@@ -550,6 +554,7 @@ public class RangedData {
         MORRIGANS_JAVELIN(5, 6, FightType.JAVELIN_LONGRANGE, false),
         LONGBOW(9, 10, FightType.LONGBOW_LONGRANGE, true),
         BLOWPIPE(5, 7, FightType.BLOWPIPE_LONGRANGE, false),
+        ATLATL(7, 9, FightType.THROWNAXE_LONGRANGE, true),
         SHORTBOW(7, 9, FightType.SHORTBOW_LONGRANGE, true),
         CROSSBOW(7, 9, FightType.CROSSBOW_LONGRANGE, true),
         BALLISTA(7, 9, FightType.BALLISTA_LONGRANGE, true),

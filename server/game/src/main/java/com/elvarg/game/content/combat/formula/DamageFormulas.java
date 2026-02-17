@@ -16,6 +16,7 @@ import com.elvarg.game.model.equipment.BonusManager;
 import com.elvarg.util.ItemIdentifiers;
 
 public class DamageFormulas {
+    private static final int ECLIPSE_ATLATL_ID = 29000;
 
     private static int effectiveStrengthLevel(Player player) {
         float str = player.getSkillManager().getCurrentLevel(Skill.STRENGTH);
@@ -178,9 +179,12 @@ public class DamageFormulas {
     }
 
     private static int maximumRangeHitDpsCalc(Player player) {
-        int strengthBonus = player.getBonusManager().getOtherBonus()[BonusManager.RANGED_STRENGTH];
+        boolean usingEclipseAtlatl = player.getEquipment().hasAt(Equipment.WEAPON_SLOT, ECLIPSE_ATLATL_ID);
+        int strengthBonus = usingEclipseAtlatl
+                ? player.getBonusManager().getOtherBonus()[BonusManager.STRENGTH]
+                : player.getBonusManager().getOtherBonus()[BonusManager.RANGED_STRENGTH];
 
-        float maxHit = effectiveRangedStrength(player);
+        float maxHit = usingEclipseAtlatl ? effectiveStrengthLevel(player) : effectiveRangedStrength(player);
         maxHit *= (strengthBonus + 64);
         maxHit += 320;
         maxHit /= 640;

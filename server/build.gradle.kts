@@ -30,6 +30,8 @@ allprojects {
             implementation(kotlinx.coroutines)
             implementation(kotlin.script.runtime)
             implementation(kotlin.scripting)
+            implementation(kotlin("scripting-jvm"))
+            implementation(kotlin("scripting-jvm-host"))
             implementation(kotlin.reflect)
             implementation("org.litote.kmongo:kmongo-coroutine-serialization:4.5.0")
         }

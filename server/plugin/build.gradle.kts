@@ -7,6 +7,12 @@ dependencies {
     implementation(kotlin("script-runtime"))
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xdisable-default-scripting-plugin"
+    }
+}
+
 tasks.named<Jar>("jar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

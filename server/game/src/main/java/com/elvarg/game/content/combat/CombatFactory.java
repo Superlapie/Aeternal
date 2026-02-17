@@ -1,8 +1,10 @@
 package com.elvarg.game.content.combat;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import com.elvarg.game.content.sound.Sound;
@@ -37,6 +39,8 @@ import com.elvarg.game.model.Graphic;
 import com.elvarg.game.model.GraphicHeight;
 import com.elvarg.game.model.Item;
 import com.elvarg.game.model.Location;
+import com.elvarg.game.model.Priority;
+import com.elvarg.game.model.Projectile;
 import com.elvarg.game.model.Skill;
 import com.elvarg.game.model.SkullType;
 import com.elvarg.game.model.areas.AreaManager;
@@ -65,6 +69,20 @@ import static com.elvarg.util.ItemIdentifiers.AMULET_OF_BLOOD_FURY;
  */
 public class CombatFactory {
 	private static final RandomGen RANDOM = new RandomGen();
+	private static final int ECLIPSE_HELM = 29010;
+	private static final int ECLIPSE_CHEST = 29004;
+	private static final int ECLIPSE_TASSETS = 29007;
+	private static final int ECLIPSE_ATLATL = 29000;
+	private static final int ATLATL_DART = 28991;
+	private static final int ATLATL_DART_ALT = 29002;
+	private static final int ECLIPSE_BURN_PROC_CHANCE = 20; // 20%
+	private static final int ECLIPSE_BURN_STACK_CAP = 5;
+	private static final int ECLIPSE_BURN_DAMAGE_PER_STACK = 1;
+	private static final int ECLIPSE_BURN_TICK_RATE = 4; // 40 game ticks total over 10 applications.
+	private static final int ECLIPSE_BURN_APPLICATIONS = 10;
+	private static final int ECLIPSE_PROC_ATTACKER_GFX = 2797;
+	private static final String ECLIPSE_BURN_STACKS_ATTR = "eclipse_burn_stacks";
+	private static final String ECLIPSE_BURN_TASK_ACTIVE_ATTR = "eclipse_burn_task_active";
 
 	public enum CanAttackResponse {
 		INVALID_TARGET,
@@ -586,6 +604,16 @@ public class CombatFactory {
 				if (qHit.getCombatType() == CombatType.MELEE && p_.getEquipment().hasAt(Equipment.AMULET_SLOT,
 				                                                                        AMULET_OF_BLOOD_FURY)) {
 					handleAmuletOfBloodFury(p_, target, qHit.getTotalDamage());
+				}
+
+				// Eclipse Moon set effect:
+				// 20% chance to inflict a burn (10 damage over 40 ticks), stacking up to 5.
+				if (qHit.getCombatType() == CombatType.RANGED && qHit.isAccurate() && hasFullEclipseSet(p_)
+						&& (p_.getEquipment().hasAt(Equipment.AMMUNITION_SLOT, ATLATL_DART)
+						|| p_.getEquipment().hasAt(Equipment.AMMUNITION_SLOT, ATLATL_DART_ALT))
+						&& Misc.getRandom(99) < ECLIPSE_BURN_PROC_CHANCE && canReceiveStrongBurn(target)) {
+					performEclipseProcVisual(p_, target);
+					applyOrStackEclipseBurn(target);
 				}
 			}
 		} else if (attacker.isNpc()) {
@@ -1210,6 +1238,101 @@ public class CombatFactory {
 	public static boolean fullGuthans(Mobile entity) {
 		return entity.isNpc() ? entity.getAsNpc().getDefinition().getName().equals("Guthan the Infested")
 				: entity.getAsPlayer().getEquipment().containsAll(4724, 4728, 4730, 4726);
+	}
+
+	private static boolean hasFullEclipseSet(Player player) {
+		return player.getEquipment().containsAll(ECLIPSE_HELM, ECLIPSE_CHEST, ECLIPSE_TASSETS, ECLIPSE_ATLATL);
+	}
+
+	private static boolean canReceiveStrongBurn(Mobile target) {
+		if (target == null || target.getHitpoints() <= 0) {
+			return false;
+		}
+		if (target.isNpc()) {
+			int npcId = target.getAsNpc().getId();
+			if (npcId == NpcIdentifiers.TZKAL_ZUK) {
+				return false;
+			}
+			String npcName = target.getAsNpc().getDefinition().getName();
+			if (npcName != null) {
+				String lower = npcName.toLowerCase(Locale.ROOT);
+				if (lower.contains("eclipse moon") || lower.contains("blood moon") || lower.contains("blue moon")) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private static void performEclipseProcVisual(Player attacker, Mobile target) {
+		// Proc visual on attacker only (no persistent burn aura on target).
+		attacker.performGraphic(new Graphic(ECLIPSE_PROC_ATTACKER_GFX, GraphicHeight.HIGH, Priority.HIGH));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void applyOrStackEclipseBurn(Mobile target) {
+		List<Integer> stacks = (List<Integer>) target.getAttribute(ECLIPSE_BURN_STACKS_ATTR);
+		if (stacks == null) {
+			stacks = new ArrayList<>();
+			target.setAttribute(ECLIPSE_BURN_STACKS_ATTR, stacks);
+		}
+
+		if (stacks.size() < ECLIPSE_BURN_STACK_CAP) {
+			stacks.add(ECLIPSE_BURN_APPLICATIONS);
+		}
+
+		boolean taskActive = (boolean) target.getAttribute(ECLIPSE_BURN_TASK_ACTIVE_ATTR, false);
+		if (!taskActive) {
+			target.setAttribute(ECLIPSE_BURN_TASK_ACTIVE_ATTR, true);
+			TaskManager.submit(new EclipseBurnTask(target));
+		}
+	}
+
+	private static final class EclipseBurnTask extends Task {
+		private final Mobile target;
+
+		private EclipseBurnTask(Mobile target) {
+			super(ECLIPSE_BURN_TICK_RATE, target, false);
+			this.target = target;
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		protected void execute() {
+			if (target == null || !target.isRegistered() || target.getHitpoints() <= 0) {
+				stop();
+				return;
+			}
+
+			List<Integer> stacks = (List<Integer>) target.getAttribute(ECLIPSE_BURN_STACKS_ATTR);
+			if (stacks == null || stacks.isEmpty()) {
+				stop();
+				return;
+			}
+
+			int activeStacks = stacks.size();
+			int burnDamage = activeStacks * ECLIPSE_BURN_DAMAGE_PER_STACK;
+			target.getCombat().getHitQueue().addPendingDamage(new HitDamage(burnDamage, HitMask.YELLOW));
+
+			for (int i = stacks.size() - 1; i >= 0; i--) {
+				int applicationsRemaining = stacks.get(i) - 1;
+				if (applicationsRemaining <= 0) {
+					stacks.remove(i);
+				} else {
+					stacks.set(i, applicationsRemaining);
+				}
+			}
+
+			if (stacks.isEmpty()) {
+				stop();
+			}
+		}
+
+		@Override
+		public void stop() {
+			target.setAttribute(ECLIPSE_BURN_TASK_ACTIVE_ATTR, false);
+			super.stop();
+		}
 	}
 
 	/**

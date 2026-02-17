@@ -25,7 +25,7 @@ public final class ModelAuditTool {
 
     private static final String[] KEYWORDS = {
             "nightmare", "phosani", "inquisitor",
-            "araxxor", "yama", "moon", "blood moon", "blue moon", "eclipse moon",
+            "araxxor", "yama",
             "vardorvis", "leviathan", "whisperer", "duke sucellus", "dt2"
     };
 

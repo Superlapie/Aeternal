@@ -9,6 +9,7 @@ import com.runescape.entity.model.Model;
 import com.runescape.io.Buffer;
 import com.runescape.sign.SignLink;
 import com.runescape.util.FileUtils;
+import com.runescape.cache.MoonModelLoader;
 
 public final class ItemDefinition {
 
@@ -76,12 +77,22 @@ public final class ItemDefinition {
         Buffer stream = new Buffer(FileUtils.readFile(SignLink.findcachedir() + "obj.idx"));
 
         totalItems = stream.readUShort();
+        // Extend totalItems to include custom moon equipment IDs if needed
+        int originalTotalItems = totalItems;
+        if (totalItems < 29013) {
+            totalItems = 29013; // Ensure we have space for moon equipment (28991 / 29000+)
+        }
         streamIndices = new int[totalItems];
         int offset = 2;
 
-        for (int _ctr = 0; _ctr < totalItems; _ctr++) {
+        for (int _ctr = 0; _ctr < originalTotalItems; _ctr++) {
             streamIndices[_ctr] = offset;
             offset += stream.readUShort();
+        }
+        
+        // Initialize remaining indices for moon equipment items
+        for (int _ctr = originalTotalItems; _ctr < totalItems; _ctr++) {
+            streamIndices[_ctr] = -1; // Mark as no cache data available
         }
 
         cache = new ItemDefinition[10];
@@ -100,11 +111,17 @@ public final class ItemDefinition {
 
         cacheIndex = (cacheIndex + 1) % 10;
         ItemDefinition itemDef = cache[cacheIndex];
-        if (itemId > 0)
+        if (itemId > 0 && itemId < streamIndices.length) {
             item_data.currentPosition = streamIndices[itemId];
+        } else {
+            item_data.currentPosition = -1; // Skip cache read for items beyond cache size
+            System.out.println("Item ID " + itemId + " is beyond cache size (" + streamIndices.length + "), using defaults");
+        }
         itemDef.id = itemId;
         itemDef.setDefaults();
-        itemDef.readValues(item_data);
+        if (item_data.currentPosition != -1) {
+            itemDef.readValues(item_data);
+        }
 
         if (itemDef.noted_item_id != -1)
             itemDef.toNote();
@@ -194,6 +211,72 @@ public final class ItemDefinition {
             case 24423:
                 // Harmonised nightmare staff: fallback inventory model while 39070 is missing in this cache.
                 itemDef.inventory_model = 39073;
+                break;
+
+            case 29010: // Eclipse moon helm
+                itemDef.copy(lookup(1149)); // Helmet base behavior
+                itemDef.name = "Eclipse moon helm";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wear";
+                itemDef.inventory_model = MoonModelLoader.getMoonModel(itemId, 52255);
+                itemDef.equipped_model_male_1 = 50873;
+                itemDef.equipped_model_female_1 = 51075;
+                itemDef.equipped_model_male_dialogue_1 = 52727;
+                itemDef.equipped_model_female_dialogue_1 = 52727;
+                break;
+            case 29004: // Eclipse moon chestplate
+                itemDef.copy(lookup(1127)); // Platebody base behavior
+                itemDef.name = "Eclipse moon chestplate";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wear";
+                itemDef.inventory_model = MoonModelLoader.getMoonModel(itemId, 52238);
+                itemDef.equipped_model_male_1 = 50901;
+                itemDef.equipped_model_female_1 = 51102;
+                break;
+            case 29007: // Eclipse moon tassets
+                itemDef.copy(lookup(1079)); // Platelegs base behavior
+                itemDef.name = "Eclipse moon tassets";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wear";
+                itemDef.inventory_model = MoonModelLoader.getMoonModel(itemId, 52245);
+                itemDef.equipped_model_male_1 = 50851;
+                itemDef.equipped_model_female_1 = 51057;
+                break;
+            case 29000: // Eclipse atlatl
+                itemDef.copy(lookup(859)); // Ranged weapon base behavior
+                itemDef.name = "Eclipse atlatl";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.inventory_model = MoonModelLoader.getMoonModel(itemId, 52263);
+                itemDef.equipped_model_male_1 = 51175;
+                itemDef.equipped_model_female_1 = 51138;
+                break;
+            case 28991: // Atlatl dart
+                itemDef.copy(lookup(806)); // Dart base behavior
+                itemDef.name = "Atlatl dart";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.stackable = true;
+                itemDef.inventory_model = MoonModelLoader.getMoonModel(itemId, 52270);
+                break;
+            case 27690: // Voidwaker
+                itemDef.copy(lookup(1305)); // Dragon longsword base behavior
+                itemDef.name = "Voidwaker";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.inventory_model = 47422;
+                itemDef.equipped_model_male_1 = 47212;
+                itemDef.equipped_model_female_1 = 47217;
+                itemDef.modelZoom = 1723;
+                itemDef.rotation_x = 539;
+                itemDef.rotation_y = 678;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = 1;
+                itemDef.translate_yz = -1;
+                break;
+            case 27691: // Voidwaker (noted)
+                itemDef.copy(lookup(1306)); // Dragon longsword note base behavior
+                itemDef.name = "Voidwaker";
                 break;
         }
         return itemDef;

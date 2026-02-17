@@ -33,7 +33,11 @@ public final class Projectile extends Renderable {
     private int tiltAngle;
 
     public Projectile(int initialSlope, int endHeight, int creationCycle, int destructionCycle, int initialDistance, int startZ, int startHeight, int y, int x, int target, int gfxMoving) {
-        projectileGFX = Graphic.cache[gfxMoving];
+        int resolvedGfx = gfxMoving;
+        if (resolvedGfx >= Graphic.cache.length || resolvedGfx < 0) {
+            resolvedGfx = 0;
+        }
+        projectileGFX = Graphic.cache[resolvedGfx];
         projectileZ = startZ;
         projectileX = x;
         projectileY = y;

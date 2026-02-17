@@ -383,7 +383,12 @@ public class Presetables {
 
 		// Set equipment
 		Arrays.stream(preset.getEquipment()).filter(t -> !Objects.isNull(t) && t.isValid())
-				.forEach(t -> player.getEquipment().setItem(t.getDefinition().getEquipmentType().getSlot(), t.clone()));
+				.forEach(t -> {
+					int slot = t.getDefinition().getEquipmentType().getSlot();
+					if (slot != -1) {
+						player.getEquipment().setItem(slot, t.clone());
+					}
+				});
 
 		// Set magic spellbook
 		player.setSpellbook(preset.getSpellbook());

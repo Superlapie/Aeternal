@@ -66,6 +66,10 @@ public final class Player extends Mob {
 
         if (super.graphic != -1 && super.currentAnimation != -1) {
             Graphic spotAnim = Graphic.cache[super.graphic];
+            if (spotAnim == null || spotAnim.animationSequence == null
+                    || super.currentAnimation >= spotAnim.animationSequence.frameCount) {
+                return animatedModel;
+            }
 
             Model spotAnimationModel = spotAnim.getModel();
 
@@ -73,7 +77,8 @@ public final class Player extends Mob {
              * MAKE SURE WE'VE LOADED THE GRAPHIC BEFORE ATTEMPTING TO DO IT.
              * Fixes graphics flickering.
              */
-            if (Frame.animationlist[spotAnim.animationSequence.primaryFrames[0] >> 16].length == 0) {
+            int firstFrame = spotAnim.animationSequence.primaryFrames[0];
+            if (firstFrame != -1 && Frame.method531(firstFrame) == null) {
                 spotAnimationModel = null;
             }
 

@@ -13,6 +13,7 @@ import com.elvarg.game.model.areas.impl.GodwarsDungeonArea;
 import com.elvarg.game.model.areas.impl.KingBlackDragonArea;
 import com.elvarg.game.model.areas.impl.PrivateArea;
 import com.elvarg.game.model.areas.impl.WildernessArea;
+import com.elvarg.game.model.areas.impl.YamaArea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class AreaManager {
         areas.add(PestControl.GAME_AREA);
         areas.add(PestControl.NOVICE_BOAT_AREA);
         areas.add(PestControl.OUTPOST_AREA);
+        areas.add(new YamaArea());
     }
 
     /**

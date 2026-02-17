@@ -358,8 +358,21 @@ public class Player extends Mobile {
 		// If player is using magic, attack speed is
 		// Calculated in the MagicCombatMethod class.
 
-		int speed = getWeapon().getSpeed();
+		// Eclipse atlatl uses 4-tick base speed and 3-tick on rapid.
+		if (getEquipment().hasAt(Equipment.WEAPON_SLOT, 29000)) {
+			int speed = 4;
+			if (getFightType().toString().toLowerCase().contains("rapid")) {
+				speed--;
+			}
+			return speed;
+		}
 
+		// Voidwaker is a 4-tick weapon.
+		if (getEquipment().hasAt(Equipment.WEAPON_SLOT, 27690)) {
+			return 4;
+		}
+
+		int speed = getWeapon().getSpeed();
 		if (getFightType().toString().toLowerCase().contains("rapid")) {
 			speed--;
 		}

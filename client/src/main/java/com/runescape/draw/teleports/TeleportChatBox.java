@@ -370,6 +370,7 @@ public class TeleportChatBox {
 			ZULRAH(KeyEvent.VK_Z, "Zulrah"),
 			VORKATH(KeyEvent.VK_O, "Vorkath"),
 			NIGHTMARE(KeyEvent.VK_N, "Nightmare Lair"),
+			YAMA(KeyEvent.VK_Y, "Yama"),
 			;
 
 			Option(int shortcutKey, String name) {

@@ -64,6 +64,7 @@ public class PacketConstants {
 	public static final int SEND_GRAND_EXCHANGE_UPDATE = 200;
 
 	public static final int INTERFACE_TAB_ID_OPCODE = 239;
+	public static final int CLEAR_INVENTORY_OPCODE = 223;
 
 	public static final int OBJECT_FIRST_CLICK_OPCODE = 132, OBJECT_SECOND_CLICK_OPCODE = 252,
 			OBJECT_THIRD_CLICK_OPCODE = 70, OBJECT_FOURTH_CLICK_OPCODE = 234, OBJECT_FIFTH_CLICK_OPCODE = 228;
@@ -158,5 +159,6 @@ public class PacketConstants {
 		PACKETS[TRADE_REQUEST_OPCODE] = new TradeRequestPacketListener();
 		PACKETS[CREATION_MENU_OPCODE] = new CreationMenuPacketListener();
 		PACKETS[INTERFACE_TAB_ID_OPCODE] = new TabInterfaceIdListener();
+		PACKETS[CLEAR_INVENTORY_OPCODE] = new ClearInventoryPacketListener();
 	}
 }

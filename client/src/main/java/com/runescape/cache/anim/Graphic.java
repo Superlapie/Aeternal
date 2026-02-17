@@ -4,6 +4,14 @@ import com.runescape.cache.FileArchive;
 import com.runescape.collection.ReferenceCache;
 import com.runescape.entity.model.Model;
 import com.runescape.io.Buffer;
+import com.runescape.sign.SignLink;
+
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public final class Graphic {
 
@@ -30,7 +38,17 @@ public final class Graphic {
     }
 
     public static void init(FileArchive archive) {
-        Buffer stream = new Buffer(archive.readFile("spotanim.dat"));
+        byte[] spotanimData = archive.readFile("spotanim.dat");
+        Path extSpotanimDat = Paths.get(SignLink.findcachedir(), "spotanim.dat");
+        if (Files.exists(extSpotanimDat)) {
+            try {
+                spotanimData = Files.readAllBytes(extSpotanimDat);
+                System.out.println("Loaded external graphics: " + extSpotanimDat.toAbsolutePath());
+            } catch (Exception ignored) {
+            }
+        }
+
+        Buffer stream = new Buffer(spotanimData);
         int length = stream.readUShort();
         if (cache == null)
             cache = new Graphic[length + 1];
@@ -41,7 +59,68 @@ public final class Graphic {
             cache[index].readValues(stream);
         }
 
+        load2446Overrides();
+        ensureEclipseSlots();
+
         System.out.println("Loaded: " + length + " graphics");
+    }
+
+    private static void load2446Overrides() {
+        Path cacheDir = Paths.get(SignLink.findcachedir());
+        int loaded = 0;
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(cacheDir, "e2446_spot_*.dat")) {
+            for (Path path : ds) {
+                String name = path.getFileName().toString();
+                int idStart = "e2446_spot_".length();
+                int idEnd = name.lastIndexOf(".dat");
+                if (idEnd <= idStart) {
+                    continue;
+                }
+
+                int id;
+                try {
+                    id = Integer.parseInt(name.substring(idStart, idEnd));
+                } catch (NumberFormatException ignored) {
+                    continue;
+                }
+
+                byte[] data = Files.readAllBytes(path);
+                Graphic override = new Graphic();
+                override.anInt404 = id;
+                override.readValues(new Buffer(data));
+                if (override.animationId != -1
+                        && (Animation.animations == null
+                        || override.animationId >= Animation.animations.length
+                        || Animation.animations[override.animationId] == null)) {
+                    System.out.println("Skipped invalid 2446 spotanim override " + id + " (missing anim " + override.animationId + ")");
+                    continue;
+                }
+
+                if (id >= cache.length) {
+                    cache = Arrays.copyOf(cache, id + 1);
+                }
+                cache[id] = override;
+                loaded++;
+            }
+        } catch (IOException ignored) {
+        }
+
+        if (loaded > 0) {
+            System.out.println("Loaded 2446 spotanim overrides: " + loaded);
+        }
+    }
+
+    private static void ensureEclipseSlots() {
+        final int[] eclipseIds = {2709, 2710, 2711, 2712, 3017, 3030};
+        int max = 0;
+        for (int id : eclipseIds) {
+            if (id > max) {
+                max = id;
+            }
+        }
+        if (cache.length <= max) {
+            cache = Arrays.copyOf(cache, max + 1);
+        }
     }
 
     public void readValues(Buffer buffer) {
@@ -55,7 +134,7 @@ public final class Graphic {
             } else if (opcode == 2) {
                 animationId = buffer.readUShort();
 
-                if (Animation.animations != null)
+                if (Animation.animations != null && animationId >= 0 && animationId < Animation.animations.length)
                     animationSequence = Animation.animations[animationId];
             } else if (opcode == 4) {
                 resizeXY = buffer.readUShort();

@@ -120,6 +120,8 @@ public class CommandManager {
         put(new GiveDonator(), "givedonator");
         put(new SetDropRateCommand(), "setdroprate");
         put(new IdCommand(), "id");
+        put(new TestMoonItems(), "testmoon");
+        put(new DebugItemLoading(), "debugitems");
 
         if (!Server.PRODUCTION) {
             put(new DebugCommand(), "t");

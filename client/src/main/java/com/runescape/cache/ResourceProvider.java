@@ -1,6 +1,7 @@
 package com.runescape.cache;
 
 import com.runescape.Client;
+import com.runescape.cache.bzip.BZip2Decompressor;
 import com.runescape.collection.Deque;
 import com.runescape.collection.Queue;
 import com.runescape.io.Buffer;
@@ -444,8 +445,12 @@ public final class ResourceProvider implements Runnable {
             if (resource.dataType == 3 && missingMapArchives.add(resource.ID)) {
                 System.out.println("Failed to unzip archive [" + resource.ID + "] type = " + resource.dataType);
                 System.out.println("Corrupt map archive skipped [id = " + resource.ID + "]");
-                _ex.printStackTrace();
                 return null;
+            }
+            byte[] unpacked = unpackJs5Container(originalData);
+            if (unpacked != null) {
+                resource.buffer = unpacked;
+                return resource;
             }
             // Compatibility path: some imported caches store a subset of archives already
             // decoded (non-gzip). Let downstream loaders decide if the payload is usable.
@@ -460,6 +465,65 @@ public final class ResourceProvider implements Runnable {
         System.arraycopy(gzipInputBuffer, 0, resource.buffer, 0, read);
 
         return resource;
+    }
+
+    private static byte[] unpackJs5Container(byte[] data) {
+        if (data == null || data.length < 5) {
+            return null;
+        }
+        int type = data[0] & 0xff;
+        int compressedLength = readInt(data, 1);
+        if (compressedLength < 0) {
+            return null;
+        }
+        if (type == 0) {
+            if (data.length < 5 + compressedLength) {
+                return null;
+            }
+            byte[] out = new byte[compressedLength];
+            System.arraycopy(data, 5, out, 0, compressedLength);
+            return out;
+        }
+        if (data.length < 9) {
+            return null;
+        }
+        int decompressedLength = readInt(data, 5);
+        if (decompressedLength < 0 || data.length < 9 + compressedLength) {
+            return null;
+        }
+        byte[] out = new byte[decompressedLength];
+        if (type == 1) {
+            BZip2Decompressor.decompress(out, decompressedLength, data, compressedLength, 9);
+            return out;
+        }
+        if (type == 2) {
+            try (GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(data, 9, compressedLength))) {
+                int read = 0;
+                while (read < decompressedLength) {
+                    int count = gis.read(out, read, decompressedLength - read);
+                    if (count == -1) {
+                        break;
+                    }
+                    read += count;
+                }
+                if (read == decompressedLength) {
+                    return out;
+                }
+            } catch (IOException ignored) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    private static int readInt(byte[] data, int offset) {
+        if (offset + 4 > data.length) {
+            return -1;
+        }
+        return ((data[offset] & 0xff) << 24)
+                | ((data[offset + 1] & 0xff) << 16)
+                | ((data[offset + 2] & 0xff) << 8)
+                | (data[offset + 3] & 0xff);
     }
 
     public int resolve(int landscapeOrObject, int regionY, int regionX) {
@@ -504,10 +568,12 @@ public final class ResourceProvider implements Runnable {
                 break;
             }
             try {
-                if (fileStatus[request.dataType][request.ID] != 0) {
-                    filesLoaded++;
+                if (hasFileStatusEntry(request.dataType, request.ID)) {
+                    if (fileStatus[request.dataType][request.ID] != 0) {
+                        filesLoaded++;
+                    }
+                    fileStatus[request.dataType][request.ID] = 0;
                 }
-                fileStatus[request.dataType][request.ID] = 0;
                 requested.insertHead(request);
                 uncompletedCount++;
                 request(request);
@@ -594,7 +660,8 @@ public final class ResourceProvider implements Runnable {
                 resource = (Resource) extras.popHead();
             }
             while (resource != null) {
-                if (fileStatus[resource.dataType][resource.ID] != 0) {
+                if (hasFileStatusEntry(resource.dataType, resource.ID)
+                        && fileStatus[resource.dataType][resource.ID] != 0) {
                     fileStatus[resource.dataType][resource.ID] = 0;
                     requested.insertHead(resource);
                     request(resource);
@@ -633,4 +700,13 @@ public final class ResourceProvider implements Runnable {
         }
     }
 
+    private boolean hasFileStatusEntry(int type, int id) {
+        if (type < 0 || type >= fileStatus.length || id < 0) {
+            return false;
+        }
+        byte[] status = fileStatus[type];
+        return status != null && id < status.length;
+    }
+
 }
+

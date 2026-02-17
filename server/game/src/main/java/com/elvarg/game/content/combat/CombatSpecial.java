@@ -35,6 +35,7 @@ import com.elvarg.game.content.combat.method.impl.specials.ShoveCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.StatiusWarhammerCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ToxicBlowpipeCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.VestasLongswordCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.VoidwakerCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.VolatileNightmareStaffCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ZamorakGodswordCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ZaryteCrossbowCombatMethod;
@@ -70,6 +71,8 @@ public enum CombatSpecial {
             WeaponInterface.MACE),
     DRAGON_WARHAMMER(new int[]{13576}, 50, 1.5, 1.00,
             new DragonWarhammerCombatMethod(), WeaponInterface.WARHAMMER),
+    VOIDWAKER(new int[]{27690}, 50, 1.0, 1.0,
+            new VoidwakerCombatMethod(), WeaponInterface.LONGSWORD),
     VESTAS_LONGSWORD(new int[]{22613},
                     25, 1.0, 1.0, new VestasLongswordCombatMethod(), WeaponInterface.LONGSWORD),
     STATIUS_WARHAMMER(new int[]{22622}, 35, 1.0, 1.0, new StatiusWarhammerCombatMethod(), WeaponInterface.WARHAMMER),

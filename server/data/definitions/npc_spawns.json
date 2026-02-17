@@ -3207,5 +3207,16 @@
       "y": 3089,
       "z": 0
     }
+  },
+  {
+    "facing": "SOUTH",
+    "radius": 4,
+    "description": "Yama",
+    "id": 13243,
+    "position": {
+      "x": 3810,
+      "y": 9775,
+      "z": 1
+    }
   }
 ]

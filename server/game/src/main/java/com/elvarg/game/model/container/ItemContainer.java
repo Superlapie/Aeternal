@@ -190,6 +190,9 @@ public abstract class ItemContainer {
      * @param item Item that will occupy the slot.
      */
     public ItemContainer setItem(int slot, Item item) {
+        if (slot < 0 || slot >= items.length) {
+            return this;
+        }
         items[slot] = item;
         return this;
     }
@@ -201,6 +204,9 @@ public abstract class ItemContainer {
      * @return items[slot] != null.
      */
     public boolean isSlotOccupied(int slot) {
+        if (slot < 0 || slot >= items.length) {
+            return false;
+        }
         return items[slot] != null && items[slot].getId() > 0 && items[slot].getAmount() > 0;
     }
 
@@ -394,6 +400,9 @@ public abstract class ItemContainer {
      * @return The total amount of items in the container with said slot.
      */
     public int getAmountForSlot(int slot) {
+        if (slot < 0 || slot >= items.length) {
+            return 0;
+        }
         return items[slot].getAmount();
     }
 
@@ -416,6 +425,9 @@ public abstract class ItemContainer {
      * @return Item in said slot.
      */
     public Item forSlot(int slot) {
+        if (slot < 0 || slot >= items.length) {
+            return new Item(-1, 0);
+        }
         return items[slot];
     }
 

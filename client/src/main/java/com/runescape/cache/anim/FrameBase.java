@@ -11,8 +11,17 @@ public final class FrameBase {
 
     public final int[][] skinList;
 
+    public FrameBase(int[] transformationType, int[][] skinList) {
+        this.transformationType = transformationType;
+        this.skinList = skinList;
+    }
+
     public FrameBase(Buffer stream) {
         int count = stream.readUShort();
+        
+        if (count < 0 || count > 10000) {
+            throw new RuntimeException("Invalid frame base count: " + count);
+        }
 
         transformationType = new int[count];
         skinList = new int[count][];
@@ -22,7 +31,11 @@ public final class FrameBase {
         }
 
         for (int label = 0; label < count; label++) {
-            skinList[label] = new int[stream.readUShort()];
+            int skinCount = stream.readUShort();
+            if (skinCount < 0 || skinCount > 10000) {
+                throw new RuntimeException("Invalid skin count: " + skinCount);
+            }
+            skinList[label] = new int[skinCount];
         }
 
         for (int label = 0; label < count; label++) {

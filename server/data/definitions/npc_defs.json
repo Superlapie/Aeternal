@@ -176780,5 +176780,25 @@
     "attackSpeed": 6,
     "combatLevel": 0,
     "stats": [300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300]
+  },
+  {
+    "id": 13243,
+    "name": "Yama",
+    "examine": "A powerful infernal fiend.",
+    "size": 5,
+    "walkRadius": 0,
+    "attackable": true,
+    "retreats": false,
+    "aggressive": true,
+    "fightsBack": true,
+    "respawn": 0,
+    "maxHit": 80,
+    "hitpoints": 2500,
+    "attackSpeed": 6,
+    "attackAnim": 11342,
+    "defenceAnim": 11339,
+    "deathAnim": 11358,
+    "combatLevel": 1238,
+    "stats": [320, 225, 350, 2500, 210, 250, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300, 300]
   }
 ]

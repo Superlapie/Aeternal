@@ -91,7 +91,12 @@ public class Mob extends Renderable {
     }
 
     public final void setPos(int x, int y, boolean flag) {
-        if (emoteAnimation != -1 && Animation.animations[emoteAnimation].priority == 1)
+        if (emoteAnimation >= Animation.animations.length) {
+            emoteAnimation = -1;
+        }
+        if (emoteAnimation != -1
+                && Animation.animations[emoteAnimation] != null
+                && Animation.animations[emoteAnimation].priority == 1)
             emoteAnimation = -1;
 
         if (!flag) {
@@ -365,7 +370,9 @@ public class Mob extends Renderable {
             x++;
             y--;
         }
-        if (emoteAnimation != -1 && Animation.animations[emoteAnimation].priority == 1)
+        if (emoteAnimation != -1
+                && Animation.animations[emoteAnimation] != null
+                && Animation.animations[emoteAnimation].priority == 1)
             emoteAnimation = -1;
         if (remainingPath < 9)
             remainingPath++;
@@ -384,7 +391,17 @@ public class Mob extends Renderable {
         try {
             animationStretches = false;
             if (movementAnimation != -1) {
-                Animation animation = Animation.animations[movementAnimation];
+                if (movementAnimation >= Animation.animations.length) {
+                    movementAnimation = -1;
+                    return;
+                }
+            Animation animation = Animation.animations[movementAnimation];
+            if (animation == null || animation.frameCount <= 0) {
+                movementAnimation = -1;
+                displayedMovementFrames = 0;
+                anInt1519 = 0;
+                return;
+            }
                 anInt1519++;
                 if (displayedMovementFrames < animation.frameCount && anInt1519 > animation.duration(displayedMovementFrames)) {
                     anInt1519 = 1;
@@ -398,7 +415,20 @@ public class Mob extends Renderable {
             if (graphic != -1 && Client.tick >= graphicDelay) {
                 if (currentAnimation < 0)
                     currentAnimation = 0;
+                if (graphic >= Graphic.cache.length || Graphic.cache[graphic] == null
+                        || Graphic.cache[graphic].animationSequence == null) {
+                    graphic = -1;
+                    currentAnimation = 0;
+                    anInt1522 = 0;
+                    return;
+                }
                 Animation animation_1 = Graphic.cache[graphic].animationSequence;
+                if (animation_1 == null || animation_1.frameCount <= 0) {
+                    graphic = -1;
+                    currentAnimation = 0;
+                    anInt1522 = 0;
+                    return;
+                }
 
                 for (anInt1522++; currentAnimation < animation_1.frameCount && anInt1522 > animation_1.duration(currentAnimation); currentAnimation++)
                     anInt1522 -= animation_1.duration(currentAnimation);
@@ -409,14 +439,30 @@ public class Mob extends Renderable {
                 }
             }
             if (emoteAnimation != -1 && animationDelay <= 1) {
+                if (emoteAnimation >= Animation.animations.length) {
+                    emoteAnimation = -1;
+                    return;
+                }
                 Animation animation_2 = Animation.animations[emoteAnimation];
+                if (animation_2 == null || animation_2.frameCount <= 0) {
+                    emoteAnimation = -1;
+                    return;
+                }
                 if (animation_2.animatingPrecedence == 1 && anInt1542 > 0 && startForceMovement <= Client.tick && endForceMovement < Client.tick) {
                     animationDelay = 1;
                     return;
                 }
             }
             if (emoteAnimation != -1 && animationDelay == 0) {
+                if (emoteAnimation >= Animation.animations.length) {
+                    emoteAnimation = -1;
+                    return;
+                }
                 Animation animation_3 = Animation.animations[emoteAnimation];
+                if (animation_3 == null || animation_3.frameCount <= 0) {
+                    emoteAnimation = -1;
+                    return;
+                }
                 for (emoteTimeRemaining++; displayedEmoteFrames < animation_3.frameCount && emoteTimeRemaining > animation_3.duration(displayedEmoteFrames); displayedEmoteFrames++)
                     emoteTimeRemaining -= animation_3.duration(displayedEmoteFrames);
 

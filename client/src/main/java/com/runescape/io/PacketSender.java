@@ -443,6 +443,10 @@ public class PacketSender {
         }
     }
     
+    public void sendClearInventory() {
+        buffer.writeOpcode(223); // Custom opcode for clearing inventory
+    }
+    
     public Buffer getBuffer() {
         return buffer;
     }

@@ -5,7 +5,7 @@ kotlinLogging = "2.1.23"
 
 gson = "_"
 kotlinxSerializationCore = "_"
-kotlin = "1.8.10"
+kotlin = "1.9.10"
 caffeine = "3.1.1"
 nettyAll = "4.1.72.Final"
 
@@ -15,7 +15,7 @@ slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4jApi" 
 kotlin-logging = { group = "io.github.microutils", name = "kotlin-logging", version.ref = "kotlinLogging" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
-kotlin-scripting = {group = "org.jetbrains.kotlin", name = "kotlin-scripting-common", version = "_"}
+kotlin-scripting = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-common", version.ref = "kotlin" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin"}
 kotlin-script-runtime = { group = "org.jetbrains.kotlin", name = "kotlin-script-runtime", version.ref = "kotlin"}
 kotlinx-coroutines = {group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "_"}

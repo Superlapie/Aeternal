@@ -119,6 +119,9 @@ public final class Buffer extends Cacheable {
     }
 
     public int readUShort() {
+        if (currentPosition + 2 > payload.length) {
+            throw new ArrayIndexOutOfBoundsException("Buffer underflow: attempted to read 2 bytes from position " + currentPosition + " but only " + (payload.length - currentPosition) + " bytes available");
+        }
         currentPosition += 2;
         return ((payload[currentPosition - 2] & 0xff) << 8)
                 + (payload[currentPosition - 1] & 0xff);
