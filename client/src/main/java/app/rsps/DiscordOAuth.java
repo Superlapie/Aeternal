@@ -6,6 +6,7 @@ package app.rsps;
  * @author shogun <shogunrsps@gmail.com>
  */
 
+/*
 import com.runescape.Configuration.DiscordConfiguration;
 import fi.iki.elonen.NanoHTTPD;
 
@@ -30,10 +31,6 @@ public class DiscordOAuth {
         return "https://discord.com/api/oauth2/authorize?client_id=" + DiscordConfiguration.CLIENT_ID + "&redirect_uri=http%3A%2F%2Flocalhost%3A8080&response_type=code&scope=identify";
     }
 
-    /**
-     * Lightweight wrapper around the web framework. Intended to isolate the actual HTTP
-     * processing of receiving the Discord callback
-     */
     class DiscordOAuthListener extends NanoHTTPD {
         private DiscordOAuth parent;
         public DiscordOAuthListener(DiscordOAuth parent) {
@@ -82,4 +79,10 @@ public class DiscordOAuth {
     static {
         instance = new DiscordOAuth();
     }
+}
+*/
+public class DiscordOAuth {
+    public static DiscordOAuth getInstance() { return null; }
+    public static String getOAuthUrl() { return ""; }
+    public void setCallback(java.util.function.Function<String, Void> callback) {}
 }

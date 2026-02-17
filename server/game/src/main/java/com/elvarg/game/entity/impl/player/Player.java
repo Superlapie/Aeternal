@@ -99,6 +99,7 @@ public class Player extends Mobile {
 	public final SecondsTimer decreaseStats = new SecondsTimer();
 	private final List<Player> localPlayers = new LinkedList<Player>();
 	private final List<NPC> localNpcs = new LinkedList<NPC>();
+	private List<String> slayerUnlocks = new ArrayList<>();
 	private final PacketSender packetSender = new PacketSender(this);
 	private final Appearance appearance = new Appearance(this);
 	private final SkillManager skillManager = new SkillManager(this);
@@ -794,7 +795,15 @@ public class Player extends Mobile {
 		creationDate = timestamp;
 	}
 
-	public PlayerSession getSession() {
+	public List<String> getSlayerUnlocks() {
+        return slayerUnlocks;
+    }
+    
+    public void setSlayerUnlocks(List<String> slayerUnlocks) {
+        this.slayerUnlocks = slayerUnlocks;
+    }
+
+    public PlayerSession getSession() {
 		return session;
 	}
 

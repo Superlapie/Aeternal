@@ -110,7 +110,21 @@ public class Slayer {
         }
 
         // Assign the new task
-        ActiveSlayerTask activeTask = new ActiveSlayerTask(master, toAssign, Misc.inclusive(toAssign.getMinimumAmount(), toAssign.getMaximumAmount()));
+        int min = toAssign.getMinimumAmount();
+        int max = toAssign.getMaximumAmount();
+        
+        // Check for extensions
+        if (player.getSlayerUnlocks() != null) {
+            String extensionName = "EXTENDED_" + toAssign.name();
+            if (player.getSlayerUnlocks().contains(extensionName)) {
+                // Extend by 50-100% roughly, or fixed amount. OSRS usually sets a higher bracket.
+                // We'll just double the max and increase min significantly.
+                min += 50;
+                max += 100;
+            }
+        }
+        
+        ActiveSlayerTask activeTask = new ActiveSlayerTask(master, toAssign, Misc.inclusive(min, max));
         
         // Handle specialized masters
         if (master == SlayerMaster.KONAR) {
@@ -264,8 +278,8 @@ public class Slayer {
         }
         
         List<SlayerTask> blocked = player.getBlockedSlayerTasks().computeIfAbsent(master, k -> new ArrayList<>());
-        if (blocked.size() >= 5) {
-            player.getPacketSender().sendMessage("You can only block up to 5 tasks for this master.");
+        if (blocked.size() >= 7) {
+            player.getPacketSender().sendMessage("You can only block up to 7 tasks for this master.");
             return;
         }
         
@@ -367,8 +381,13 @@ public class Slayer {
         String name = npc.getCurrentDefinition().getName().toLowerCase();
         boolean success = false;
         
-        if (name.contains("gargoyle") && itemId == ItemIdentifiers.ROCK_HAMMER) {
-            success = true;
+        // Check for Gargoyle Smasher unlock
+        boolean hasSmasher = player.getSlayerUnlocks() != null && player.getSlayerUnlocks().contains(SlayerUnlock.GARGOYLE_SMASHER.name());
+        
+        if (name.contains("gargoyle")) {
+            if (itemId == ItemIdentifiers.ROCK_HAMMER || (hasSmasher && player.getInventory().contains(ItemIdentifiers.ROCK_HAMMER))) {
+                success = true;
+            }
         } else if (name.contains("rockslug") && itemId == ItemIdentifiers.BAG_OF_SALT) {
             success = true;
         } else if (name.contains("desert lizard") && itemId == ItemIdentifiers.ICE_COOLER) {

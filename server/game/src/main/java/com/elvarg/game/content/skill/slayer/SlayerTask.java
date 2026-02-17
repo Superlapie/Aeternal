@@ -138,7 +138,7 @@ public enum SlayerTask {
     
     @Override
     public String toString() {
-        return Misc.ucFirst(name().toLowerCase().replaceAll("_", ""));
+        return Misc.ucFirst(name().toLowerCase().replaceAll("_", " "));
     }
 
     public boolean isUnlocked(Player player) {

@@ -421,6 +421,7 @@ public class Widget {
 
 		SettingsWidget.widget();
 		SettingsWidget.advancedWidget();
+		SlayerRewardsWidget.widget();
 		keybinding();
 
 		levelUpInterfaces();

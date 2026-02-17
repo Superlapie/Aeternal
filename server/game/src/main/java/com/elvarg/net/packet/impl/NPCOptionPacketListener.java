@@ -19,6 +19,8 @@ import com.elvarg.game.model.container.shop.ShopManager;
 import com.elvarg.game.model.dialogues.builders.impl.EmblemTraderDialogue;
 import com.elvarg.game.content.skill.slayer.SlayerDialogue;
 import com.elvarg.game.content.skill.slayer.SlayerMaster;
+import com.elvarg.game.content.skill.slayer.SlayerRewards;
+import com.elvarg.game.content.skill.slayer.Slayer;
 import com.elvarg.game.model.dialogues.builders.impl.ParduDialogue;
 import com.elvarg.game.model.PlayerStatus;
 import com.elvarg.game.model.rights.PlayerRights;
@@ -314,7 +316,22 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 case 7663:
                 case 8623:
                 case 9085:
-                    ShopManager.open(player, ShopIdentifiers.SLAYER_SHOP);
+                    SlayerMaster master = null;
+                    for (SlayerMaster m : SlayerMaster.MASTERS) {
+                        if (m.getNpcId() == npc.getId()) {
+                            master = m;
+                            break;
+                        }
+                    }
+                    if (master != null) {
+                        if (player.getSlayerTask() != null) {
+                            player.getPacketSender().sendMessage("You already have a Slayer task: " + player.getSlayerTask().getTask().toString());
+                        } else {
+                            if (Slayer.assign(player, master)) {
+                                player.getPacketSender().sendMessage("You have been assigned to kill " + player.getSlayerTask().getRemaining() + " " + player.getSlayerTask().getTask().toString() + ".");
+                            }
+                        }
+                    }
                     break;
                 case BANKER:
                 case BANKER_2:
@@ -364,7 +381,17 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 			}
 
             switch (npc.getId()) {
-
+                case NIEVE:
+                case 6798:
+                case 401:
+                case 402:
+                case 403:
+                case 404:
+                case 7663:
+                case 8623:
+                case 9085:
+                    SlayerRewards.openRewards(player, npc.getId());
+                    break;
                 case EMBLEM_TRADER:
                     player.getDialogueManager().start(new EmblemTraderDialogue(), 2);
                     break;
@@ -382,6 +409,17 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 			}
 
             switch (npc.getId()) {
+                case NIEVE:
+                case 6798:
+                case 401:
+                case 402:
+                case 403:
+                case 404:
+                case 7663:
+                case 8623:
+                case 9085:
+                    SlayerRewards.openRewards(player, npc.getId());
+                    break;
                 case EMBLEM_TRADER:
                     player.getDialogueManager().start(new EmblemTraderDialogue(), 5);
                     break;

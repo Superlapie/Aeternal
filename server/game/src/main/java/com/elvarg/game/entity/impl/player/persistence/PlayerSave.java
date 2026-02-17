@@ -82,6 +82,7 @@ public class PlayerSave {
     private ActiveSlayerTask storedSlayerTask;
     private Map<SlayerMaster, List<SlayerTask>> blockedSlayerTasks;
     private int slayerPoints;
+    private List<String> slayerUnlocks;
     private int consecutiveTasks;
 
     public String getPasswordHashWithSalt() {
@@ -623,6 +624,9 @@ public class PlayerSave {
             player.getBlockedSlayerTasks().putAll(this.blockedSlayerTasks);
         }
         player.setSlayerPoints(this.slayerPoints);
+        if (this.slayerUnlocks != null) {
+            player.setSlayerUnlocks(this.slayerUnlocks);
+        }
         player.setConsecutiveTasks(this.consecutiveTasks);
     }
 
@@ -714,6 +718,7 @@ public class PlayerSave {
         playerSave.storedSlayerTask = player.getStoredSlayerTask();
         playerSave.blockedSlayerTasks = player.getBlockedSlayerTasks();
         playerSave.slayerPoints = player.getSlayerPoints();
+        playerSave.slayerUnlocks = player.getSlayerUnlocks();
         playerSave.consecutiveTasks = player.getConsecutiveTasks();
 
         return playerSave;
