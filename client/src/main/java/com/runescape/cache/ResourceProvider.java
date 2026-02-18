@@ -231,6 +231,7 @@ public final class ResourceProvider implements Runnable {
             mapFiles[i2] = stream.readUShort();
             landscapes[i2] = stream.readUShort();
         }
+        addMapBridgeEntry(14744, 4227, 4228);
 
         System.out.println("Loaded: " + file_amounts[3] + " maps");
 
@@ -442,15 +443,15 @@ public final class ResourceProvider implements Runnable {
                 read += in;
             } while (true);
         } catch (IOException _ex) {
-            if (resource.dataType == 3 && missingMapArchives.add(resource.ID)) {
-                System.out.println("Failed to unzip archive [" + resource.ID + "] type = " + resource.dataType);
-                System.out.println("Corrupt map archive skipped [id = " + resource.ID + "]");
-                return null;
-            }
             byte[] unpacked = unpackJs5Container(originalData);
             if (unpacked != null) {
                 resource.buffer = unpacked;
                 return resource;
+            }
+            if (resource.dataType == 3 && missingMapArchives.add(resource.ID)) {
+                System.out.println("Failed to unzip archive [" + resource.ID + "] type = " + resource.dataType);
+                System.out.println("Corrupt map archive skipped [id = " + resource.ID + "]");
+                return null;
             }
             // Compatibility path: some imported caches store a subset of archives already
             // decoded (non-gzip). Let downstream loaders decide if the payload is usable.
@@ -545,6 +546,25 @@ public final class ResourceProvider implements Runnable {
             if (landscapes[index] == landscape)
                 return true;
         return false;
+    }
+
+    private void addMapBridgeEntry(int regionId, int terrainArchive, int objectArchive) {
+        for (int i = 0; i < areas.length; i++) {
+            if (areas[i] == regionId) {
+                mapFiles[i] = terrainArchive;
+                landscapes[i] = objectArchive;
+                return;
+            }
+        }
+        int newLen = areas.length + 1;
+        areas = java.util.Arrays.copyOf(areas, newLen);
+        mapFiles = java.util.Arrays.copyOf(mapFiles, newLen);
+        landscapes = java.util.Arrays.copyOf(landscapes, newLen);
+        areas[newLen - 1] = regionId;
+        mapFiles[newLen - 1] = terrainArchive;
+        landscapes[newLen - 1] = objectArchive;
+        file_amounts[3] = newLen;
+        System.out.println("Added map bridge region " + regionId + " -> " + terrainArchive + "," + objectArchive);
     }
 
     private void requestMandatory() {

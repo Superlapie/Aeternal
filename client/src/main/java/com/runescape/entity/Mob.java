@@ -213,13 +213,17 @@ public class Mob extends Renderable {
             return;
         }
 
-        if (emoteAnimation > Animation.animations.length) {
+        if (Animation.animations == null || emoteAnimation >= Animation.animations.length) {
             emoteAnimation = -1;
             return;
         }
 
         if (emoteAnimation != -1 && animationDelay == 0) {
             Animation animation = Animation.animations[emoteAnimation];
+            if (animation == null) {
+                emoteAnimation = -1;
+                return;
+            }
             if (anInt1542 > 0 && animation.animatingPrecedence == 0) {
                 anInt1503++;
                 return;

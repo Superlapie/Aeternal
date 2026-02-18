@@ -77,8 +77,13 @@ public final class ObjectDefinition {
     }
 
     public static ObjectDefinition lookup(int id) {
-        if (id > streamIndices.length)
+        if (id >= streamIndices.length) {
+            ObjectDefinition fallback = lookupFallback(id);
+            if (fallback != null) {
+                return fallback;
+            }
             id = streamIndices.length - 1;
+        }
         for (int index = 0; index < 20; index++)
             if (cache[index].type == id)
                 return cache[index];
@@ -228,6 +233,10 @@ public final class ObjectDefinition {
             cache[index] = new ObjectDefinition();
 
         System.out.println("Loaded: " + TOTAL_OBJECTS + " objects");
+    }
+
+    private static ObjectDefinition lookupFallback(int id) {
+        return null;
     }
 
     public void reset() {

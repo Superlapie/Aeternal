@@ -30,19 +30,48 @@ public final class Npc extends Mob {
     }
 
     private Model getAnimatedModel() {
-        if (super.emoteAnimation >= 0 && super.animationDelay == 0) {
-            int emote = Animation.animations[super.emoteAnimation].primaryFrames[super.displayedEmoteFrames];
-            int movement = -1;
-            if (super.movementAnimation >= 0 && super.movementAnimation != super.idleAnimation)
-                movement = Animation.animations[super.movementAnimation].primaryFrames[super.displayedMovementFrames];
-            return desc.getAnimatedModel(movement, emote,
-                    Animation.animations[super.emoteAnimation].interleaveOrder);
+        int emoteFrame = -1;
+        int movementFrame = -1;
+        int[] interleave = null;
+
+        if (super.emoteAnimation >= 0 && super.animationDelay == 0
+                && super.emoteAnimation < Animation.animations.length) {
+            Animation emoteAnim = Animation.animations[super.emoteAnimation];
+            if (emoteAnim != null
+                    && !emoteAnim.isSkeletalSequence()
+                    && emoteAnim.primaryFrames != null
+                    && super.displayedEmoteFrames >= 0
+                    && super.displayedEmoteFrames < emoteAnim.primaryFrames.length) {
+                emoteFrame = emoteAnim.primaryFrames[super.displayedEmoteFrames];
+                interleave = emoteAnim.interleaveOrder;
+            }
         }
-        int movement = -1;
-        if (super.movementAnimation >= 0) {
-            movement = Animation.animations[super.movementAnimation].primaryFrames[super.displayedMovementFrames];
+
+        if (super.movementAnimation >= 0
+                && super.movementAnimation < Animation.animations.length
+                && (super.movementAnimation != super.idleAnimation || emoteFrame == -1)) {
+            Animation movementAnim = Animation.animations[super.movementAnimation];
+            if (movementAnim != null
+                    && !movementAnim.isSkeletalSequence()
+                    && movementAnim.primaryFrames != null
+                    && super.displayedMovementFrames >= 0
+                    && super.displayedMovementFrames < movementAnim.primaryFrames.length) {
+                movementFrame = movementAnim.primaryFrames[super.displayedMovementFrames];
+            }
         }
-        return desc.getAnimatedModel(-1, movement, null);
+
+        // 2446 Yama body anims are skeletal/maya and not directly playable in this client.
+        // Reject invalid/unsupported transform frames so Yama stays visible instead of warping.
+        if (desc != null && (desc.id == 13243 || desc.id == 14176 || desc.id == 15555)) {
+            if (movementFrame != -1 && Frame.method531(movementFrame) == null) {
+                movementFrame = -1;
+            }
+            if (emoteFrame != -1 && Frame.method531(emoteFrame) == null) {
+                emoteFrame = -1;
+            }
+        }
+
+        return desc.getAnimatedModel(movementFrame, emoteFrame, interleave);
     }
 
     public Model getRotatedModel() {

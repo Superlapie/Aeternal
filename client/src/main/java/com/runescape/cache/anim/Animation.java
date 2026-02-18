@@ -1,5 +1,6 @@
 package com.runescape.cache.anim;
 
+import com.google.gson.Gson;
 import com.runescape.cache.FileArchive;
 import com.runescape.io.Buffer;
 import com.runescape.sign.SignLink;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,9 +22,23 @@ public final class Animation {
             10815, 10818, 10819,
             11051, 11052, 11053, 11055,
             11057, 11058, 11059, 11060, 11061, 11062, 11063, 11064,
-            11240, 11275, 11463, 11464
+            11240, 11275, 11463, 11464,
+            12095, 12096, 12097, 12098, 12099, 12100, 12101, 12102, 12103, 12104,
+            12105, 12106, 12107, 12108, 12109, 12110, 12111, 12112, 12113, 12114,
+            12115, 12116, 12117, 12118, 12119, 12120, 12121, 12128, 12129, 12130,
+            12138, 12149, 12152, 12169, 12170, 12171, 12172, 12173, 12174, 12175,
+            12176, 12196,
+            12142, 12144, 12145, 12146, 12147, 12148, 12156, 12160, 12161,
+            // Yama true ids from 2446 export are retained as slots; these entries are
+            // skeletal/maya in this client and may fallback if not directly playable.
+            12140, 12141
     ));
+    private static final Set<Integer> OPCODE14_USHORT_2446 = new HashSet<>(Arrays.asList(
+            11338, 11339, 11342, 11345, 11350, 11355, 11358
+    ));
+    private static boolean decodeOpcode14AsUShort = false;
     private static final Set<Integer> loggedUnknownOpcodes = new HashSet<>();
+    private static final Gson GSON = new Gson();
 
     public static Animation[] animations;
     public int frameCount;
@@ -97,10 +113,114 @@ public final class Animation {
         }
 
         load2446Overrides();
+        loadAraxxorOverridesFromExt();
+        materializeAnimayaFallbacks();
         ensureEclipseSlots();
 
         System.out.println("Loaded: " + length + " animations");
         dumpEclipseAnimationCandidates();
+    }
+
+    private static void materializeAnimayaFallbacks() {
+        if (animations == null || Frame.animationlist == null) {
+            return;
+        }
+        int converted = 0;
+        int[] yamaProbeIds = {12140, 12141, 12144, 12145, 12146, 12148};
+        for (int id = 0; id < animations.length; id++) {
+            Animation anim = animations[id];
+            if (anim == null || anim.hasClassicFrames() || anim.skeletalId == -1) {
+                continue;
+            }
+
+            int packed = anim.skeletalId;
+            int sourceGroup = packed >>> 16;
+            int baseFile = packed & 0xFFFF;
+            if (sourceGroup <= 0) {
+                continue;
+            }
+
+            int aliasGroup = 24000 + sourceGroup;
+            Frame.register2446AliasGroup(aliasGroup, sourceGroup);
+            Frame.method531((aliasGroup << 16) | Math.max(0, baseFile));
+
+            if (aliasGroup >= Frame.animationlist.length || Frame.animationlist[aliasGroup] == null) {
+                if (contains(yamaProbeIds, id)) {
+                    System.out.println("Animaya fallback skipped seq " + id + " (group " + sourceGroup + " not loadable)");
+                }
+                continue;
+            }
+
+            Frame[] groupFrames = Frame.animationlist[aliasGroup];
+            int available = 0;
+            for (int i = 0; i < groupFrames.length; i++) {
+                if (groupFrames[i] != null) {
+                    available++;
+                }
+            }
+            if (available == 0) {
+                if (contains(yamaProbeIds, id)) {
+                    System.out.println("Animaya fallback skipped seq " + id + " (group " + sourceGroup + " has 0 classic frames)");
+                }
+                continue;
+            }
+
+            int start = Math.max(0, baseFile);
+            int end = groupFrames.length;
+            if (anim.skeletalRangeEnd > anim.skeletalRangeBegin && anim.skeletalRangeBegin >= 0) {
+                start = Math.max(start, anim.skeletalRangeBegin);
+                end = Math.min(end, anim.skeletalRangeEnd);
+            }
+            if (start >= end) {
+                start = Math.max(0, baseFile);
+                end = groupFrames.length;
+            }
+
+            int frameCount = 0;
+            for (int i = start; i < end; i++) {
+                if (i < groupFrames.length && groupFrames[i] != null) {
+                    frameCount++;
+                }
+            }
+            if (frameCount == 0) {
+                if (contains(yamaProbeIds, id)) {
+                    System.out.println("Animaya fallback skipped seq " + id + " (no frames in selected range)");
+                }
+                continue;
+            }
+
+            anim.frameCount = frameCount;
+            anim.primaryFrames = new int[frameCount];
+            anim.secondaryFrames = new int[frameCount];
+            anim.durations = new int[frameCount];
+            int write = 0;
+            for (int i = start; i < end; i++) {
+                if (i >= groupFrames.length || groupFrames[i] == null) {
+                    continue;
+                }
+                anim.primaryFrames[write] = (aliasGroup << 16) | i;
+                anim.secondaryFrames[write] = -1;
+                anim.durations[write] = 1;
+                write++;
+            }
+            anim.clearSkeletalFlags();
+            converted++;
+            if (contains(yamaProbeIds, id)) {
+                System.out.println("Animaya fallback materialized seq " + id + " from group " + sourceGroup + " using " + frameCount + " frames");
+            }
+        }
+        if (converted > 0) {
+            System.out.println("Materialized Animaya fallbacks: " + converted);
+        }
+    }
+
+    private static boolean contains(int[] arr, int value) {
+        for (int x : arr) {
+            if (x == value) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void load2446Overrides() {
@@ -128,7 +248,8 @@ public final class Animation {
                 byte[] data = Files.readAllBytes(path);
                 Animation override = new Animation();
                 try {
-                    decode2446Sequence(override, new Buffer(data));
+                    decode2446Sequence(id, override, new Buffer(data));
+                    remapLowFrameGroupsToAliases(override, id);
                 } catch (Exception ex) {
                     System.out.println("Failed loading 2446 sequence override " + id + ": " + ex.getMessage());
                     continue;
@@ -148,12 +269,105 @@ public final class Animation {
         }
     }
 
-    private static void decode2446Sequence(Animation out, Buffer buffer) {
-        out.decode(buffer);
+    private static void loadAraxxorOverridesFromExt() {
+        Path jsonPath = Paths.get("").toAbsolutePath().normalize().resolve("_ext").resolve("AraxxorAnimations.json");
+        if (!Files.exists(jsonPath)) {
+            return;
+        }
+        int loaded = 0;
+        try {
+            String json = new String(Files.readAllBytes(jsonPath));
+            AraxxorAnimEntry[] entries = GSON.fromJson(json, AraxxorAnimEntry[].class);
+            if (entries == null) {
+                return;
+            }
+            for (AraxxorAnimEntry entry : entries) {
+                if (entry == null || entry.id <= 0 || entry.frameIDs == null || entry.frameIDs.length == 0) {
+                    continue;
+                }
+                if (animations == null) {
+                    return;
+                }
+                if (entry.id >= animations.length) {
+                    animations = Arrays.copyOf(animations, entry.id + 1);
+                }
+                Animation a = new Animation();
+                int count = entry.frameIDs.length;
+                a.frameCount = count;
+                a.primaryFrames = Arrays.copyOf(entry.frameIDs, count);
+                a.secondaryFrames = new int[count];
+                Arrays.fill(a.secondaryFrames, -1);
+                a.durations = new int[count];
+                if (entry.frameLengths != null && entry.frameLengths.length == count) {
+                    for (int i = 0; i < count; i++) {
+                        a.durations[i] = Math.max(1, entry.frameLengths[i]);
+                    }
+                } else {
+                    Arrays.fill(a.durations, 3);
+                }
+                if (entry.frameLoop != null) {
+                    a.loopOffset = entry.frameLoop;
+                }
+                if (entry.priority != null) {
+                    a.priority = entry.priority;
+                }
+                if (entry.forcedPriority != null) {
+                    a.forcedPriority = entry.forcedPriority;
+                }
+                if (entry.maxLoops != null) {
+                    a.maximumLoops = entry.maxLoops;
+                }
+                if (entry.stretches != null) {
+                    a.stretches = entry.stretches;
+                }
+                remapLowFrameGroupsToAliases(a, entry.id);
+                animations[entry.id] = a;
+                loaded++;
+            }
+        } catch (Exception ex) {
+            System.out.println("Failed loading Araxxor animation overrides: " + ex.getMessage());
+            return;
+        }
+        if (loaded > 0) {
+            System.out.println("Loaded Araxxor animation overrides: " + loaded);
+        }
+    }
+
+    private static final class AraxxorAnimEntry {
+        int id;
+        int[] frameLengths;
+        int[] frameIDs;
+        Integer frameLoop;
+        Integer priority;
+        Integer forcedPriority;
+        Integer maxLoops;
+        Boolean stretches;
+    }
+
+    private static void decode2446Sequence(int id, Animation out, Buffer buffer) {
+        boolean old = decodeOpcode14AsUShort;
+        decodeOpcode14AsUShort = OPCODE14_USHORT_2446.contains(id);
+        try {
+            out.decode(buffer);
+        } finally {
+            decodeOpcode14AsUShort = old;
+        }
     }
 
     private static void ensureEclipseSlots() {
-        final int[] eclipseIds = {10815, 10818, 10819, 11051, 11052, 11053, 11055, 11057, 11058, 11059, 11060, 11061, 11062, 11063, 11064, 11240, 11275, 11463, 11464};
+        final int[] eclipseIds = {
+                10815, 10818, 10819,
+                11051, 11052, 11053, 11055, 11057, 11058, 11059, 11060, 11061, 11062, 11063, 11064,
+                11240, 11275,
+                11463, 11464,
+                12095, 12096, 12097, 12098, 12099, 12100, 12101, 12102, 12103, 12104,
+                12105, 12106, 12107, 12108, 12109, 12110, 12111, 12112, 12113, 12114,
+                12115, 12116, 12117, 12118, 12119, 12120, 12121, 12128, 12129, 12130,
+                12138, 12149, 12152, 12169, 12170, 12171, 12172, 12173, 12174, 12175,
+                12176, 12196,
+                12142, 12144, 12145, 12146, 12147, 12148, 12156, 12160, 12161,
+                12140, 12141
+        };
         int max = 0;
         for (int id : eclipseIds) {
             if (id > max) {
@@ -219,6 +433,65 @@ public final class Animation {
         if (j == 0)
             j = 1;
         return j;
+    }
+
+    public boolean hasClassicFrames() {
+        return primaryFrames != null && primaryFrames.length > 0 && primaryFrames[0] != -1;
+    }
+
+    public boolean isSkeletalSequence() {
+        return !hasClassicFrames() && (skeletalId != -1 || (masks != null) || skeletalRangeBegin != -1 || skeletalRangeEnd != -1);
+    }
+
+    public int getSkeletalId() {
+        return skeletalId;
+    }
+
+    public int getSkeletalRangeBegin() {
+        return skeletalRangeBegin;
+    }
+
+    public int getSkeletalRangeEnd() {
+        return skeletalRangeEnd;
+    }
+
+    public void clearSkeletalFlags() {
+        skeletalId = -1;
+        skeletalRangeBegin = -1;
+        skeletalRangeEnd = -1;
+        masks = null;
+        skeletalSounds = null;
+    }
+
+    private static void remapLowFrameGroupsToAliases(Animation animation, int sequenceId) {
+        if (animation == null || animation.primaryFrames == null) {
+            return;
+        }
+        Set<Integer> remappedGroups = new LinkedHashSet<>();
+        for (int i = 0; i < animation.primaryFrames.length; i++) {
+            int frame = animation.primaryFrames[i];
+            if (frame < 0) {
+                continue;
+            }
+            int group = frame >>> 16;
+            int file = frame & 0xFFFF;
+            // Yama VFX overrides commonly use low-id frame groups that collide with legacy 317 groups.
+            // Move them into a high alias range and have Frame load the real source group on demand.
+            if (group > 0 && group < 4000) {
+                int aliasGroup = 20000 + group;
+                Frame.register2446AliasGroup(aliasGroup, group);
+                animation.primaryFrames[i] = (aliasGroup << 16) | file;
+                remappedGroups.add(group);
+                if (animation.secondaryFrames != null && i < animation.secondaryFrames.length && animation.secondaryFrames[i] >= 0) {
+                    int secFile = animation.secondaryFrames[i] & 0xFFFF;
+                    animation.secondaryFrames[i] = (aliasGroup << 16) | secFile;
+                }
+            }
+        }
+        for (int group : remappedGroups) {
+            int aliasGroup = 20000 + group;
+            System.out.println("Remapped 2446 low frame group " + group + " -> " + aliasGroup + " for seq " + sequenceId);
+        }
     }
 
     private void decode(Buffer buffer) {        
@@ -287,7 +560,7 @@ public final class Animation {
                     buffer.read24Int();
                 }
             } else if (opcode == 14) {
-                skeletalId = buffer.readInt();
+                skeletalId = decodeOpcode14AsUShort ? buffer.readUShort() : buffer.readInt();
             } else if (opcode == 15) {
                 skeletalSounds = new HashMap<Integer, Integer>();
                 int count = buffer.readUShort();

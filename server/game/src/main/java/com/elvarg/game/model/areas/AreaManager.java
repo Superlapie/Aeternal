@@ -12,6 +12,7 @@ import com.elvarg.game.model.areas.impl.DuelArenaArea;
 import com.elvarg.game.model.areas.impl.GodwarsDungeonArea;
 import com.elvarg.game.model.areas.impl.KingBlackDragonArea;
 import com.elvarg.game.model.areas.impl.PrivateArea;
+import com.elvarg.game.model.areas.impl.AraxxorArea;
 import com.elvarg.game.model.areas.impl.WildernessArea;
 import com.elvarg.game.model.areas.impl.YamaArea;
 
@@ -35,6 +36,7 @@ public class AreaManager {
         areas.add(PestControl.GAME_AREA);
         areas.add(PestControl.NOVICE_BOAT_AREA);
         areas.add(PestControl.OUTPOST_AREA);
+        areas.add(new AraxxorArea());
         areas.add(new YamaArea());
     }
 

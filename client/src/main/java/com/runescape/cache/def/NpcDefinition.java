@@ -86,7 +86,7 @@ public final class NpcDefinition {
 		if (id >= 0 && id < offsets.length) {
 			dataBuf.currentPosition = offsets[id];
 			definition.readValues(dataBuf);
-			if (isYamaDefinition(id)) {
+			if (isYamaDefinition(id) || isAraxxorDefinition(id)) {
 				applyCustomDefinition(definition, id);
 				return definition;
 			}
@@ -255,11 +255,30 @@ public final class NpcDefinition {
 				definition.actions = new String[] { null, "Attack", null, null, null };
 				// Use imported 2446 donor copies to avoid collisions with legacy low-id models.
 				definition.modelId = new int[] { 65298, 65299, 65300 };
+				// True 2446 Yama body anims (12140/12141) are skeletal in this client path.
+				// Keep safe legacy movement fallbacks so the model always stays visible.
 				definition.standAnim = resolvePlayableAnimation(12140, 8593);
 				definition.walkAnim = resolvePlayableAnimation(12141, 8592);
 				definition.turn180AnimIndex = definition.walkAnim;
 				definition.turn90CCWAnimIndex = definition.walkAnim;
 				definition.turn90CWAnimIndex = definition.walkAnim;
+				definition.scaleXZ = 128;
+				definition.scaleY = 128;
+				definition.clickable = true;
+				definition.drawMinimapDot = false;
+				break;
+			case 13668:
+				definition.name = "Araxxor";
+				definition.description = "A giant, venomous araxyte spider.".getBytes();
+				definition.size = 7;
+				definition.combatLevel = 890;
+				definition.actions = new String[] { null, "Attack", null, null, null };
+				definition.modelId = new int[] { 54289, 54290 };
+				definition.standAnim = 11473;
+				definition.walkAnim = 11474;
+				definition.turn180AnimIndex = 11474;
+				definition.turn90CCWAnimIndex = 11474;
+				definition.turn90CWAnimIndex = 11474;
 				definition.scaleXZ = 128;
 				definition.scaleY = 128;
 				definition.clickable = true;
@@ -278,7 +297,11 @@ public final class NpcDefinition {
 			return fallback;
 		}
 		Animation anim = Animation.animations[preferred];
-		if (anim == null || anim.primaryFrames == null || anim.primaryFrames.length == 0 || anim.primaryFrames[0] == -1) {
+		if (anim == null
+				|| anim.isSkeletalSequence()
+				|| anim.primaryFrames == null
+				|| anim.primaryFrames.length == 0
+				|| anim.primaryFrames[0] == -1) {
 			return fallback;
 		}
 		return preferred;
@@ -355,6 +378,10 @@ public final class NpcDefinition {
 			default:
 				return false;
 		}
+	}
+
+	private static boolean isAraxxorDefinition(long id) {
+		return (int) id == 13668;
 	}
 
 	public static int TOTAL_NPCS;
@@ -591,6 +618,8 @@ public final class NpcDefinition {
 				secondaryFrame = -1;
 			}
 		}
+		// Yama frame safety is handled in Npc#getAnimatedModel where unsupported/skeletal
+		// frames are filtered before they reach this render path.
 		model_1.method464(model,
 				Frame.noAnimationInProgress(secondaryFrame) & Frame.noAnimationInProgress(primaryFrame));
 		if (secondaryFrame != -1 && primaryFrame != -1)
@@ -612,6 +641,7 @@ public final class NpcDefinition {
 			model_1.fits_on_single_square = true;
 		return model_1;
 	}
+
 
 	public void readValues(Buffer buffer) {
 	    

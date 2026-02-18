@@ -4795,6 +4795,9 @@ public class Client extends GameApplet {
         // one of its terrain archives is below the generic threshold.
 
         switch (archiveId) {
+            // Araxxor lair terrain in this cache path decodes in classic (byte opcode) format.
+            case 4227:
+                return false;
 
             case 2976:
 
@@ -19669,6 +19672,10 @@ public class Client extends GameApplet {
             int k = mobsAwaitingUpdate[j];
 
             Npc npc = npcs[k];
+            if (npc == null) {
+                // Keep parsing this mask payload to preserve stream alignment.
+                npc = new Npc();
+            }
 
             int mask = stream.readUnsignedByte();
 
@@ -19682,7 +19689,12 @@ public class Client extends GameApplet {
 
                 int i2 = stream.readUnsignedByte();
 
-                if (i1 == npc.emoteAnimation && i1 != -1) {
+                boolean validIncomingAnim = i1 >= 0 && Animation.animations != null
+                        && i1 < Animation.animations.length && Animation.animations[i1] != null;
+                boolean validCurrentAnim = npc.emoteAnimation >= 0 && Animation.animations != null
+                        && npc.emoteAnimation < Animation.animations.length && Animation.animations[npc.emoteAnimation] != null;
+
+                if (i1 == npc.emoteAnimation && validIncomingAnim) {
 
                     int l2 = Animation.animations[i1].replayMode;
 
@@ -19702,9 +19714,9 @@ public class Client extends GameApplet {
 
                         npc.currentAnimationLoops = 0;
 
-                } else if (i1 == -1 || npc.emoteAnimation == -1
+                } else if (i1 == -1 || !validCurrentAnim
 
-                        || Animation.animations[i1].forcedPriority >= Animation.animations[npc.emoteAnimation].forcedPriority) {
+                        || (validIncomingAnim && Animation.animations[i1].forcedPriority >= Animation.animations[npc.emoteAnimation].forcedPriority)) {
 
                     npc.emoteAnimation = i1;
 

@@ -21,6 +21,7 @@ public final class Frame {
     public static Frame[][] animationlist;
     private static final Set<Integer> failedFrameFiles = new HashSet<>();
     private static final Set<Integer> attempted2446Groups = new HashSet<>();
+    private static final Map<Integer, Integer> aliasGroupSources = new HashMap<>();
     private static final Set<Integer> allowed2446Groups = new HashSet<>(Arrays.asList(
             7756, // 11059
             7757, // 11058
@@ -37,9 +38,11 @@ public final class Frame {
             4173, // 11463 (voidwaker special vfx)
             4275, // 11275 (voidwaker special anim)
             4276, // 11240 (voidwaker alt special anim)
-            // Yama combat body animation groups (2446 seq ids 11338+)
+            // Araxxor animation groups.
+            6503, 6504, 6505, 6506, 6507, 6508, 6509, 6510, 6511, 6512,
+            6513, 6514, 6515, 6516, 6517, 6518, 6519, 6520, 9476,
+            // Yama combat body animation groups (classic fallback set).
             6715, 6718, 6719, 6720, 6722, 6725, 6727, 6730, 6731, 6733,
-            // Keep only high, non-colliding groups from 2446.
             11307
     ));
     private static final Map<Integer, int[]> animArchiveFiles = new HashMap<>();
@@ -205,6 +208,7 @@ public final class Frame {
         animationlist = null;
         failedFrameFiles.clear();
         attempted2446Groups.clear();
+        aliasGroupSources.clear();
         animArchiveFiles.clear();
         skeletonArchiveFiles.clear();
         skeletonBaseCache.clear();
@@ -238,15 +242,13 @@ public final class Frame {
     }
 
     private static boolean tryLoad2446FrameGroup(int groupId) {
-        // TEMP SAFETY MODE: disable all 2446 runtime frame group injection while
-        // isolating animation corruption.
-        return false;
-        /*
+        Integer aliasedSource = aliasGroupSources.get(groupId);
+        int sourceGroupId = aliasedSource != null ? aliasedSource : groupId;
         // Never override low legacy group ids; they collide with native 317 animation groups.
-        if (groupId < 4000) {
+        if (groupId < 4000 && aliasedSource == null) {
             return false;
         }
-        if (!allowed2446Groups.contains(groupId)) {
+        if (aliasedSource == null && !allowed2446Groups.contains(groupId)) {
             return false;
         }
         Path root = resolveFlatCacheRoot();
@@ -257,7 +259,7 @@ public final class Frame {
             return animationlist[groupId] != null && animationlist[groupId].length > 0;
         }
         try {
-            Path groupPath = root.resolve("0").resolve(groupId + ".dat");
+            Path groupPath = root.resolve("0").resolve(sourceGroupId + ".dat");
             if (!Files.exists(groupPath)) {
                 return false;
             }
@@ -267,7 +269,7 @@ public final class Frame {
                 return false;
             }
 
-            int[] fileIds = getArchiveFileIds(0, groupId);
+            int[] fileIds = getArchiveFileIds(0, sourceGroupId);
             if (fileIds == null || fileIds.length == 0) {
                 return false;
             }
@@ -316,14 +318,26 @@ public final class Frame {
             }
             animationlist[groupId] = frames;
             failedFrameFiles.remove(groupId);
-            System.out.println("Loaded 2446 frame group " + groupId + " (" + loaded + " frames)");
+            if (aliasedSource != null) {
+                System.out.println("Loaded 2446 frame group alias " + groupId + " -> " + sourceGroupId + " (" + loaded + " frames)");
+            } else {
+                System.out.println("Loaded 2446 frame group " + groupId + " (" + loaded + " frames)");
+            }
             return true;
         } catch (Exception ex) {
             failedFrameFiles.add(groupId);
             System.err.println("Frame.load2446: failed group " + groupId + " (" + ex.getClass().getSimpleName() + ")");
             return false;
         }
-        */
+    }
+
+    public static void register2446AliasGroup(int aliasGroupId, int sourceGroupId) {
+        if (aliasGroupId <= 0 || sourceGroupId <= 0) {
+            return;
+        }
+        aliasGroupSources.put(aliasGroupId, sourceGroupId);
+        failedFrameFiles.remove(aliasGroupId);
+        attempted2446Groups.remove(aliasGroupId);
     }
 
     private static FrameBase loadSkeletonBase(int skeletonId) {

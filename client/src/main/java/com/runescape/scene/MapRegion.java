@@ -410,30 +410,28 @@ public final class MapRegion {
                         if (k9 >= 0 && k9 < regionSizeX) {
                             int l12 = underlays[z][k9][i8] & 0x7FFF;
                             if (l12 > 0) {
-                                if (l12 > FloorDefinition.underlays.length) {
-                                    l12 = FloorDefinition.underlays.length;
-                                }
-                                FloorDefinition flo = FloorDefinition.underlays[l12 - 1];
+                                FloorDefinition flo = FloorDefinition.getUnderlay(l12);
+                                if (flo != null) {
                                 hues[i8] += flo.blendHue;
                                 saturations[i8] += flo.saturation;
                                 luminances[i8] += flo.luminance;
                                 chromas[i8] += flo.blendHueMultiplier;
                                 anIntArray128[i8]++;
+                                }
                             }
                         }
                         int i13 = l6 - 5;
                         if (i13 >= 0 && i13 < regionSizeX) {
                             int i14 = underlays[z][i13][i8] & 0x7FFF;
                             if (i14 > 0) {
-                                if (i14 > FloorDefinition.underlays.length) {
-                                    i14 = FloorDefinition.underlays.length;
-                                }
-                                FloorDefinition flo_1 = FloorDefinition.underlays[i14 - 1];
+                                FloorDefinition flo_1 = FloorDefinition.getUnderlay(i14);
+                                if (flo_1 != null) {
                                 hues[i8] -= flo_1.blendHue;
                                 saturations[i8] -= flo_1.saturation;
                                 luminances[i8] -= flo_1.luminance;
                                 chromas[i8] -= flo_1.blendHueMultiplier;
                                 anIntArray128[i8]--;
+                                }
                             }
                         }
                     }
@@ -466,8 +464,8 @@ public final class MapRegion {
                                     maximumPlane = z;
                                 int l18 = underlays[z][l6][k17] & 0x7FFF;
                                 int i19 = overlays[z][l6][k17] & 0x7FFF;
-                                int overlayCount = FloorDefinition.overlays != null ? FloorDefinition.overlays.length : 0;
-                                boolean hasValidOverlay = i19 > 0 && i19 <= overlayCount && FloorDefinition.overlays[i19 - 1] != null;
+                                FloorDefinition overlayDef = FloorDefinition.getOverlay(i19);
+                                boolean hasValidOverlay = i19 > 0 && overlayDef != null;
                                 if (!hasValidOverlay) {
                                     i19 = 0;
                                 }
@@ -497,7 +495,7 @@ public final class MapRegion {
                                     }
                                     if (z > 0) {
                                         boolean flag = l18 != 0 || overlayTypes[z][l6][k17] == 0;
-                                        if (hasValidOverlay && !FloorDefinition.overlays[i19 - 1].occlude)
+                                        if (hasValidOverlay && !overlayDef.occlude)
                                             flag = false;
                                         if (flag && j19 == k19 && j19 == l19 && j19 == i20)
                                             anIntArrayArrayArray135[z][l6][k17] |= 0x924;
@@ -511,7 +509,7 @@ public final class MapRegion {
 
                                         int k22 = overlayTypes[z][l6][k17] + 1;
                                         byte byte4 = overlayOrientations[z][l6][k17];
-                                        FloorDefinition overlay_flo = FloorDefinition.overlays[i19 - 1];
+                                        FloorDefinition overlay_flo = overlayDef;
                                         int textureId = overlay_flo.texture;
                                         int j23;
                                         int minimapColor;

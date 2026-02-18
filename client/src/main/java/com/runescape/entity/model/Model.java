@@ -2189,6 +2189,9 @@ public class Model extends Renderable {
     }
 
     private void transformSkin(int animationType, int[] skin, int x, int y, int z) {
+        if (animationType != 5 && transformSkinAnimaya(animationType, skin, x, y, z)) {
+            return;
+        }
 
         int i1 = skin.length;
         if (animationType == 0) {
@@ -2325,6 +2328,169 @@ public class Model extends Renderable {
             }
 
         }
+    }
+
+    private boolean transformSkinAnimaya(int animationType, int[] skin, int x, int y, int z) {
+        if (animayaGroups == null || animayaScales == null || skin == null || skin.length == 0) {
+            return false;
+        }
+
+        boolean[] boneMask = buildBoneMask(skin);
+        if (boneMask == null) {
+            return false;
+        }
+
+        if (animationType == 0) {
+            long sx = 0L;
+            long sy = 0L;
+            long sz = 0L;
+            long totalWeight = 0L;
+            for (int v = 0; v < numVertices; v++) {
+                int weight = animayaInfluenceForVertex(v, boneMask);
+                if (weight <= 0) {
+                    continue;
+                }
+                sx += (long) vertexX[v] * weight;
+                sy += (long) vertexY[v] * weight;
+                sz += (long) vertexZ[v] * weight;
+                totalWeight += weight;
+            }
+            if (totalWeight > 0L) {
+                xAnimOffset = (int) (sx / totalWeight) + x;
+                yAnimOffset = (int) (sy / totalWeight) + y;
+                zAnimOffset = (int) (sz / totalWeight) + z;
+            } else {
+                xAnimOffset = x;
+                yAnimOffset = y;
+                zAnimOffset = z;
+            }
+            return true;
+        }
+
+        if (animationType == 1) {
+            for (int v = 0; v < numVertices; v++) {
+                int weight = animayaInfluenceForVertex(v, boneMask);
+                if (weight <= 0) {
+                    continue;
+                }
+                vertexX[v] += (x * weight) / 255;
+                vertexY[v] += (y * weight) / 255;
+                vertexZ[v] += (z * weight) / 255;
+            }
+            return true;
+        }
+
+        if (animationType == 2) {
+            for (int v = 0; v < numVertices; v++) {
+                int weight = animayaInfluenceForVertex(v, boneMask);
+                if (weight <= 0) {
+                    continue;
+                }
+
+                vertexX[v] -= xAnimOffset;
+                vertexY[v] -= yAnimOffset;
+                vertexZ[v] -= zAnimOffset;
+
+                int k6 = ((x & 0xff) * 8 * weight) / 255;
+                int l6 = ((y & 0xff) * 8 * weight) / 255;
+                int i7 = ((z & 0xff) * 8 * weight) / 255;
+
+                if (i7 != 0) {
+                    int j7 = SINE[i7];
+                    int i8 = COSINE[i7];
+                    int l8 = vertexY[v] * j7 + vertexX[v] * i8 >> 16;
+                    vertexY[v] = vertexY[v] * i8 - vertexX[v] * j7 >> 16;
+                    vertexX[v] = l8;
+                }
+                if (k6 != 0) {
+                    int k7 = SINE[k6];
+                    int j8 = COSINE[k6];
+                    int i9 = vertexY[v] * j8 - vertexZ[v] * k7 >> 16;
+                    vertexZ[v] = vertexY[v] * k7 + vertexZ[v] * j8 >> 16;
+                    vertexY[v] = i9;
+                }
+                if (l6 != 0) {
+                    int l7 = SINE[l6];
+                    int k8 = COSINE[l6];
+                    int j9 = vertexZ[v] * l7 + vertexX[v] * k8 >> 16;
+                    vertexZ[v] = vertexZ[v] * k8 - vertexX[v] * l7 >> 16;
+                    vertexX[v] = j9;
+                }
+
+                vertexX[v] += xAnimOffset;
+                vertexY[v] += yAnimOffset;
+                vertexZ[v] += zAnimOffset;
+            }
+            return true;
+        }
+
+        if (animationType == 3) {
+            for (int v = 0; v < numVertices; v++) {
+                int weight = animayaInfluenceForVertex(v, boneMask);
+                if (weight <= 0) {
+                    continue;
+                }
+                vertexX[v] -= xAnimOffset;
+                vertexY[v] -= yAnimOffset;
+                vertexZ[v] -= zAnimOffset;
+
+                int sx = 128 + ((x - 128) * weight) / 255;
+                int sy = 128 + ((y - 128) * weight) / 255;
+                int sz = 128 + ((z - 128) * weight) / 255;
+                vertexX[v] = (vertexX[v] * sx) / 128;
+                vertexY[v] = (vertexY[v] * sy) / 128;
+                vertexZ[v] = (vertexZ[v] * sz) / 128;
+
+                vertexX[v] += xAnimOffset;
+                vertexY[v] += yAnimOffset;
+                vertexZ[v] += zAnimOffset;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean[] buildBoneMask(int[] skin) {
+        int max = -1;
+        for (int bone : skin) {
+            if (bone > max) {
+                max = bone;
+            }
+        }
+        if (max < 0) {
+            return null;
+        }
+        boolean[] mask = new boolean[max + 1];
+        for (int bone : skin) {
+            if (bone >= 0 && bone < mask.length) {
+                mask[bone] = true;
+            }
+        }
+        return mask;
+    }
+
+    private int animayaInfluenceForVertex(int vertex, boolean[] boneMask) {
+        if (vertex < 0 || vertex >= animayaGroups.length || vertex >= animayaScales.length) {
+            return 0;
+        }
+        int[] groups = animayaGroups[vertex];
+        int[] scales = animayaScales[vertex];
+        if (groups == null || scales == null) {
+            return 0;
+        }
+        int len = Math.min(groups.length, scales.length);
+        int sum = 0;
+        for (int i = 0; i < len; i++) {
+            int bone = groups[i];
+            if (bone >= 0 && bone < boneMask.length && boneMask[bone]) {
+                sum += scales[i] & 0xFF;
+            }
+        }
+        if (sum > 255) {
+            return 255;
+        }
+        return sum;
     }
 
     public void applyTransform(int frameId) {

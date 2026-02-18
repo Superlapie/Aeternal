@@ -60,6 +60,7 @@ public final class Graphic {
         }
 
         load2446Overrides();
+        applyYamaFallbackSpots();
         ensureEclipseSlots();
 
         System.out.println("Loaded: " + length + " graphics");
@@ -111,7 +112,7 @@ public final class Graphic {
     }
 
     private static void ensureEclipseSlots() {
-        final int[] eclipseIds = {2709, 2710, 2711, 2712, 3017, 3030};
+        final int[] eclipseIds = {2709, 2710, 2711, 2712, 2810, 2812, 2815, 3017, 3030};
         int max = 0;
         for (int id : eclipseIds) {
             if (id > max) {
@@ -121,6 +122,38 @@ public final class Graphic {
         if (cache.length <= max) {
             cache = Arrays.copyOf(cache, max + 1);
         }
+    }
+
+    private static void applyYamaFallbackSpots() {
+        // Temporary Yama spotanim bridges:
+        // sequence ids are from 2446 Yama export, model ids are known-good donor models in this client.
+        // These are only applied when explicit e2446_spot_* overrides are absent.
+        installFallbackSpot(2810, 51181, 12095, 0, 0, 128, 128); // shadow magic impact
+        installFallbackSpot(2812, 50024, 12101, 0, 0, 128, 128); // fire skull / ranged impact
+        installFallbackSpot(2815, 44174, 12113, 20, 0, 128, 128); // meteor impact
+    }
+
+    private static void installFallbackSpot(int id, int modelId, int animationId, int ambient, int contrast, int resizeXY, int resizeZ) {
+        if (Animation.animations == null || animationId < 0 || animationId >= Animation.animations.length || Animation.animations[animationId] == null) {
+            return;
+        }
+        if (id < cache.length && cache[id] != null) {
+            return;
+        }
+        if (id >= cache.length) {
+            cache = Arrays.copyOf(cache, id + 1);
+        }
+        Graphic g = new Graphic();
+        g.anInt404 = id;
+        g.modelId = modelId;
+        g.animationId = animationId;
+        g.animationSequence = Animation.animations[animationId];
+        g.modelBrightness = ambient;
+        g.modelShadow = contrast;
+        g.resizeXY = resizeXY;
+        g.resizeZ = resizeZ;
+        cache[id] = g;
+        System.out.println("Installed fallback Yama spotanim " + id + " (model=" + modelId + ", anim=" + animationId + ")");
     }
 
     public void readValues(Buffer buffer) {

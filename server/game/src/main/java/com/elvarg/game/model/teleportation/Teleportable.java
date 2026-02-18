@@ -22,7 +22,7 @@ public enum Teleportable {
 	ZULRAH(TeleportButton.BOSSES, 2, 9, new Location(2202, 3056)),
 	VORKATH(TeleportButton.BOSSES, 2, 10, new Location(2272, 4052)),
 	NIGHTMARE_LAIR(TeleportButton.BOSSES, 2, 11, new Location(3808, 9756, 1)),
-	YAMA(TeleportButton.BOSSES, 2, 12, new Location(3810, 9775, 1)),
+	ARAXXOR(TeleportButton.BOSSES, 2, 12, new Location(3682, 9752, 2)),
 	
 	DUEL_ARENA(TeleportButton.MINIGAME, 1, 0, new Location(3370, 3270)),
 	BARROWS(TeleportButton.MINIGAME, 1, 1, new Location(3565, 3313)),

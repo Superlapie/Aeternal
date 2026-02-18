@@ -185,4 +185,26 @@ public class FloorDefinition {
         blendHue = (int) (h * blendHueMultiplier);
         hsl16 = hsl24to16(hue, saturation, luminance);
     }
+
+    public static FloorDefinition getUnderlay(int id1Based) {
+        if (id1Based <= 0) {
+            return null;
+        }
+        int index = id1Based - 1;
+        if (underlays != null && index < underlays.length) {
+            return underlays[index];
+        }
+        return null;
+    }
+
+    public static FloorDefinition getOverlay(int id1Based) {
+        if (id1Based <= 0) {
+            return null;
+        }
+        int index = id1Based - 1;
+        if (overlays != null && index < overlays.length) {
+            return overlays[index];
+        }
+        return null;
+    }
 }

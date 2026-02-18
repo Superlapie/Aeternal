@@ -1,11 +1,17 @@
 package com.runescape.tools;
 
 import com.runescape.cache.FileStore;
+import com.runescape.io.Buffer;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +37,7 @@ public final class CacheArchiveCopyTool {
         String donorDir = normalize(args[0]);
         String targetDir = normalize(args[1]);
         int storeIndex = Integer.parseInt(args[2]);
-        List<Integer> archiveIds = parseIds(args[3]);
+        List<Integer> archiveIds = parseIdsArg(args[3]);
 
         if (storeIndex < 0 || storeIndex > 4) {
             throw new IllegalArgumentException("storeIndex must be between 0 and 4");
@@ -88,6 +94,28 @@ public final class CacheArchiveCopyTool {
                 .filter(s -> !s.isEmpty())
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
+    }
+
+    private static List<Integer> parseIdsArg(String arg) throws Exception {
+        if (!arg.startsWith("MAPINDEX:")) {
+            return parseIds(arg);
+        }
+        Path mapIndexPath = Paths.get(arg.substring("MAPINDEX:".length())).toAbsolutePath().normalize();
+        if (!Files.exists(mapIndexPath)) {
+            throw new IllegalStateException("map_index not found: " + mapIndexPath);
+        }
+        byte[] bytes = Files.readAllBytes(mapIndexPath);
+        Buffer buffer = new Buffer(bytes);
+        int count = buffer.readUShort();
+        Set<Integer> ids = new LinkedHashSet<>();
+        for (int i = 0; i < count; i++) {
+            buffer.readUShort(); // region id
+            ids.add(buffer.readUShort()); // terrain
+            ids.add(buffer.readUShort()); // object
+        }
+        ids.remove(65535);
+        System.out.println("Resolved " + ids.size() + " archive ids from " + mapIndexPath);
+        return ids.stream().collect(Collectors.toList());
     }
 
     private static String normalize(String dir) {

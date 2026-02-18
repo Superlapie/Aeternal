@@ -6,3 +6,11 @@ client/Cache_backup_before_restore_*/
 client/Cache_corrupt_backup_*/
 client/Cache/*.backup*
 client/Cache/map_index.sanctuary_backup
+client/Cache/*.off
+client/Cache/*.disabled_2446
+client/Cache/*.broken_backup
+client/Cache/_recovery_backup/
+client/Cache/map_index.external_*
+client/Cache/seq.dat.disabled_*
+Tmp*.java
+Tmp*.class

@@ -68,6 +68,7 @@ public class RegionManager {
             int objectFile = stream.readUShort();
             RegionManager.regions.put(regionId, new Region(regionId, terrainFile, objectFile));
         }
+        RegionManager.regions.putIfAbsent(14744, new Region(14744, 4227, 4228));
     }
 
     /**
