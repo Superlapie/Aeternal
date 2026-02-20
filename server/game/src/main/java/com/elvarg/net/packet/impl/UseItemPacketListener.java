@@ -2,6 +2,7 @@ package com.elvarg.net.packet.impl;
 
 import com.elvarg.game.World;
 import com.elvarg.game.content.cannon.DwarfCannon;
+import com.elvarg.game.content.combat.BlowpipeData;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.ScytheData;
 import com.elvarg.game.content.minigames.impl.CastleWars;
@@ -21,6 +22,7 @@ import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Item;
 import com.elvarg.game.model.Location;
 import com.elvarg.game.model.container.impl.Bank;
+import com.elvarg.game.model.equipment.BonusManager;
 import com.elvarg.game.model.menu.CreationMenu;
 import com.elvarg.game.task.impl.WalkToTask;
 import com.elvarg.net.packet.Packet;
@@ -109,17 +111,11 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
             return;
         }
 
-        //Blowpipe reload
-        else if (used.getId() == TOXIC_BLOWPIPE || usedWith.getId() == TOXIC_BLOWPIPE) {
-            int reload = used.getId() == TOXIC_BLOWPIPE ? usedWith.getId() : used.getId();
-            if (reload == ZULRAHS_SCALES) {
-                final int amount = player.getInventory().getAmount(12934);
-                player.incrementBlowpipeScales(amount);
-                player.getInventory().delete(ZULRAHS_SCALES, amount);
-                player.getPacketSender().sendMessage("You now have " + player.getBlowpipeScales() + " Zulrah scales in your blowpipe.");
-            } else {
-                player.getPacketSender().sendMessage("You cannot load the blowpipe with that!");
-            }
+        if (BlowpipeData.handleItemOnItemLoad(player, used.getId(), usedWith.getId(),
+                BlowpipeData.isBlowpipe(used.getId()) ? itemUsedSlot : usedWithSlot)) {
+            BlowpipeData.syncWeaponVariant(player);
+            BonusManager.update(player);
+            return;
         }
     }
 

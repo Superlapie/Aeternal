@@ -4,9 +4,11 @@ import com.elvarg.game.content.sound.Sound;
 import com.elvarg.game.content.combat.hit.PendingHit;
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.npc.NPC;
+import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Animation;
 import com.elvarg.game.model.Graphic;
 import com.elvarg.game.model.Projectile;
+import com.elvarg.game.model.container.impl.Equipment;
 
 import java.util.Optional;
 
@@ -28,6 +30,19 @@ public abstract class CombatSpell extends Spell {
 				castAnimation = npc.getDefinition().getAttackAnim();
 			}
 		}*/
+
+        if (cast.isPlayer()) {
+            final Player player = cast.getAsPlayer();
+            final int weaponId = player.getEquipment().get(Equipment.WEAPON_SLOT).getId();
+            final boolean usingNightmareStaffSet =
+                    weaponId == 24422 || weaponId == 24506
+                    || weaponId == 24423 || weaponId == 24508
+                    || weaponId == 24424 || weaponId == 24509
+                    || weaponId == 24425 || weaponId == 24510;
+            if (usingNightmareStaffSet && !TridentData.isTridentSpell(this)) {
+                castAnimation = 8142;
+            }
+        }
 
         if (castAnimation().isPresent() && castAnimation == -1) {
             castAnimation().ifPresent(cast::performAnimation);

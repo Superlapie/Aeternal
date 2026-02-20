@@ -7,16 +7,31 @@ import com.elvarg.game.content.combat.method.CombatMethod;
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Animation;
+import com.elvarg.game.model.Graphic;
+import com.elvarg.game.model.GraphicHeight;
+import com.elvarg.game.model.Projectile;
+import com.elvarg.game.model.Projectile.ProjectileBuilder;
 import com.elvarg.game.model.Priority;
 import com.elvarg.game.model.Skill;
 import com.elvarg.game.model.equipment.BonusManager;
 import com.elvarg.util.Misc;
 
 import static com.elvarg.util.ItemIdentifiers.VOLATILE_NIGHTMARE_STAFF;
+import static com.elvarg.util.ItemIdentifiers.VOLATILE_NIGHTMARE_STAFF_2;
 
 public class VolatileNightmareStaffCombatMethod extends CombatMethod {
 
     private static final Animation CAST_ANIMATION = new Animation(8532, Priority.HIGH);
+    private static final Graphic START_GFX = new Graphic(1757, GraphicHeight.HIGH);
+    private static final Graphic HIT_GFX = new Graphic(1759, GraphicHeight.HIGH);
+    private static final Projectile PROJECTILE = new ProjectileBuilder()
+            .setId(1758)
+            .setStart(43)
+            .setEnd(31)
+            .setDelay(51)
+            .setAngle(16)
+            .setDistanceOffset(64)
+            .create();
 
     @Override
     public PendingHit[] hits(Mobile character, Mobile target) {
@@ -36,7 +51,8 @@ public class VolatileNightmareStaffCombatMethod extends CombatMethod {
     @Override
     public boolean canAttack(Mobile character, Mobile target) {
         final Player player = character.getAsPlayer();
-        if (player.getEquipment().getWeapon().getId() != VOLATILE_NIGHTMARE_STAFF) {
+        final int weaponId = player.getEquipment().getWeapon().getId();
+        if (weaponId != VOLATILE_NIGHTMARE_STAFF && weaponId != VOLATILE_NIGHTMARE_STAFF_2) {
             return false;
         }
         return true;
@@ -52,6 +68,8 @@ public class VolatileNightmareStaffCombatMethod extends CombatMethod {
         final Player player = character.getAsPlayer();
         CombatSpecial.drain(player, CombatSpecial.VOLATILE_NIGHTMARE_STAFF.getDrainAmount());
         player.performAnimation(CAST_ANIMATION);
+        player.performGraphic(START_GFX);
+        Projectile.sendProjectile(player, target, PROJECTILE);
     }
 
     @Override
@@ -71,6 +89,13 @@ public class VolatileNightmareStaffCombatMethod extends CombatMethod {
         character.getCombat().reset();
         character.setMobileInteraction(target);
         character.getMovementQueue().reset();
+    }
+
+    @Override
+    public void handleAfterHitEffects(PendingHit hit) {
+        if (hit.isAccurate()) {
+            hit.getTarget().performGraphic(HIT_GFX);
+        }
     }
 
 }

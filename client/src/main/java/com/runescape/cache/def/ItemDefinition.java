@@ -205,8 +205,10 @@ public final class ItemDefinition {
                 break;
             case 12926:
                 itemDef.actions = new String[5];
+                itemDef.actions[0] = "Check";
                 itemDef.actions[1] = "Wield";
-                itemDef.actions[2] = "Check";
+                itemDef.actions[2] = "Unload";
+                itemDef.actions[3] = "Uncharge";
                 break;
             case 24423:
                 // Harmonised nightmare staff: fallback inventory model while 39070 is missing in this cache.

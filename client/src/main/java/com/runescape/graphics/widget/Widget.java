@@ -571,6 +571,23 @@ public class Widget {
 			}
 		}
 		modernSpellbook();
+		addStaffSpecialBar();
+	}
+
+	private static void addStaffSpecialBar() {
+		Widget staff = interfaceCache[328];
+		if (staff == null || staff.children == null) {
+			return;
+		}
+
+		for (int child : staff.children) {
+			if (child == 7549) {
+				return;
+			}
+		}
+
+		// Mirror the standard special bar placement used on ranged combat tabs.
+		insertNewChild(staff, 1, 7549, 17, 201);
 	}
 
 	public static void modernSpellbook() {

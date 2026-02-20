@@ -69,7 +69,6 @@ public class BonusManager {
                 }
             }
         }
-
         for (int i = 0; i < totalBonuses; i++) {
             if (i <= 4) {
                 player.getBonusManager().attackBonus[i] = bonuses[i];

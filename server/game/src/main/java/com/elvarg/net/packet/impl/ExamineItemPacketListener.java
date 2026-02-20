@@ -26,14 +26,6 @@ public class ExamineItemPacketListener implements PacketExecutor {
 			return;
 		}
 
-		// Blowpipe
-		if (itemId == 12926) {
-			player.getPacketSender()
-					.sendMessage("Fires Dragon darts while coating them with venom. Charges left: "
-							+ player.getBlowpipeScales());
-			return;
-		}
-
 		ItemDefinition itemDef = ItemDefinition.forId(itemId);
 		if (itemDef != null) {
 			player.getPacketSender().sendMessage(itemDef.getExamine());

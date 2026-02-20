@@ -4,6 +4,7 @@ import com.elvarg.game.GameConstants;
 import com.elvarg.game.content.Food;
 import com.elvarg.game.content.Gambling;
 import com.elvarg.game.content.PotionConsumable;
+import com.elvarg.game.content.combat.BlowpipeData;
 import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.combat.ScytheData;
 import com.elvarg.game.content.minigames.impl.Barrows;
@@ -46,6 +47,11 @@ public class ItemActionPacketListener implements PacketExecutor {
 			return;
 
 		player.getPacketSender().sendInterfaceRemoval();
+
+		if (BlowpipeData.isBlowpipe(itemId)) {
+			BlowpipeData.notifyState(player);
+			return;
+		}
 
 		// Herblore
 		if (Herblore.cleanHerb(player, itemId)) {
@@ -236,6 +242,9 @@ public class ItemActionPacketListener implements PacketExecutor {
 		if (ScytheData.handleUncharge(player, itemId, slot)) {
 			return;
 		}
+		if (BlowpipeData.handleUnchargeScales(player, itemId, slot)) {
+			return;
+		}
 
 		switch (itemId) {
 		case 2550:
@@ -278,12 +287,8 @@ public class ItemActionPacketListener implements PacketExecutor {
 		if (ScytheData.handleCheck(player, itemId)) {
 			return;
 		}
-
-		switch (itemId) {
-		case 12926:
-			player.getPacketSender()
-					.sendMessage("Your Toxic blowpipe has " + player.getBlowpipeScales() + " Zulrah scales left.");
-			break;
+		if (BlowpipeData.handleUnloadDarts(player, itemId, slot)) {
+			return;
 		}
 	}
 

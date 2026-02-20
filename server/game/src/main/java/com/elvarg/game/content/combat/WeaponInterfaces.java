@@ -22,6 +22,11 @@ public final class WeaponInterfaces {
     public static void assign(Player player) {
         Item equippedWeapon = player.getEquipment().getItems()[Equipment.WEAPON_SLOT];
         WeaponInterface weapon = WeaponInterface.UNARMED;
+        if (equippedWeapon.getId() != 29796
+                && (player.getNoxiousHalberdMinHit() > 0 || player.getNoxiousHalberdMinHitPending() > 0)) {
+            player.setNoxiousHalberdMinHit(0);
+            player.setNoxiousHalberdMinHitPending(0);
+        }
 
         //Get the currently equipped weapon's interface
         if (equippedWeapon.getId() > 0) {
@@ -453,7 +458,7 @@ public final class WeaponInterfaces {
      * @author lare96
      */
     public enum WeaponInterface {
-        STAFF(328, 355, 5, new FightType[]{FightType.STAFF_BASH, FightType.STAFF_POUND, FightType.STAFF_FOCUS}),
+        STAFF(328, 355, 5, new FightType[]{FightType.STAFF_BASH, FightType.STAFF_POUND, FightType.STAFF_FOCUS}, 7549, 7561),
         WARHAMMER(425, 428, 6, new FightType[]{FightType.WARHAMMER_POUND,
                 FightType.WARHAMMER_PUMMEL, FightType.WARHAMMER_BLOCK}, 7474, 7486),
         MAUL(425, 428, 7, new FightType[]{FightType.MAUL_POUND,
@@ -534,7 +539,7 @@ public final class WeaponInterfaces {
                 FightType.DART_RAPID, FightType.DART_LONGRANGE}, 7649, 7661),
         JAVELIN(4446, 4449, 6, new FightType[]{FightType.JAVELIN_ACCURATE,
                 FightType.JAVELIN_RAPID, FightType.JAVELIN_LONGRANGE}, 7649, 7661),
-        ANCIENT_STAFF(328, 355, 4, new FightType[]{FightType.STAFF_BASH, FightType.STAFF_POUND, FightType.STAFF_FOCUS}),
+        ANCIENT_STAFF(328, 355, 4, new FightType[]{FightType.STAFF_BASH, FightType.STAFF_POUND, FightType.STAFF_FOCUS}, 7549, 7561),
         DARK_BOW(1764, 1767, 8, new FightType[]{FightType.LONGBOW_ACCURATE,
                 FightType.LONGBOW_RAPID, FightType.LONGBOW_LONGRANGE}, 7549, 7561),
         GODSWORD(4705, 4708, 6, new FightType[]{

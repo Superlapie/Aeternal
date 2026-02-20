@@ -27,7 +27,9 @@ import com.elvarg.game.content.combat.ranged.RangedData;
 import com.elvarg.game.content.combat.ranged.RangedData.Ammunition;
 import com.elvarg.game.content.combat.ranged.RangedData.RangedWeapon;
 import com.elvarg.game.content.combat.ranged.RangedData.RangedWeaponType;
+import com.elvarg.game.content.combat.BlowpipeData;
 import com.elvarg.game.entity.impl.Mobile;
+import com.elvarg.game.entity.impl.grounditem.ItemOnGroundManager;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.npc.NPCMovementCoordinator.CoordinateState;
 import com.elvarg.game.entity.impl.player.Player;
@@ -46,6 +48,7 @@ import com.elvarg.game.model.SkullType;
 import com.elvarg.game.model.areas.AreaManager;
 import com.elvarg.game.model.areas.impl.WildernessArea;
 import com.elvarg.game.model.container.impl.Equipment;
+import com.elvarg.game.model.equipment.BonusManager;
 import com.elvarg.game.model.movement.MovementQueue;
 import com.elvarg.game.model.movement.path.PathFinder;
 import com.elvarg.game.model.rights.PlayerRights;
@@ -73,8 +76,12 @@ public class CombatFactory {
 	private static final int ECLIPSE_CHEST = 29004;
 	private static final int ECLIPSE_TASSETS = 29007;
 	private static final int ECLIPSE_ATLATL = 29000;
+	private static final int NOXIOUS_HALBERD = 29796;
 	private static final int ATLATL_DART = 28991;
 	private static final int ATLATL_DART_ALT = 29002;
+	private static final int SERPENTINE_HELM = 12931;
+	private static final int TANZANITE_HELM = 13197;
+	private static final int MAGMA_HELM = 13199;
 	private static final int ECLIPSE_BURN_PROC_CHANCE = 20; // 20%
 	private static final int ECLIPSE_BURN_STACK_CAP = 5;
 	private static final int ECLIPSE_BURN_DAMAGE_PER_STACK = 1;
@@ -509,8 +516,6 @@ public class CombatFactory {
 		final Mobile target = qHit.getTarget();
 		final CombatMethod method = qHit.getCombatMethod();
 		final CombatType combatType = qHit.getCombatType();
-		final int damage = qHit.getTotalDamage();
-
 		// If target/attacker is dead, don't continue.
 		if (target.getHitpoints() <= 0 || attacker.getHitpoints() <= 0) {
 			return;
@@ -525,6 +530,19 @@ public class CombatFactory {
 		// Before target takes damage, manipulate the hit to handle
 		// last-second effects
 		qHit = target.manipulateHit(qHit);
+		int damage = qHit.getTotalDamage();
+
+		// Noxious halberd special (Virulence): next accurate halberd hit gets min-hit floor.
+		if (attacker.isPlayer() && qHit.isAccurate()) {
+			Player p = attacker.getAsPlayer();
+			if (p.getNoxiousHalberdMinHit() > 0 && p.getEquipment().hasAt(Equipment.WEAPON_SLOT, NOXIOUS_HALBERD)) {
+				if (damage < p.getNoxiousHalberdMinHit()) {
+					qHit.setTotalDamage(p.getNoxiousHalberdMinHit());
+					damage = qHit.getTotalDamage();
+				}
+				p.setNoxiousHalberdMinHit(0);
+			}
+		}
 
 		// Do block animation
 		target.performAnimation(new Animation(target.getBlockAnim()));
@@ -569,10 +587,10 @@ public class CombatFactory {
 
 		ScytheData.consumeChargeOnSuccessfulHit(qHit);
 
-		// Check for poisonous weapons..
-		// And do other effects, such as barrows effects..
-		if (attacker.isPlayer()) {
-			Player p_ = attacker.getAsPlayer();
+			// Check for poisonous weapons..
+			// And do other effects, such as barrows effects..
+			if (attacker.isPlayer()) {
+				Player p_ = attacker.getAsPlayer();
 
 			// Randomly apply poison if poisonous weapon is equipped.
 			if (damage > 0 && Misc.getRandom(20) <= 5) { // 1/4
@@ -586,12 +604,25 @@ public class CombatFactory {
 						|| p_.getWeapon() == WeaponInterface.JAVELIN) {
 					poison = CombatPoisonData.getPoisonType(p_.getEquipment().get(Equipment.WEAPON_SLOT));
 				} else if (combatType == CombatType.RANGED) {
-					isRanged = true;
-					poison = CombatPoisonData.getPoisonType(p_.getEquipment().get(Equipment.AMMUNITION_SLOT));
+					if (p_.getCombat().getRangedWeapon() == RangedWeapon.TOXIC_BLOWPIPE) {
+						poison = CombatPoisonData.getPoisonType(p_.getEquipment().get(Equipment.WEAPON_SLOT));
+					} else {
+						isRanged = true;
+						poison = CombatPoisonData.getPoisonType(p_.getEquipment().get(Equipment.AMMUNITION_SLOT));
+					}
 				}
 
 				if (poison.isPresent() && (!isRanged || Misc.getRandom(10) <= 5)) { // Range 1/8
 					CombatFactory.poisonEntity(target, poison.get());
+				}
+			}
+
+			// Noxious halberd passive effect: 33% envenom chance on successful melee hit (50% with serp helm variants).
+			if (qHit.getCombatType() == CombatType.MELEE && qHit.isAccurate()
+					&& p_.getEquipment().hasAt(Equipment.WEAPON_SLOT, NOXIOUS_HALBERD)) {
+				int chance = hasSerpentineHelmVariant(p_) ? 50 : 33;
+				if (Misc.getRandom(99) < chance) {
+					envenomEntity(target);
 				}
 			}
 
@@ -1034,9 +1065,13 @@ public class CombatFactory {
 	 */
 	public static void handleRetribution(Player killed, Player killer) {
 		killed.performGraphic(new Graphic(437));
-		if (killer.getLocation().isWithinDistance(killer.getLocation(), CombatConstants.RETRIBUTION_RADIUS)) {
-			killer.getCombat().getHitQueue().addPendingDamage(
-					new HitDamage(Misc.getRandom(CombatConstants.MAXIMUM_RETRIBUTION_DAMAGE), HitMask.RED));
+		if (killer.getLocation().isWithinDistance(killed.getLocation(), CombatConstants.RETRIBUTION_RADIUS)) {
+			int maxRetributionHit = Math.min(CombatConstants.MAXIMUM_RETRIBUTION_DAMAGE,
+					(int) Math.floor(killed.getSkillManager().getCurrentLevel(Skill.PRAYER) * 0.25));
+			if (maxRetributionHit > 0) {
+				killer.getCombat().getHitQueue()
+						.addPendingDamage(new HitDamage(Misc.getRandom(maxRetributionHit), HitMask.RED));
+			}
 		}
 	}
 
@@ -1060,8 +1095,12 @@ public class CombatFactory {
 		}
 
 		if (rangedWeapon == RangedWeapon.TOXIC_BLOWPIPE) {
-			if (player.getBlowpipeScales() <= 0) {
-				player.getPacketSender().sendMessage("You must recharge your Toxic blowpipe using some Zulrah scales.");
+			if (!BlowpipeData.hasRequiredCharges(player, amountRequired)) {
+				player.getCombat().reset();
+				return false;
+			}
+			if (ammoData == null) {
+				player.getPacketSender().sendMessage("You must load darts into your Toxic blowpipe.");
 				player.getCombat().reset();
 				return false;
 			}
@@ -1130,33 +1169,49 @@ public class CombatFactory {
 			slot = Equipment.WEAPON_SLOT;
 		}
 
-		boolean accumalator = player.getEquipment().get(Equipment.CAPE_SLOT).getId() == 10499;
-		if (accumalator) {
-			if (Misc.getRandom(12) <= 9) {
-				return;
-			}
-		}
-
 		if (rangedWeapon == RangedWeapon.TOXIC_BLOWPIPE) {
-			if (player.decrementAndGetBlowpipeScales() <= 0) {
-				player.getPacketSender().sendMessage("Your Toxic blowpipe has run out of scales!");
+			player.setBlowpipeDarts(player.getBlowpipeDarts() - amount);
+			BlowpipeData.consumeScaleShots(player, amount);
+			if (player.getBlowpipeScales() <= 0 || !BlowpipeData.hasDartsLoaded(player)) {
+				player.getPacketSender().sendMessage("Your Toxic blowpipe has run out of charges!");
 				player.getCombat().reset();
 			}
+			BlowpipeData.syncWeaponVariant(player);
+			BonusManager.update(player);
 			return;
 		}
 
-		// Decrement the ammo in the selected slot.
-		player.getEquipment().get(slot).decrementAmountBy(amount);
+		int ammoId = player.getEquipment().get(slot).getId();
+		int consumedAmount = amount;
+		int droppedAmount = 0;
+		AvaDevice avaDevice = AvaDevice.forCape(player.getEquipment().get(Equipment.CAPE_SLOT).getId());
 
-		// Drop arrows if the player isn't using an accumalator
 		if (player.getCombat().getAmmunition().dropOnFloor()) {
-			if (!accumalator) {
-				/*
-				 * for(int i = 0; i < amount; i++) { GroundItemManager.spawnGroundItem(player,
-				 * new GroundItem(new Item(player.getEquipment().get(slot).getId()), pos,
-				 * player.getUsername(), false, 120, true, 120)); }
-				 */
+			if (avaDevice != AvaDevice.NONE) {
+				consumedAmount = 0;
+				for (int i = 0; i < amount; i++) {
+					int roll = Misc.getRandom(99);
+					if (roll < avaDevice.recoverRate) {
+						continue;
+					}
+					consumedAmount++;
+					if (roll < avaDevice.recoverRate + avaDevice.dropRate) {
+						droppedAmount++;
+					}
+				}
+			} else {
+				droppedAmount = amount;
 			}
+		}
+
+		// Decrement the ammo in the selected slot.
+		if (consumedAmount > 0) {
+			player.getEquipment().get(slot).decrementAmountBy(consumedAmount);
+		}
+
+		// Drop recoverable ammo on floor (Ava drop-rate outcome).
+		if (droppedAmount > 0 && ammoId > 0) {
+			ItemOnGroundManager.registerNonGlobal(player, new Item(ammoId, droppedAmount), pos);
 		}
 
 		// If we are at 0 ammo remove the item from the equipment completely.
@@ -1172,6 +1227,67 @@ public class CombatFactory {
 
 		// Refresh the equipment interface.
 		player.getEquipment().refreshItems();
+	}
+
+	private static boolean hasSerpentineHelmVariant(Player player) {
+		int helmetId = player.getEquipment().get(Equipment.HEAD_SLOT).getId();
+		return helmetId == SERPENTINE_HELM || helmetId == TANZANITE_HELM || helmetId == MAGMA_HELM;
+	}
+
+	private static void envenomEntity(Mobile entity) {
+		if (entity.isImmuneToPoison()) {
+			return;
+		}
+
+		if (entity.isPlayer()) {
+			Player player = entity.getAsPlayer();
+			if (!player.getCombat().getPoisonImmunityTimer().finished()) {
+				return;
+			}
+			player.getPacketSender().sendPoisonType(2);
+		}
+
+		boolean alreadyPoisoned = entity.isPoisoned();
+		entity.setPoisonDamage(Math.max(entity.getPoisonDamage(), PoisonType.VENOM.getDamage()));
+		if (!alreadyPoisoned) {
+			TaskManager.submit(new CombatPoisonEffect(entity));
+		}
+	}
+
+	private enum AvaDevice {
+		NONE(0, 0),
+		ATTRACTOR(60, 20),
+		ACCUMULATOR(72, 8),
+		ASSEMBLER(80, 0);
+
+		private final int recoverRate;
+		private final int dropRate;
+
+		AvaDevice(int recoverRate, int dropRate) {
+			this.recoverRate = recoverRate;
+			this.dropRate = dropRate;
+		}
+
+		private static AvaDevice forCape(int capeId) {
+			switch (capeId) {
+				case ItemIdentifiers.AVAS_ATTRACTOR:
+					return ATTRACTOR;
+				case ItemIdentifiers.AVAS_ACCUMULATOR:
+				case ItemIdentifiers.AVAS_ACCUMULATOR_2:
+				case ItemIdentifiers.AVAS_ACCUMULATOR_3:
+				case ItemIdentifiers.AVAS_MAX_CAPE:
+					return ACCUMULATOR;
+				case ItemIdentifiers.AVAS_ASSEMBLER:
+				case ItemIdentifiers.AVAS_ASSEMBLER_2:
+				case ItemIdentifiers.AVAS_ASSEMBLER_L_:
+				case ItemIdentifiers.ASSEMBLER_MAX_CAPE:
+				case ItemIdentifiers.ASSEMBLER_MAX_CAPE_2:
+				case ItemIdentifiers.ASSEMBLER_MAX_CAPE_L_:
+					return ASSEMBLER;
+				default:
+					return NONE;
+			}
+		}
 	}
 
 	/**

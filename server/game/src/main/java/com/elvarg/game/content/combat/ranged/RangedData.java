@@ -7,6 +7,7 @@ import com.elvarg.game.content.PrayerHandler;
 import com.elvarg.game.content.combat.CombatEquipment;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.FightType;
+import com.elvarg.game.content.combat.BlowpipeData;
 import com.elvarg.game.content.combat.hit.PendingHit;
 import com.elvarg.game.content.combat.method.CombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ArmadylCrossbowCombatMethod;
@@ -314,7 +315,9 @@ public class RangedData {
 
         BALLISTA(new int[]{19478, 19481}, new Ammunition[]{Ammunition.BRONZE_JAVELIN, Ammunition.IRON_JAVELIN, Ammunition.STEEL_JAVELIN, Ammunition.MITHRIL_JAVELIN, Ammunition.ADAMANT_JAVELIN, Ammunition.RUNE_JAVELIN, Ammunition.DRAGON_JAVELIN}, RangedWeaponType.BALLISTA),
 
-        TOXIC_BLOWPIPE(new int[]{12926}, new Ammunition[]{Ammunition.DRAGON_DART}, RangedWeaponType.BLOWPIPE),
+        TOXIC_BLOWPIPE(new int[]{12926}, new Ammunition[]{Ammunition.BRONZE_DART, Ammunition.IRON_DART,
+                Ammunition.STEEL_DART, Ammunition.BLACK_DART, Ammunition.MITHRIL_DART, Ammunition.ADAMANT_DART,
+                Ammunition.RUNE_DART, Ammunition.AMETHYST_DART, Ammunition.DRAGON_DART}, RangedWeaponType.BLOWPIPE),
 
         ECLIPSE_ATLATL(new int[]{29000}, new Ammunition[]{Ammunition.ATLATL_DART, Ammunition.ATLATL_DART_ALT}, RangedWeaponType.ATLATL),
 
@@ -363,24 +366,24 @@ public class RangedData {
         STEEL_ARROW(886, new Graphic(20, GraphicHeight.HIGH), 11, 16, -1),
         MITHRIL_ARROW(888, new Graphic(21, GraphicHeight.HIGH), 12, 22, -1),
         ADAMANT_ARROW(890, new Graphic(22, GraphicHeight.HIGH), 13, 31, -1),
-        RUNE_ARROW(892, new Graphic(24, GraphicHeight.HIGH), 15, 50, -1),
+        RUNE_ARROW(892, new Graphic(24, GraphicHeight.HIGH), 15, 49, -1),
         ICE_ARROW(78, new Graphic(25, GraphicHeight.HIGH), 16, 58, -1),
-        BROAD_ARROW(4160, new Graphic(20, GraphicHeight.HIGH), 11, 58, -1),
-        DRAGON_ARROW(11212, new Graphic(1111, GraphicHeight.HIGH), 1120, 65, -1),
+        BROAD_ARROW(4160, new Graphic(20, GraphicHeight.HIGH), 11, 28, -1),
+        DRAGON_ARROW(11212, new Graphic(1111, GraphicHeight.HIGH), 1120, 60, -1),
 
-        BRONZE_BOLT(877, new Graphic(955, GraphicHeight.HIGH), 27, 13, -1),
+        BRONZE_BOLT(877, new Graphic(955, GraphicHeight.HIGH), 27, 10, -1),
         OPAL_BOLT(879, new Graphic(955, GraphicHeight.HIGH), 27, 20, -1),
         ENCHANTED_OPAL_BOLT(9236, new Graphic(955, GraphicHeight.HIGH), 27, 20, -1),
-        IRON_BOLT(9140, new Graphic(955, GraphicHeight.HIGH), 27, 28, -1),
+        IRON_BOLT(9140, new Graphic(955, GraphicHeight.HIGH), 27, 46, -1),
         JADE_BOLT(9335, new Graphic(955, GraphicHeight.HIGH), 27, 31, -1),
         ENCHANTED_JADE_BOLT(9237, new Graphic(955, GraphicHeight.HIGH), 27, 31, -1),
-        STEEL_BOLT(9141, new Graphic(955, GraphicHeight.HIGH), 27, 35, -1),
+        STEEL_BOLT(9141, new Graphic(955, GraphicHeight.HIGH), 27, 64, -1),
         PEARL_BOLT(880, new Graphic(955, GraphicHeight.HIGH), 27, 38, -1),
         ENCHANTED_PEARL_BOLT(9238, new Graphic(955, GraphicHeight.HIGH), 27, 38, -1),
-        MITHRIL_BOLT(9142, new Graphic(955, GraphicHeight.HIGH), 27, 40, -1),
+        MITHRIL_BOLT(9142, new Graphic(955, GraphicHeight.HIGH), 27, 82, -1),
         TOPAZ_BOLT(9336, new Graphic(955, GraphicHeight.HIGH), 27, 50, -1),
         ENCHANTED_TOPAZ_BOLT(9239, new Graphic(955, GraphicHeight.HIGH), 27, 50, -1),
-        ADAMANT_BOLT(9143, new Graphic(955, GraphicHeight.HIGH), 27, 60, -1),
+        ADAMANT_BOLT(9143, new Graphic(955, GraphicHeight.HIGH), 27, 100, -1),
         SAPPHIRE_BOLT(9337, new Graphic(955, GraphicHeight.HIGH), 27, 65, -1),
         ENCHANTED_SAPPHIRE_BOLT(9240, new Graphic(955, GraphicHeight.HIGH), 27, 65, -1),
         EMERALD_BOLT(9338, new Graphic(955, GraphicHeight.HIGH), 27, 70, -1),
@@ -391,20 +394,22 @@ public class RangedData {
         RUNITE_BOLT(9144, new Graphic(955, GraphicHeight.HIGH), 27, 115, -1),
         DIAMOND_BOLT(9340, new Graphic(955, GraphicHeight.HIGH), 27, 105, -1),
         ENCHANTED_DIAMOND_BOLT(9243, new Graphic(955, GraphicHeight.HIGH), 27, 105, -1),
-        DRAGON_BOLT(9341, new Graphic(955, GraphicHeight.HIGH), 27, 117, -1),
-        ENCHANTED_DRAGON_BOLT(9244, new Graphic(955, GraphicHeight.HIGH), 27, 117, -1),
+        DRAGON_BOLT(9341, new Graphic(955, GraphicHeight.HIGH), 27, 122, -1),
+        ENCHANTED_DRAGON_BOLT(9244, new Graphic(955, GraphicHeight.HIGH), 27, 122, -1),
         ONYX_BOLT(9342, new Graphic(955, GraphicHeight.HIGH), 27, 120, -1),
         ENCHANTED_ONYX_BOLT(9245, new Graphic(955, GraphicHeight.HIGH), 27, 120, -1),
         ENCHANTED_DRAGONSTONE_DRAGON_BOLT(DRAGONSTONE_DRAGON_BOLTS_E_, new Graphic(955, GraphicHeight.HIGH), 27, 122, -1),
         ENCHANTED_DRAGONSTONE_DIAMOND_BOLT(DIAMOND_DRAGON_BOLTS_E_, new Graphic(955, GraphicHeight.HIGH), 27, 122, -1),
         ENCHANTED_DRAGONSTONE_OPAL_BOLT(OPAL_DRAGON_BOLTS_E_, new Graphic(955, GraphicHeight.HIGH), 27, 122, -1),
         BRONZE_DART(806, new Graphic(232, GraphicHeight.HIGH), 226, 1, -1),
-        IRON_DART(807, new Graphic(233, GraphicHeight.HIGH), 227, 4, -1),
-        STEEL_DART(808, new Graphic(234, GraphicHeight.HIGH), 228, 6, -1),
-        MITHRIL_DART(809, new Graphic(235, GraphicHeight.HIGH), 229, 8, -1),
-        ADAMANT_DART(810, new Graphic(236, GraphicHeight.HIGH), 230, 13, -1),
-        RUNE_DART(811, new Graphic(237, GraphicHeight.HIGH), 231, 17, -1),
-        DRAGON_DART(11230, new Graphic(1123, GraphicHeight.HIGH), 226, 24, -1),
+        IRON_DART(807, new Graphic(233, GraphicHeight.HIGH), 227, 2, -1),
+        STEEL_DART(808, new Graphic(234, GraphicHeight.HIGH), 228, 3, -1),
+        BLACK_DART(3093, new Graphic(235, GraphicHeight.HIGH), 229, 6, -1),
+        MITHRIL_DART(809, new Graphic(235, GraphicHeight.HIGH), 229, 9, -1),
+        ADAMANT_DART(810, new Graphic(236, GraphicHeight.HIGH), 230, 17, -1),
+        RUNE_DART(811, new Graphic(237, GraphicHeight.HIGH), 231, 26, -1),
+        AMETHYST_DART(25849, new Graphic(237, GraphicHeight.HIGH), 231, 28, -1),
+        DRAGON_DART(11230, new Graphic(1123, GraphicHeight.HIGH), 226, 35, -1),
         ATLATL_DART(28991, null, 2795, 18, -1),
         ATLATL_DART_ALT(29002, null, 2795, 18, -1),
 
@@ -497,9 +502,9 @@ public class RangedData {
             int weapon = p.getEquipment().getItems()[Equipment.WEAPON_SLOT].getId();
             Ammunition throwWeapon = rangedAmmunition.get(weapon);
 
-            //Toxic blowpipe should always fire dragon darts.
+            // Toxic blowpipe fires whichever dart type is loaded into the weapon.
             if (weapon == 12926) {
-                return Ammunition.DRAGON_DART;
+                return BlowpipeData.getLoadedAmmunition(p);
             }
 
             //Didnt find one. Try arrows

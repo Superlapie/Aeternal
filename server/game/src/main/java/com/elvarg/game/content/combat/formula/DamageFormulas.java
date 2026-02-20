@@ -5,6 +5,8 @@ import com.elvarg.game.content.combat.CombatEquipment;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.FightStyle;
+import com.elvarg.game.content.combat.ranged.RangedData.Ammunition;
+import com.elvarg.game.content.combat.ranged.RangedData.RangedWeapon;
 import com.elvarg.game.content.combat.magic.CombatSpell;
 import com.elvarg.game.content.combat.magic.TridentData;
 import com.elvarg.game.entity.impl.Mobile;
@@ -130,8 +132,19 @@ public class DamageFormulas {
             maxHit = c.getAsNpc().getDefinition().getMaxHit();
         }
 
+        float prayerMagicDamageBonus = 0f;
+        if (c.isPlayer()) {
+            Player player = c.getAsPlayer();
+            if (PrayerHandler.isActivated(player, PrayerHandler.MYSTIC_MIGHT)) {
+                prayerMagicDamageBonus = 0.02f;
+            }
+            else if (PrayerHandler.isActivated(player, PrayerHandler.AUGURY)) {
+                prayerMagicDamageBonus = 0.04f;
+            }
+        }
+
         float equipmentBonus = c.isPlayer()
-                               ? 1f + (c.getAsPlayer().getBonusManager().getOtherBonus()[BonusManager.MAGIC_STRENGTH] / 100f)
+                               ? 1f + (c.getAsPlayer().getBonusManager().getOtherBonus()[BonusManager.MAGIC_STRENGTH] / 100f) + prayerMagicDamageBonus
                                : 1f;
 
         maxHit *= equipmentBonus;
@@ -177,15 +190,56 @@ public class DamageFormulas {
         return (int) Math.floor(rngStrength);
     }
 
+    private static int effectiveAtlatlStrength(Player player) {
+        float strengthLevel = player.getSkillManager().getCurrentLevel(Skill.STRENGTH);
+
+        float prayerMod = 1.0f;
+        if (PrayerHandler.isActivated(player, PrayerHandler.BURST_OF_STRENGTH)) {
+            prayerMod = 1.05f;
+        }
+        else if (PrayerHandler.isActivated(player, PrayerHandler.SUPERHUMAN_STRENGTH)) {
+            prayerMod = 1.10f;
+        }
+        else if (PrayerHandler.isActivated(player, PrayerHandler.ULTIMATE_STRENGTH)) {
+            prayerMod = 1.15f;
+        }
+        else if (PrayerHandler.isActivated(player, PrayerHandler.CHIVALRY)) {
+            prayerMod = 1.18f;
+        }
+        else if (PrayerHandler.isActivated(player, PrayerHandler.PIETY)) {
+            prayerMod = 1.23f;
+        }
+
+        strengthLevel *= prayerMod;
+        strengthLevel = (float) Math.floor(strengthLevel);
+
+        FightStyle fightStyle = player.getFightType().getStyle();
+        if (fightStyle == FightStyle.ACCURATE) {
+            strengthLevel += 3;
+        }
+
+        strengthLevel += 8;
+
+        if (CombatEquipment.wearingVoid(player, CombatType.RANGED)) {
+            strengthLevel *= 1.1f;
+        }
+
+        return (int) Math.floor(strengthLevel);
+    }
+
     private static int maximumRangeHitDpsCalc(Player player) {
         boolean usingEclipseAtlatl = player.getEquipment().hasAt(Equipment.WEAPON_SLOT, ECLIPSE_ATLATL_ID);
         int strengthBonus = usingEclipseAtlatl
                 ? player.getBonusManager().getOtherBonus()[BonusManager.STRENGTH]
                 : player.getBonusManager().getOtherBonus()[BonusManager.RANGED_STRENGTH];
+        if (!usingEclipseAtlatl && player.getCombat().getRangedWeapon() == RangedWeapon.TOXIC_BLOWPIPE) {
+            Ammunition blowpipeDart = player.getCombat().getAmmunition();
+            if (blowpipeDart != null) {
+                strengthBonus += blowpipeDart.getStrength();
+            }
+        }
 
-        // Eclipse atlatl scales from ranged level/prayers (as a ranged weapon),
-        // but uses melee strength bonus for max-hit.
-        float maxHit = effectiveRangedStrength(player);
+        float maxHit = usingEclipseAtlatl ? effectiveAtlatlStrength(player) : effectiveRangedStrength(player);
         maxHit *= (strengthBonus + 64);
         maxHit += 320;
         maxHit /= 640;

@@ -6,9 +6,11 @@ import com.elvarg.game.content.combat.hit.HitMask;
 import com.elvarg.game.content.combat.hit.PendingHit;
 import com.elvarg.game.content.combat.method.impl.MeleeCombatMethod;
 import com.elvarg.game.entity.impl.Mobile;
+import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.model.Animation;
 import com.elvarg.game.model.Graphic;
 import com.elvarg.game.model.Priority;
+import com.elvarg.game.model.Skill;
 import com.elvarg.game.task.Task;
 import com.elvarg.game.task.TaskManager;
 
@@ -43,11 +45,22 @@ public class AncientGodswordCombatMethod extends MeleeCombatMethod {
                     if (processed == 8) {
                         hit.getTarget().sendMessage("You have been sacrificed.");
                         hit.getTarget().performGraphic(new Graphic(377));
-                        hit.getAttacker().heal(25);
+                        int maxSacrificeDamage;
+                        if (hit.getTarget().isPlayer()) {
+                            maxSacrificeDamage = (int) Math.floor(hit.getTarget().getAsPlayer().getSkillManager()
+                                    .getMaxLevel(Skill.HITPOINTS) * 0.15);
+                        } else if (hit.getTarget().isNpc()) {
+                            maxSacrificeDamage = (int) Math.floor(((NPC) hit.getTarget()).getDefinition().getHitpoints() * 0.15);
+                        } else {
+                            maxSacrificeDamage = 0;
+                        }
+                        int sacrificeDamage = Math.min(25,
+                                Math.min(Math.max(maxSacrificeDamage, 0), hit.getTarget().getHitpoints()));
+                        hit.getAttacker().heal(sacrificeDamage);
                         hit.getTarget()
                            .getCombat()
                            .getHitQueue()
-                           .addPendingDamage(new HitDamage(25, HitMask.RED));
+                           .addPendingDamage(new HitDamage(sacrificeDamage, HitMask.RED));
                         stop();
                         return;
                     }

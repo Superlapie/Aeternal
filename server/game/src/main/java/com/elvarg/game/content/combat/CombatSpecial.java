@@ -26,6 +26,7 @@ import com.elvarg.game.content.combat.method.impl.specials.DragonLongswordCombat
 import com.elvarg.game.content.combat.method.impl.specials.DragonMaceCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.DragonScimitarCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.DragonWarhammerCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.EldritchNightmareStaffCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.GraniteMaulCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.MagicShortbowCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.MorrigansJavelinCombatMethod;
@@ -82,8 +83,8 @@ public enum CombatSpecial {
 
     ARMADYL_GODSWORD(new int[]{11802}, 50, 1.375, 2, new ArmadylGodswordCombatMethod(), WeaponInterface.GODSWORD),
     ANCIENT_GODSWORD(new int[]{26233}, 50, 1.1, 2, new AncientGodswordCombatMethod(), WeaponInterface.GODSWORD),
-    SARADOMIN_GODSWORD(new int[]{11806}, 50, 1.1, 1.5, new SaradominGodswordCombatMethod(), WeaponInterface.GODSWORD),
-    BANDOS_GODSWORD(new int[]{11804}, 100, 1.21, 1.5, new BandosGodswordCombatMethod(), WeaponInterface.GODSWORD),
+    SARADOMIN_GODSWORD(new int[]{11806}, 50, 1.1, 2, new SaradominGodswordCombatMethod(), WeaponInterface.GODSWORD),
+    BANDOS_GODSWORD(new int[]{11804}, 100, 1.21, 2, new BandosGodswordCombatMethod(), WeaponInterface.GODSWORD),
     ZAMORAK_GODSWORD(new int[]{11808}, 50, 1.1, 2, new ZamorakGodswordCombatMethod(), WeaponInterface.GODSWORD),
 
     ABYSSAL_BLUDGEON(new int[]{13263}, 50, 1.20, 1.0, new AbyssalBludgeonCombatMethod(),
@@ -128,8 +129,10 @@ public enum CombatSpecial {
                  25, 1, 1, new DragonKnifeCombatMethod(), WeaponInterface.KNIFE),
 
 
-    VOLATILE_NIGHTMARE_STAFF(new int[]{24424}, 55, 1, 1.5,
+    VOLATILE_NIGHTMARE_STAFF(new int[]{24424, 24509}, 55, 1, 1.5,
                              new VolatileNightmareStaffCombatMethod(), WeaponInterface.STAFF),
+    ELDRITCH_NIGHTMARE_STAFF(new int[]{24425, 24510}, 55, 1, 1.5,
+                             new EldritchNightmareStaffCombatMethod(), WeaponInterface.STAFF),
     ;
 
     public static final Set<Integer> SPECIAL_ATTACK_WEAPON_IDS = Arrays.stream(CombatSpecial.values()).flatMap(cs -> Arrays.stream(cs.getIdentifiers()).boxed()).collect(Collectors.toSet());

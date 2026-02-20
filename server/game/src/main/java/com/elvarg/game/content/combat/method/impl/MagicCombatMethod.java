@@ -15,6 +15,7 @@ import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Graphic;
 import com.elvarg.game.model.GraphicHeight;
+import com.elvarg.game.model.container.impl.Equipment;
 import com.elvarg.game.model.areas.AreaManager;
 import com.google.common.collect.Streams;
 
@@ -142,7 +143,17 @@ public class MagicCombatMethod extends CombatMethod {
 	public int attackSpeed(Mobile character) {
 
 		if (character.getCombat().getPreviousCast() != null) {
-			return character.getCombat().getPreviousCast().getAttackSpeed();
+            int speed = character.getCombat().getPreviousCast().getAttackSpeed();
+            if (character.isPlayer()) {
+                final int weaponId = character.getAsPlayer().getEquipment().get(Equipment.WEAPON_SLOT).getId();
+                final boolean harmonisedNightmareStaff = weaponId == 24423 || weaponId == 24508;
+                if (harmonisedNightmareStaff
+                        && !TridentData.isTridentSpell(character.getCombat().getPreviousCast())
+                        && speed == 5) {
+                    return 4;
+                }
+            }
+			return speed;
 		}
 
 		return super.attackSpeed(character);
@@ -203,6 +214,10 @@ public class MagicCombatMethod extends CombatMethod {
 			}
 
 			previousSpell.finishCast(attacker, target, accurate, damage);
+
+            if (attacker.isPlayer() && TridentData.isTridentSpell(previousSpell)) {
+                TridentData.trySanguinestiHeal(attacker.getAsPlayer(), accurate, damage);
+            }
 
 		}
 	}

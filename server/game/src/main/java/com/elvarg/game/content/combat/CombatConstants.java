@@ -31,9 +31,9 @@ public class CombatConstants {
     /**
      * The maximum amount of damage inflicted by retribution.
      */
-    // Damage between currently 0-15 will be inflicted if in the specified
+    // Damage between currently 0-24 will be inflicted if in the specified
     // radius when the retribution prayer effect is activated.
-    public static final int MAXIMUM_RETRIBUTION_DAMAGE = 15;
+    public static final int MAXIMUM_RETRIBUTION_DAMAGE = 24;
 
     /**
      * The radius that retribution will hit players in.

@@ -20,6 +20,8 @@ import java.util.Set;
 public final class Animation {
     private static final boolean VERBOSE_ANIM_LOGS = Boolean.getBoolean("client.verboseAnimLogs");
     private static final Set<Integer> ALLOWED_2446_OVERRIDES = new HashSet<>(Arrays.asList(
+            8139, 8140, 8141, 8142,
+            8531, 8532,
             10815, 10818, 10819,
             11051, 11052, 11053, 11055,
             11057, 11058, 11059, 11060, 11061, 11062, 11063, 11064,
@@ -33,6 +35,9 @@ public final class Animation {
             // Yama true ids from 2446 export are retained as slots; these entries are
             // skeletal/maya in this client and may fallback if not directly playable.
             12140, 12141
+    ));
+    private static final Set<Integer> NIGHTMARE_STAFF_SEQUENCE_IDS = new HashSet<>(Arrays.asList(
+            8139, 8140, 8141, 8142, 8531, 8532
     ));
     private static final Set<Integer> OPCODE14_USHORT_2446 = new HashSet<>(Arrays.asList(
             11338, 11339, 11342, 11345, 11350, 11355, 11358
@@ -259,6 +264,7 @@ public final class Animation {
                 try {
                     decode2446Sequence(id, override, new Buffer(data));
                     remapLowFrameGroupsToAliases(override, id);
+                    sanitizeNightmareStaffSequence(override, id);
                 } catch (Exception ex) {
                     System.out.println("Failed loading 2446 sequence override " + id + ": " + ex.getMessage());
                     continue;
@@ -505,6 +511,16 @@ public final class Animation {
                 System.out.println("Remapped 2446 low frame group " + group + " -> " + aliasGroup + " for seq " + sequenceId);
             }
         }
+    }
+
+    private static void sanitizeNightmareStaffSequence(Animation animation, int id) {
+        if (animation == null || !NIGHTMARE_STAFF_SEQUENCE_IDS.contains(id)) {
+            return;
+        }
+        // 2446 sequences can include modern hand model swaps that don't map cleanly in this client,
+        // which causes warped/broken playback when wielding the staff.
+        animation.playerMainhand = -1;
+        animation.playerOffhand = -1;
     }
 
     private void decode(Buffer buffer) {        

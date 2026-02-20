@@ -136,9 +136,16 @@ import java.util.ArrayList;
 
 import java.util.Arrays;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+
 import java.util.List;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -1667,6 +1674,134 @@ public class Client extends GameApplet {
 
     private int destinationY;
 
+    private boolean tileIndicatorsPluginEnabled = false;
+    private boolean tileIndicatorDestinationEnabled = true;
+    private boolean tileIndicatorCurrentEnabled = false;
+    private int tileIndicatorBorderWidth = 2;
+    private Color tileIndicatorDestinationBorderColor = new Color(128, 128, 128, 220);
+    private Color tileIndicatorDestinationFillColor = new Color(0, 0, 0, 50);
+    private Color tileIndicatorCurrentBorderColor = new Color(0, 255, 255, 220);
+    private Color tileIndicatorCurrentFillColor = new Color(0, 0, 0, 50);
+    private boolean visualMetronomePluginEnabled = false;
+    private boolean visualMetronomeHighlightTrueTile = false;
+    private int visualMetronomeCycleLength = 2;
+    private Color visualMetronomeTickColor = new Color(0, 255, 0, 190);
+    private Color visualMetronomeTockColor = new Color(255, 0, 0, 190);
+    private long visualMetronomeTickAnchorMs = 0L;
+    private int visualMetronomeTickCounter = 0;
+    private Color visualMetronomeCurrentColor = visualMetronomeTickColor;
+    private boolean shortestPathPluginEnabled = false;
+    private Color shortestPathColor = new Color(255, 0, 0, 190);
+    private List<Point> shortestPathPoints = new ArrayList<>();
+    private boolean shortestPathUseManualTarget = false;
+    private boolean shortestPathSelectTargetMode = false;
+    private int shortestPathManualTargetX = -1;
+    private int shortestPathManualTargetY = -1;
+    private int shortestPathTargetX = -1;
+    private int shortestPathTargetY = -1;
+    private int shortestPathStartX = -1;
+    private int shortestPathStartY = -1;
+    private boolean ammoPluginEnabled = false;
+    private int ammoLowWarningThreshold = 100;
+    private boolean ammoLowNotifierTriggered = false;
+    private boolean boostsInfoPluginEnabled = false;
+    private boolean boostsShowCombatSkills = true;
+    private boolean boostsShowNonCombatSkills = false;
+    private boolean boostsUseRelativeBoosts = true;
+    private int boostsThreshold = 0;
+    private boolean boostsNotifyOnThreshold = false;
+    private final Set<Integer> boostsThresholdNotifiedSkills = new HashSet<>();
+    private boolean bossTimersPluginEnabled = false;
+    private final Set<Integer> bossDeathHandledNpcIndices = new HashSet<>();
+    private boolean itemStatsPluginEnabled = false;
+    private boolean itemStatsShowItemId = true;
+    private boolean itemStatsShowItemValue = true;
+    private boolean itemStatsShowActions = false;
+    private boolean itemStatsShowGroundActions = false;
+    private boolean itemStatsShowMembershipInfo = true;
+    private boolean itemStatsShowNoteInfo = true;
+    private boolean npcAggressionTimerPluginEnabled = false;
+    private long npcAggressionTimerStartMs = 0L;
+    private int npcAggressionDurationSeconds = 600;
+    private int npcAggressionStartTileX = -1;
+    private int npcAggressionStartTileY = -1;
+    private boolean npcIndicatorsPluginEnabled = false;
+    private boolean npcIndicatorsHighlightTile = true;
+    private boolean npcIndicatorsHighlightName = false;
+    private boolean npcIndicatorsHighlightMinimap = false;
+    private boolean npcIndicatorsIgnoreDead = true;
+    private int npcIndicatorsMatchMode = 0; // 0=contains, 1=exact, 2=starts with
+    private boolean npcIndicatorsCaseSensitive = false;
+    private String npcIndicatorTargetsCsv = "";
+    private Color npcIndicatorsColor = new Color(255, 255, 0, 190);
+    private final List<String> npcIndicatorTargetTokens = new ArrayList<>();
+    private boolean xpDropsPluginEnabled = true;
+    private boolean xpTrackerPluginEnabled = false;
+    private long xpTrackerSessionStartMs = 0L;
+    private long xpTrackerSessionStartTotalExp = 0L;
+    private long xpTrackerSessionPausedMs = 0L;
+    private long xpTrackerPauseStartedMs = 0L;
+    private long xpTrackerLastXpGainMs = 0L;
+    private long xpTrackerLastObservedTotalExp = 0L;
+    private boolean xpTrackerPauseOnLogout = true;
+    private int xpTrackerAutoPauseMinutes = 0;
+    private boolean idleNotifierPluginEnabled = false;
+    private int idleNotifierThresholdSeconds = 60;
+    private boolean idleNotifierTriggered = false;
+    private boolean inventoryTagsPluginEnabled = false;
+    private String inventoryTagsItemIdsCsv = "";
+    private String inventoryTagsItemNamesCsv = "";
+    private Color inventoryTagsColor = new Color(255, 0, 255, 200);
+    private final Set<Integer> inventoryTagItemIds = new HashSet<>();
+    private final List<String> inventoryTagItemNameTokens = new ArrayList<>();
+    private String inventoryTagsItemIdsCsv2 = "";
+    private String inventoryTagsItemNamesCsv2 = "";
+    private Color inventoryTagsColor2 = new Color(85, 255, 255, 200);
+    private final Set<Integer> inventoryTagItemIds2 = new HashSet<>();
+    private final List<String> inventoryTagItemNameTokens2 = new ArrayList<>();
+    private String inventoryTagsItemIdsCsv3 = "";
+    private String inventoryTagsItemNamesCsv3 = "";
+    private Color inventoryTagsColor3 = new Color(140, 255, 120, 200);
+    private final Set<Integer> inventoryTagItemIds3 = new HashSet<>();
+    private final List<String> inventoryTagItemNameTokens3 = new ArrayList<>();
+    private String inventoryTagsItemIdsCsv4 = "";
+    private String inventoryTagsItemNamesCsv4 = "";
+    private Color inventoryTagsColor4 = new Color(255, 180, 90, 200);
+    private final Set<Integer> inventoryTagItemIds4 = new HashSet<>();
+    private final List<String> inventoryTagItemNameTokens4 = new ArrayList<>();
+    private int inventoryTagsSelectedGroup = 0;
+    private int inventoryTagsNameMatchMode = 0; // 0=contains, 1=exact, 2=starts with
+    private boolean inventoryTagsCaseSensitive = false;
+    private boolean itemChargesPluginEnabled = false;
+    private int itemChargesLowWarningThreshold = 1;
+    private boolean itemChargesShowWhenZero = false;
+    private Color itemChargesTextColor = new Color(255, 255, 255, 230);
+    private Color itemChargesLowColor = new Color(255, 107, 107, 230);
+    private boolean lootTrackerPluginEnabled = false;
+    private final List<String> lootTrackerRecentEntries = new ArrayList<>();
+    private final Map<Integer, Integer> lootTrackerLastTotals = new HashMap<>();
+    private int lootTrackerMaxEntries = 8;
+    private boolean lootTrackerShowNpcKillChat = false;
+    private boolean timersPluginEnabled = true;
+    private boolean timersShowSecondsOnly = false;
+    private int timersOverlayOffsetX = -330;
+    private int timersOverlayOffsetY = -195;
+    private Color timersTextColor = new Color(255, 140, 0, 255);
+    private int timersMinSeconds = 0;
+    private int timersMaxVisible = 8;
+    private boolean timersSortAscending = true;
+    private boolean timersShowSpriteId = false;
+    private String timersIncludeSpriteIdsCsv = "";
+    private String timersExcludeSpriteIdsCsv = "";
+    private final Set<Integer> timersIncludeSpriteIds = new HashSet<>();
+    private final Set<Integer> timersExcludeSpriteIds = new HashSet<>();
+    private int itemStatsHoveredItemId = -1;
+    private int itemStatsHoveredAmount = 0;
+    private final Map<Integer, Integer> bossLastKnownHealth = new HashMap<>();
+    private final List<BossRespawnEntry> bossRespawnEntries = new ArrayList<>();
+    private int bossTimersOverlayLimit = 3;
+    private final long[] xpTrackerSkillStartXp = new long[SkillConstants.SKILL_COUNT];
+
     private Sprite minimapImage;
 
     private Image worldMapMarker;
@@ -2769,6 +2904,341 @@ public class Client extends GameApplet {
 
     }
 
+    private static final int PLUGIN_SETTINGS_VERSION = 8;
+
+    public void savePluginData() {
+        try {
+            File file = new File(SignLink.findcachedir() + "/plugins.dat");
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            DataOutputStream stream = new DataOutputStream(new FileOutputStream(file));
+            stream.writeInt(PLUGIN_SETTINGS_VERSION);
+
+            stream.writeBoolean(tileIndicatorsPluginEnabled);
+            stream.writeBoolean(tileIndicatorDestinationEnabled);
+            stream.writeBoolean(tileIndicatorCurrentEnabled);
+            stream.writeInt(tileIndicatorDestinationBorderColor.getRGB());
+            stream.writeInt(tileIndicatorCurrentBorderColor.getRGB());
+
+            stream.writeBoolean(visualMetronomePluginEnabled);
+            stream.writeBoolean(visualMetronomeHighlightTrueTile);
+            stream.writeInt(visualMetronomeCycleLength);
+            stream.writeInt(visualMetronomeTickColor.getRGB());
+            stream.writeInt(visualMetronomeTockColor.getRGB());
+
+            stream.writeBoolean(shortestPathPluginEnabled);
+            stream.writeInt(shortestPathColor.getRGB());
+            stream.writeBoolean(shortestPathUseManualTarget);
+            stream.writeInt(shortestPathManualTargetX);
+            stream.writeInt(shortestPathManualTargetY);
+
+            stream.writeBoolean(ammoPluginEnabled);
+            stream.writeInt(ammoLowWarningThreshold);
+            stream.writeBoolean(boostsInfoPluginEnabled);
+            stream.writeBoolean(boostsShowCombatSkills);
+            stream.writeBoolean(boostsShowNonCombatSkills);
+            stream.writeBoolean(boostsUseRelativeBoosts);
+            stream.writeInt(boostsThreshold);
+            stream.writeBoolean(boostsNotifyOnThreshold);
+            stream.writeBoolean(bossTimersPluginEnabled);
+            stream.writeInt(bossTimersOverlayLimit);
+            stream.writeBoolean(itemStatsPluginEnabled);
+            stream.writeBoolean(itemStatsShowItemId);
+            stream.writeBoolean(itemStatsShowItemValue);
+            stream.writeBoolean(itemStatsShowActions);
+            stream.writeBoolean(itemStatsShowGroundActions);
+            stream.writeBoolean(itemStatsShowMembershipInfo);
+            stream.writeBoolean(itemStatsShowNoteInfo);
+            stream.writeBoolean(npcAggressionTimerPluginEnabled);
+            stream.writeInt(npcAggressionDurationSeconds);
+            stream.writeBoolean(npcIndicatorsPluginEnabled);
+            stream.writeBoolean(npcIndicatorsHighlightTile);
+            stream.writeBoolean(npcIndicatorsHighlightName);
+            stream.writeBoolean(npcIndicatorsHighlightMinimap);
+            stream.writeBoolean(npcIndicatorsIgnoreDead);
+            stream.writeInt(npcIndicatorsMatchMode);
+            stream.writeBoolean(npcIndicatorsCaseSensitive);
+            stream.writeUTF(npcIndicatorTargetsCsv == null ? "" : npcIndicatorTargetsCsv);
+            stream.writeInt(npcIndicatorsColor.getRGB());
+            stream.writeBoolean(xpDropsPluginEnabled);
+            stream.writeBoolean(xpTrackerPluginEnabled);
+            stream.writeBoolean(xpTrackerPauseOnLogout);
+            stream.writeInt(xpTrackerAutoPauseMinutes);
+            stream.writeBoolean(idleNotifierPluginEnabled);
+            stream.writeInt(idleNotifierThresholdSeconds);
+            stream.writeBoolean(inventoryTagsPluginEnabled);
+            stream.writeUTF(inventoryTagsItemIdsCsv == null ? "" : inventoryTagsItemIdsCsv);
+            stream.writeUTF(inventoryTagsItemNamesCsv == null ? "" : inventoryTagsItemNamesCsv);
+            stream.writeInt(inventoryTagsNameMatchMode);
+            stream.writeBoolean(inventoryTagsCaseSensitive);
+            stream.writeInt(inventoryTagsColor.getRGB());
+            stream.writeInt(inventoryTagsSelectedGroup);
+            stream.writeUTF(inventoryTagsItemIdsCsv2 == null ? "" : inventoryTagsItemIdsCsv2);
+            stream.writeUTF(inventoryTagsItemNamesCsv2 == null ? "" : inventoryTagsItemNamesCsv2);
+            stream.writeInt(inventoryTagsColor2.getRGB());
+            stream.writeUTF(inventoryTagsItemIdsCsv3 == null ? "" : inventoryTagsItemIdsCsv3);
+            stream.writeUTF(inventoryTagsItemNamesCsv3 == null ? "" : inventoryTagsItemNamesCsv3);
+            stream.writeInt(inventoryTagsColor3.getRGB());
+            stream.writeUTF(inventoryTagsItemIdsCsv4 == null ? "" : inventoryTagsItemIdsCsv4);
+            stream.writeUTF(inventoryTagsItemNamesCsv4 == null ? "" : inventoryTagsItemNamesCsv4);
+            stream.writeInt(inventoryTagsColor4.getRGB());
+            stream.writeBoolean(itemChargesPluginEnabled);
+            stream.writeInt(itemChargesLowWarningThreshold);
+            stream.writeBoolean(itemChargesShowWhenZero);
+            stream.writeInt(itemChargesTextColor.getRGB());
+            stream.writeInt(itemChargesLowColor.getRGB());
+            stream.writeBoolean(lootTrackerPluginEnabled);
+            stream.writeInt(lootTrackerMaxEntries);
+            stream.writeBoolean(lootTrackerShowNpcKillChat);
+            stream.writeBoolean(timersPluginEnabled);
+            stream.writeBoolean(timersShowSecondsOnly);
+            stream.writeInt(timersOverlayOffsetX);
+            stream.writeInt(timersOverlayOffsetY);
+            stream.writeInt(timersTextColor.getRGB());
+            stream.writeInt(timersMinSeconds);
+            stream.writeInt(timersMaxVisible);
+            stream.writeBoolean(timersSortAscending);
+            stream.writeBoolean(timersShowSpriteId);
+            stream.writeUTF(timersIncludeSpriteIdsCsv == null ? "" : timersIncludeSpriteIdsCsv);
+            stream.writeUTF(timersExcludeSpriteIdsCsv == null ? "" : timersExcludeSpriteIdsCsv);
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadPluginData() {
+        File pluginFile = new File(SignLink.findcachedir() + "/plugins.dat");
+
+        // One-time fallback: import previous plugin bytes from legacy settings.dat layout.
+        if (!pluginFile.exists()) {
+            tryLoadPluginDataFromLegacySettings();
+            savePluginData();
+            return;
+        }
+
+        try (DataInputStream stream = new DataInputStream(new FileInputStream(pluginFile))) {
+            int version = stream.readInt();
+            if (version < 1 || version > PLUGIN_SETTINGS_VERSION) {
+                return;
+            }
+
+            tileIndicatorsPluginEnabled = stream.readBoolean();
+            tileIndicatorDestinationEnabled = stream.readBoolean();
+            tileIndicatorCurrentEnabled = stream.readBoolean();
+            tileIndicatorDestinationBorderColor = withAlpha(new Color(stream.readInt(), true), 220);
+            tileIndicatorDestinationFillColor = withAlpha(tileIndicatorDestinationBorderColor, 50);
+            tileIndicatorCurrentBorderColor = withAlpha(new Color(stream.readInt(), true), 220);
+            tileIndicatorCurrentFillColor = withAlpha(tileIndicatorCurrentBorderColor, 50);
+
+            visualMetronomePluginEnabled = stream.readBoolean();
+            visualMetronomeHighlightTrueTile = stream.readBoolean();
+            visualMetronomeCycleLength = Math.max(1, Math.min(10, stream.readInt()));
+            visualMetronomeTickColor = withAlpha(new Color(stream.readInt(), true), 190);
+            visualMetronomeTockColor = withAlpha(new Color(stream.readInt(), true), 190);
+
+            shortestPathPluginEnabled = stream.readBoolean();
+            shortestPathColor = withAlpha(new Color(stream.readInt(), true), 190);
+            shortestPathUseManualTarget = stream.readBoolean();
+            shortestPathManualTargetX = stream.readInt();
+            shortestPathManualTargetY = stream.readInt();
+            if (!shortestPathUseManualTarget) {
+                shortestPathManualTargetX = -1;
+                shortestPathManualTargetY = -1;
+            }
+            shortestPathSelectTargetMode = false;
+            shortestPathPoints.clear();
+
+            if (version >= 2) {
+                ammoPluginEnabled = stream.readBoolean();
+                ammoLowWarningThreshold = Math.max(1, stream.readInt());
+                boostsInfoPluginEnabled = stream.readBoolean();
+                if (version >= 4) {
+                    boostsShowCombatSkills = stream.readBoolean();
+                    boostsShowNonCombatSkills = stream.readBoolean();
+                    boostsUseRelativeBoosts = stream.readBoolean();
+                    boostsThreshold = Math.max(0, stream.readInt());
+                    boostsNotifyOnThreshold = stream.readBoolean();
+                }
+                bossTimersPluginEnabled = stream.readBoolean();
+                if (version >= 4) {
+                    bossTimersOverlayLimit = Math.max(1, Math.min(10, stream.readInt()));
+                }
+                itemStatsPluginEnabled = stream.readBoolean();
+                if (version >= 5) {
+                    itemStatsShowItemId = stream.readBoolean();
+                    itemStatsShowItemValue = stream.readBoolean();
+                    itemStatsShowActions = stream.readBoolean();
+                    if (version >= 6) {
+                        itemStatsShowGroundActions = stream.readBoolean();
+                        itemStatsShowMembershipInfo = stream.readBoolean();
+                        itemStatsShowNoteInfo = stream.readBoolean();
+                    }
+                }
+                npcAggressionTimerPluginEnabled = stream.readBoolean();
+                npcAggressionDurationSeconds = Math.max(10, stream.readInt());
+                npcIndicatorsPluginEnabled = stream.readBoolean();
+                if (version >= 3) {
+                    npcIndicatorsHighlightTile = stream.readBoolean();
+                    npcIndicatorsHighlightName = stream.readBoolean();
+                    npcIndicatorsHighlightMinimap = stream.readBoolean();
+                    npcIndicatorsIgnoreDead = stream.readBoolean();
+                    if (version >= 7) {
+                        npcIndicatorsMatchMode = Math.max(0, Math.min(2, stream.readInt()));
+                        npcIndicatorsCaseSensitive = stream.readBoolean();
+                    }
+                }
+                npcIndicatorTargetsCsv = stream.readUTF();
+                parseNpcIndicatorTargets();
+                npcIndicatorsColor = withAlpha(new Color(stream.readInt(), true), 190);
+                xpDropsPluginEnabled = stream.readBoolean();
+                xpTrackerPluginEnabled = stream.readBoolean();
+                if (version >= 4) {
+                    xpTrackerPauseOnLogout = stream.readBoolean();
+                    xpTrackerAutoPauseMinutes = Math.max(0, Math.min(120, stream.readInt()));
+                }
+                idleNotifierPluginEnabled = stream.readBoolean();
+                idleNotifierThresholdSeconds = Math.max(5, stream.readInt());
+                inventoryTagsPluginEnabled = stream.readBoolean();
+                inventoryTagsItemIdsCsv = stream.readUTF();
+                parseInventoryTagItemIds();
+                if (version >= 7) {
+                    inventoryTagsItemNamesCsv = stream.readUTF();
+                    inventoryTagsNameMatchMode = Math.max(0, Math.min(2, stream.readInt()));
+                    inventoryTagsCaseSensitive = stream.readBoolean();
+                    parseInventoryTagItemNames();
+                }
+                inventoryTagsColor = withAlpha(new Color(stream.readInt(), true), 200);
+                if (version >= 8) {
+                    inventoryTagsSelectedGroup = Math.max(0, Math.min(3, stream.readInt()));
+                    inventoryTagsItemIdsCsv2 = stream.readUTF();
+                    inventoryTagsItemNamesCsv2 = stream.readUTF();
+                    inventoryTagsColor2 = withAlpha(new Color(stream.readInt(), true), 200);
+                    inventoryTagsItemIdsCsv3 = stream.readUTF();
+                    inventoryTagsItemNamesCsv3 = stream.readUTF();
+                    inventoryTagsColor3 = withAlpha(new Color(stream.readInt(), true), 200);
+                    inventoryTagsItemIdsCsv4 = stream.readUTF();
+                    inventoryTagsItemNamesCsv4 = stream.readUTF();
+                    inventoryTagsColor4 = withAlpha(new Color(stream.readInt(), true), 200);
+                    parseInventoryTagItemIdsForGroup(1);
+                    parseInventoryTagItemNamesForGroup(1);
+                    parseInventoryTagItemIdsForGroup(2);
+                    parseInventoryTagItemNamesForGroup(2);
+                    parseInventoryTagItemIdsForGroup(3);
+                    parseInventoryTagItemNamesForGroup(3);
+                }
+                itemChargesPluginEnabled = stream.readBoolean();
+                if (version >= 3) {
+                    itemChargesLowWarningThreshold = Math.max(0, stream.readInt());
+                    itemChargesShowWhenZero = stream.readBoolean();
+                    itemChargesTextColor = withAlpha(new Color(stream.readInt(), true), 230);
+                    itemChargesLowColor = withAlpha(new Color(stream.readInt(), true), 230);
+                }
+                lootTrackerPluginEnabled = stream.readBoolean();
+                if (version >= 4) {
+                    lootTrackerMaxEntries = Math.max(1, Math.min(50, stream.readInt()));
+                    lootTrackerShowNpcKillChat = stream.readBoolean();
+                }
+                timersPluginEnabled = stream.readBoolean();
+                if (version >= 5) {
+                    timersShowSecondsOnly = stream.readBoolean();
+                    timersOverlayOffsetX = stream.readInt();
+                    timersOverlayOffsetY = stream.readInt();
+                    timersTextColor = new Color(stream.readInt(), true);
+                    if (version >= 6) {
+                        timersMinSeconds = Math.max(0, stream.readInt());
+                        timersMaxVisible = Math.max(1, Math.min(20, stream.readInt()));
+                        timersSortAscending = stream.readBoolean();
+                        timersShowSpriteId = stream.readBoolean();
+                        timersIncludeSpriteIdsCsv = stream.readUTF();
+                        timersExcludeSpriteIdsCsv = stream.readUTF();
+                        parseTimerSpriteFilters();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Unable to load plugin data.");
+            pluginFile.delete();
+        }
+    }
+
+    private void tryLoadPluginDataFromLegacySettings() {
+        File file = new File(SignLink.findcachedir() + "/settings.dat");
+        if (!file.exists()) {
+            return;
+        }
+
+        try (DataInputStream stream = new DataInputStream(new FileInputStream(file))) {
+            // Skip existing settings.dat payload up to discordToken.
+            stream.readBoolean();
+            stream.readUTF();
+            stream.readBoolean();
+            stream.readUTF();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readByte();
+            stream.readByte();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readBoolean();
+            stream.readDouble();
+            stream.readBoolean();
+            stream.readUTF();
+
+            if (stream.available() <= 0) {
+                return;
+            }
+
+            tileIndicatorsPluginEnabled = stream.readBoolean();
+            tileIndicatorDestinationEnabled = stream.readBoolean();
+            tileIndicatorCurrentEnabled = stream.readBoolean();
+            tileIndicatorDestinationBorderColor = withAlpha(new Color(stream.readInt(), true), 220);
+            tileIndicatorDestinationFillColor = withAlpha(tileIndicatorDestinationBorderColor, 50);
+            tileIndicatorCurrentBorderColor = withAlpha(new Color(stream.readInt(), true), 220);
+            tileIndicatorCurrentFillColor = withAlpha(tileIndicatorCurrentBorderColor, 50);
+
+            visualMetronomePluginEnabled = stream.readBoolean();
+            visualMetronomeHighlightTrueTile = stream.readBoolean();
+            visualMetronomeCycleLength = Math.max(1, Math.min(10, stream.readInt()));
+            visualMetronomeTickColor = withAlpha(new Color(stream.readInt(), true), 190);
+            visualMetronomeTockColor = withAlpha(new Color(stream.readInt(), true), 190);
+
+            shortestPathPluginEnabled = stream.readBoolean();
+            shortestPathColor = withAlpha(new Color(stream.readInt(), true), 190);
+            shortestPathUseManualTarget = stream.readBoolean();
+            shortestPathManualTargetX = stream.readInt();
+            shortestPathManualTargetY = stream.readInt();
+            if (!shortestPathUseManualTarget) {
+                shortestPathManualTargetX = -1;
+                shortestPathManualTargetY = -1;
+            }
+            shortestPathSelectTargetMode = false;
+            shortestPathPoints.clear();
+        } catch (IOException ignored) {
+            // Ignore legacy import failures; defaults remain.
+        }
+    }
+
 
 
     public void addEffectTimer(EffectTimer et) {
@@ -2799,36 +3269,57 @@ public class Client extends GameApplet {
 
     public void drawEffectTimers() {
 
-        int yDraw = frameHeight - 195;
+        int yDraw = frameHeight + timersOverlayOffsetY;
 
-        int xDraw = frameWidth - 330;
+        int xDraw = frameWidth + timersOverlayOffsetX;
 
+        List<EffectTimer> visibleTimers = new ArrayList<>();
         for (EffectTimer timer : effects_list) {
-
             if (timer.getSecondsTimer().finished()) {
-
                 effects_list.remove(timer);
-
                 continue;
-
             }
 
+            int secondsRemaining = timer.getSecondsTimer().secondsRemaining();
+            if (secondsRemaining < timersMinSeconds) {
+                continue;
+            }
+            int spriteId = timer.getSprite();
+            if (!timersIncludeSpriteIds.isEmpty() && !timersIncludeSpriteIds.contains(spriteId)) {
+                continue;
+            }
+            if (timersExcludeSpriteIds.contains(spriteId)) {
+                continue;
+            }
+            visibleTimers.add(timer);
+        }
 
+        visibleTimers.sort((a, b) -> {
+            int left = a.getSecondsTimer().secondsRemaining();
+            int right = b.getSecondsTimer().secondsRemaining();
+            return timersSortAscending ? Integer.compare(left, right) : Integer.compare(right, left);
+        });
+
+        int drawCount = 0;
+        for (EffectTimer timer : visibleTimers) {
+            if (drawCount >= timersMaxVisible) {
+                break;
+            }
 
             Sprite sprite = spriteCache.lookup(timer.getSprite());
-
-
-
             if (sprite != null) {
-
                 sprite.drawAdvancedSprite(xDraw + 12, yDraw);
 
-                newSmallFont.drawBasicString(calculateInMinutes(timer.getSecondsTimer().secondsRemaining()) + "", xDraw + 40, yDraw + 13, 0xFF8C00);
+                int secondsRemaining = timer.getSecondsTimer().secondsRemaining();
+                String text = timersShowSecondsOnly ? String.valueOf(secondsRemaining) : calculateInMinutes(secondsRemaining);
+                if (timersShowSpriteId) {
+                    text = "[" + timer.getSprite() + "] " + text;
+                }
+                newSmallFont.drawBasicString(text, xDraw + 40, yDraw + 13, timersTextColor.getRGB() & 0xFFFFFF);
 
                 yDraw -= 25;
-
+                drawCount++;
             }
-
         }
 
     }
@@ -5849,128 +6340,176 @@ public class Client extends GameApplet {
 
                                     } else {
 
-                                        if (childInterface.hasActions) {
+                                        if (itemDef.id == 12926) {
+                                            // Force Toxic blowpipe right-click order:
+                                            // Wield, Check, Unload, Uncharge, Use, Drop, Examine.
+                                            menuActionText[menuActionRow] = "Drop @lre@" + itemDef.name;
+                                            menuActionTypes[menuActionRow] = 847;
+                                            selectedMenuActions[menuActionRow] = itemDef.id;
+                                            firstMenuAction[menuActionRow] = k2;
+                                            secondMenuAction[menuActionRow] = childInterface.id;
+                                            menuActionRow++;
 
-                                            for (int l3 = 4; l3 >= 3; l3--)
+                                            if (childInterface.usableItems) {
+                                                menuActionText[menuActionRow] = "Use @lre@" + itemDef.name;
+                                                menuActionTypes[menuActionRow] = 447;
+                                                selectedMenuActions[menuActionRow] = itemDef.id;
+                                                firstMenuAction[menuActionRow] = k2;
+                                                secondMenuAction[menuActionRow] = childInterface.id;
+                                                menuActionRow++;
+                                            }
 
-                                                if (itemDef.actions != null
+                                            menuActionText[menuActionRow] = "Uncharge @lre@" + itemDef.name;
+                                            menuActionTypes[menuActionRow] = 493;
+                                            selectedMenuActions[menuActionRow] = itemDef.id;
+                                            firstMenuAction[menuActionRow] = k2;
+                                            secondMenuAction[menuActionRow] = childInterface.id;
+                                            menuActionRow++;
 
-                                                        && itemDef.actions[l3] != null) {
+                                            menuActionText[menuActionRow] = "Unload @lre@" + itemDef.name;
+                                            menuActionTypes[menuActionRow] = 539;
+                                            selectedMenuActions[menuActionRow] = itemDef.id;
+                                            firstMenuAction[menuActionRow] = k2;
+                                            secondMenuAction[menuActionRow] = childInterface.id;
+                                            menuActionRow++;
 
-                                                    menuActionText[menuActionRow] =
+                                            menuActionText[menuActionRow] = "Check @lre@" + itemDef.name;
+                                            menuActionTypes[menuActionRow] = 74;
+                                            selectedMenuActions[menuActionRow] = itemDef.id;
+                                            firstMenuAction[menuActionRow] = k2;
+                                            secondMenuAction[menuActionRow] = childInterface.id;
+                                            menuActionRow++;
 
-                                                            itemDef.actions[l3]
+                                            menuActionText[menuActionRow] = "Wield @lre@" + itemDef.name;
+                                            menuActionTypes[menuActionRow] = 454;
+                                            selectedMenuActions[menuActionRow] = itemDef.id;
+                                            firstMenuAction[menuActionRow] = k2;
+                                            secondMenuAction[menuActionRow] = childInterface.id;
+                                            menuActionRow++;
+                                        } else {
+                                            if (childInterface.hasActions) {
 
-                                                                    + " @lre@"
+                                                for (int l3 = 4; l3 >= 3; l3--)
 
-                                                                    + itemDef.name;
+                                                    if (itemDef.actions != null
 
-                                                    if (l3 == 3)
+                                                            && itemDef.actions[l3] != null) {
 
-                                                        menuActionTypes[menuActionRow] =
+                                                        menuActionText[menuActionRow] =
 
-                                                                493;
+                                                                itemDef.actions[l3]
 
-                                                    if (l3 == 4) {
+                                                                        + " @lre@"
+
+                                                                        + itemDef.name;
+
+                                                        if (l3 == 3)
+
+                                                            menuActionTypes[menuActionRow] =
+
+                                                                    493;
+
+                                                        if (l3 == 4) {
+
+                                                            menuActionTypes[menuActionRow] = 847;
+
+                                                            hasDestroyOption = itemDef.actions[l3].contains("Destroy");
+
+                                                        }
+
+                                                        selectedMenuActions[menuActionRow] = itemDef.id;
+
+                                                        firstMenuAction[menuActionRow] = k2;
+
+                                                        secondMenuAction[menuActionRow] = childInterface.id;
+
+                                                        menuActionRow++;
+
+                                                    } else if (l3 == 4) {
+
+                                                        menuActionText[menuActionRow] = "Drop @lre@" + itemDef.name;
 
                                                         menuActionTypes[menuActionRow] = 847;
 
-                                                        hasDestroyOption = itemDef.actions[l3].contains("Destroy");
+                                                        selectedMenuActions[menuActionRow] = itemDef.id;
+
+                                                        firstMenuAction[menuActionRow] = k2;
+
+                                                        secondMenuAction[menuActionRow] = childInterface.id;
+
+                                                        menuActionRow++;
 
                                                     }
 
-                                                    selectedMenuActions[menuActionRow] = itemDef.id;
-
-                                                    firstMenuAction[menuActionRow] = k2;
-
-                                                    secondMenuAction[menuActionRow] = childInterface.id;
-
-                                                    menuActionRow++;
-
-                                                } else if (l3 == 4) {
-
-                                                    menuActionText[menuActionRow] = "Drop @lre@" + itemDef.name;
-
-                                                    menuActionTypes[menuActionRow] = 847;
-
-                                                    selectedMenuActions[menuActionRow] = itemDef.id;
-
-                                                    firstMenuAction[menuActionRow] = k2;
-
-                                                    secondMenuAction[menuActionRow] = childInterface.id;
-
-                                                    menuActionRow++;
-
-                                                }
-
-                                        }
-
-                                        if (childInterface.usableItems) {
-
-                                            menuActionText[menuActionRow] = "Use @lre@" + itemDef.name;
-
-                                            menuActionTypes[menuActionRow] = 447;
-
-                                            selectedMenuActions[menuActionRow] = itemDef.id;
-
-                                            firstMenuAction[menuActionRow] = k2;
-
-                                            secondMenuAction[menuActionRow] = childInterface.id;
-
-                                            menuActionRow++;
-
-
-
-                                            if (Configuration.enableShiftClickDrop && !hasDestroyOption && !menuOpen && shiftDown) {
-
-                                                menuActionsRow("Drop @lre@" + itemDef.name, 1, 847, 2);
-
-                                                removeShiftDropOnMenuOpen = true;
-
                                             }
 
-                                        }
+                                            if (childInterface.usableItems) {
 
-                                        if (childInterface.hasActions && itemDef.actions != null) {
+                                                menuActionText[menuActionRow] = "Use @lre@" + itemDef.name;
 
-                                            for (int i4 = 2; i4 >= 0; i4--) {
+                                                menuActionTypes[menuActionRow] = 447;
 
-                                                if (itemDef.actions[i4] != null) {
+                                                selectedMenuActions[menuActionRow] = itemDef.id;
 
-                                                    menuActionText[menuActionRow] = itemDef.actions[i4] + " @lre@" + itemDef.name;
+                                                firstMenuAction[menuActionRow] = k2;
 
-                                                    if (i4 == 0)
+                                                secondMenuAction[menuActionRow] = childInterface.id;
 
-                                                        menuActionTypes[menuActionRow] = 74;
+                                                menuActionRow++;
 
-                                                    if (i4 == 1)
 
-                                                        menuActionTypes[menuActionRow] = 454;
 
-                                                    if (i4 == 2)
+                                                if (Configuration.enableShiftClickDrop && !hasDestroyOption && !menuOpen && shiftDown) {
 
-                                                        menuActionTypes[menuActionRow] = 539;
+                                                    menuActionsRow("Drop @lre@" + itemDef.name, 1, 847, 2);
 
-                                                    selectedMenuActions[menuActionRow] = itemDef.id;
-
-                                                    firstMenuAction[menuActionRow] = k2;
-
-                                                    secondMenuAction[menuActionRow] = childInterface.id;
-
-                                                    menuActionRow++;
+                                                    removeShiftDropOnMenuOpen = true;
 
                                                 }
 
                                             }
 
-                                            if (Configuration.enableShiftClickDrop && !hasDestroyOption && !menuOpen && shiftDown) {
+                                            if (childInterface.hasActions && itemDef.actions != null) {
 
-                                                menuActionsRow("Drop @lre@" + itemDef.name, 1, 847, 2);
+                                                for (int i4 = 2; i4 >= 0; i4--) {
 
-                                                removeShiftDropOnMenuOpen = true;
+                                                    if (itemDef.actions[i4] != null) {
+
+                                                        menuActionText[menuActionRow] = itemDef.actions[i4] + " @lre@" + itemDef.name;
+
+                                                        if (i4 == 0)
+
+                                                            menuActionTypes[menuActionRow] = 74;
+
+                                                        if (i4 == 1)
+
+                                                            menuActionTypes[menuActionRow] = 454;
+
+                                                        if (i4 == 2)
+
+                                                            menuActionTypes[menuActionRow] = 539;
+
+                                                        selectedMenuActions[menuActionRow] = itemDef.id;
+
+                                                        firstMenuAction[menuActionRow] = k2;
+
+                                                        secondMenuAction[menuActionRow] = childInterface.id;
+
+                                                        menuActionRow++;
+
+                                                    }
+
+                                                }
+
+                                                if (Configuration.enableShiftClickDrop && !hasDestroyOption && !menuOpen && shiftDown) {
+
+                                                    menuActionsRow("Drop @lre@" + itemDef.name, 1, 847, 2);
+
+                                                    removeShiftDropOnMenuOpen = true;
+
+                                                }
 
                                             }
-
                                         }
 
 
@@ -7122,6 +7661,20 @@ public class Client extends GameApplet {
                     if (entityDef == null)
 
                         continue;
+
+                    if (npcIndicatorsPluginEnabled && npcIndicatorsHighlightName && isNpcIndicatorTarget((Npc) obj)) {
+
+                        npcScreenPos(((Mob) (obj)), ((Mob) (obj)).height + 15);
+
+                        if (spriteDrawX > -1) {
+
+                            smallText.drawTextWithPotentialShadow(true, spriteDrawX,
+
+                                    npcIndicatorsColor.getRGB() & 0xFFFFFF, entityDef.name, spriteDrawY - 5);
+
+                        }
+
+                    }
 
                 }
 
@@ -9455,6 +10008,7 @@ public class Client extends GameApplet {
             NpcDefinition.clientInstance = this;
 
             loadPlayerData();
+            loadPluginData();
 
             requestMusic(SoundConstants.SCAPE_RUNE);
 
@@ -11379,6 +11933,16 @@ public class Client extends GameApplet {
             int k = SceneGraph.clickedTileX;
 
             int k1 = SceneGraph.clickedTileY;
+
+            if (shortestPathPluginEnabled && shortestPathSelectTargetMode) {
+                shortestPathManualTargetX = k;
+                shortestPathManualTargetY = k1;
+                shortestPathUseManualTarget = true;
+                shortestPathSelectTargetMode = false;
+                shortestPathPoints.clear();
+                SceneGraph.clickedTileX = -1;
+                return;
+            }
 
             int destX = (regionBaseX + k);
 
@@ -21777,6 +22341,31 @@ public class Client extends GameApplet {
 
                                         }
 
+                                        if (isInventoryWidgetInterface(childInterface.id, childInterface.parent)) {
+                                            if (inventoryTagsPluginEnabled && isInventoryItemTagged(itemId)) {
+                                                Color tagColor = getInventoryTagColorForItem(itemId);
+                                                int tagRgb = (tagColor == null ? inventoryTagsColor : tagColor).getRGB() & 0xFFFFFF;
+                                                Rasterizer2D.drawBoxOutline(bindX, bindY, 32, 32, tagRgb);
+                                                Rasterizer2D.drawBoxOutline(bindX + 1, bindY + 1, 30, 30, tagRgb);
+                                            }
+
+                                            if (itemChargesPluginEnabled) {
+                                                int charges = extractChargesFromItemName(itemId);
+                                                if (charges >= 0 && (itemChargesShowWhenZero || charges > 0)) {
+                                                    int textColor = charges <= itemChargesLowWarningThreshold ? (itemChargesLowColor.getRGB() & 0xFFFFFF) : (itemChargesTextColor.getRGB() & 0xFFFFFF);
+                                                    String chargeText = String.valueOf(charges);
+                                                    smallText.render(0, chargeText, bindY + 11, bindX + 2);
+                                                    smallText.render(textColor, chargeText, bindY + 10, bindX + 1);
+                                                }
+                                            }
+
+                                            if (itemStatsPluginEnabled && super.mouseX >= bindX && super.mouseX <= bindX + 32
+                                                    && super.mouseY >= bindY && super.mouseY <= bindY + 32) {
+                                                itemStatsHoveredItemId = itemId;
+                                                itemStatsHoveredAmount = childInterface.inventoryAmounts[item];
+                                            }
+                                        }
+
                                     }
 
                                 }
@@ -23987,6 +24576,8 @@ public class Client extends GameApplet {
 
 
     private void draw3dScreen() {
+        itemStatsHoveredItemId = -1;
+        itemStatsHoveredAmount = 0;
 
         if (showChatComponents) {
 
@@ -23994,7 +24585,7 @@ public class Client extends GameApplet {
 
         }
 
-        if (Configuration.expCounterOpen) {
+        if (Configuration.expCounterOpen && xpDropsPluginEnabled) {
 
             drawExpCounter();
 
@@ -24162,7 +24753,11 @@ public class Client extends GameApplet {
 
         // Effect timers
 
-        drawEffectTimers();
+        if (timersPluginEnabled) {
+            drawEffectTimers();
+        }
+
+        drawCorePluginStatusOverlays();
 
         int x = regionBaseX + (localPlayer.x - 6 >> 7);
 
@@ -24244,6 +24839,2107 @@ public class Client extends GameApplet {
 
         }
 
+    }
+
+
+
+    private void drawTileIndicatorsOverlay() {
+        if (!tileIndicatorsPluginEnabled || localPlayer == null) {
+            return;
+        }
+
+        if (tileIndicatorDestinationEnabled && destinationX > 0 && destinationY > 0) {
+            drawTileOverlay(destinationX, destinationY, tileIndicatorDestinationBorderColor, tileIndicatorDestinationFillColor, tileIndicatorBorderWidth);
+        }
+
+        if (tileIndicatorCurrentEnabled) {
+            int localTileX = localPlayer.x >> 7;
+            int localTileY = localPlayer.y >> 7;
+            drawTileOverlay(localTileX, localTileY, tileIndicatorCurrentBorderColor, tileIndicatorCurrentFillColor, tileIndicatorBorderWidth);
+        }
+
+        if (visualMetronomePluginEnabled && visualMetronomeHighlightTrueTile) {
+            int localTileX = localPlayer.x >> 7;
+            int localTileY = localPlayer.y >> 7;
+            Color border = withAlpha(visualMetronomeCurrentColor, 220);
+            Color fill = withAlpha(visualMetronomeCurrentColor, 45);
+            drawTileOverlay(localTileX, localTileY, border, fill, 2);
+        }
+    }
+
+
+
+    private void drawTileOverlay(int tileX, int tileY, Color borderColor, Color fillColor, int borderWidth) {
+        if (tileX < 0 || tileY < 0 || tileX >= 104 || tileY >= 104) {
+            return;
+        }
+
+        int worldX1 = tileX << 7;
+        int worldY1 = tileY << 7;
+        int worldX2 = (tileX + 1) << 7;
+        int worldY2 = (tileY + 1) << 7;
+
+        Point p1 = projectToCanvas(worldX1, worldY1, getCenterHeight(plane, worldY1, worldX1));
+        Point p2 = projectToCanvas(worldX2, worldY1, getCenterHeight(plane, worldY1, worldX2));
+        Point p3 = projectToCanvas(worldX2, worldY2, getCenterHeight(plane, worldY2, worldX2));
+        Point p4 = projectToCanvas(worldX1, worldY2, getCenterHeight(plane, worldY2, worldX1));
+
+        if (p1 == null || p2 == null || p3 == null || p4 == null) {
+            return;
+        }
+
+        Polygon polygon = new Polygon(
+                new int[]{p1.x, p2.x, p3.x, p4.x},
+                new int[]{p1.y, p2.y, p3.y, p4.y},
+                4
+        );
+
+        Graphics2D graphics2D = Rasterizer2D.createGraphics(false);
+        graphics2D.setColor(fillColor);
+        graphics2D.fillPolygon(polygon);
+        graphics2D.setColor(borderColor);
+        graphics2D.setStroke(new BasicStroke(Math.max(1, borderWidth)));
+        graphics2D.drawPolygon(polygon);
+        graphics2D.dispose();
+    }
+
+
+
+    private Point projectToCanvas(int worldX, int worldY, int worldZ) {
+        if (worldX < 128 || worldY < 128 || worldX > 13056 || worldY > 13056) {
+            return null;
+        }
+
+        int relativeX = worldX - xCameraPos;
+        int relativeY = worldY - yCameraPos;
+        int relativeZ = worldZ - zCameraPos;
+
+        int pitchSin = Model.SINE[yCameraCurve];
+        int pitchCos = Model.COSINE[yCameraCurve];
+        int yawSin = Model.SINE[xCameraCurve];
+        int yawCos = Model.COSINE[xCameraCurve];
+
+        int tmpX = relativeY * yawSin + relativeX * yawCos >> 16;
+        relativeY = relativeY * yawCos - relativeX * yawSin >> 16;
+        relativeX = tmpX;
+
+        int tmpZ = relativeZ * pitchCos - relativeY * pitchSin >> 16;
+        int depth = relativeZ * pitchSin + relativeY * pitchCos >> 16;
+        relativeZ = tmpZ;
+
+        if (depth < 50) {
+            return null;
+        }
+
+        int screenX = Rasterizer3D.originViewX + (relativeX << SceneGraph.viewDistance) / depth;
+        int screenY = Rasterizer3D.originViewY + (relativeZ << SceneGraph.viewDistance) / depth;
+        return new Point(screenX, screenY);
+    }
+
+
+
+    private void updateVisualMetronomeState() {
+        if (!visualMetronomePluginEnabled) {
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        if (visualMetronomeTickAnchorMs <= 0L) {
+            visualMetronomeTickAnchorMs = now;
+            visualMetronomeTickCounter = 0;
+            visualMetronomeCurrentColor = visualMetronomeTickColor;
+            return;
+        }
+
+        long elapsed = now - visualMetronomeTickAnchorMs;
+        if (elapsed < 600L) {
+            visualMetronomeCurrentColor = getVisualMetronomeColor(visualMetronomeTickCounter);
+            return;
+        }
+
+        long ticksElapsed = elapsed / 600L;
+        visualMetronomeTickAnchorMs += ticksElapsed * 600L;
+        int cycleLength = Math.max(1, visualMetronomeCycleLength);
+        visualMetronomeTickCounter = (int) ((visualMetronomeTickCounter + ticksElapsed) % cycleLength);
+        visualMetronomeCurrentColor = getVisualMetronomeColor(visualMetronomeTickCounter);
+    }
+
+
+
+    private Color getVisualMetronomeColor(int tickInCycle) {
+        if (Math.max(1, visualMetronomeCycleLength) <= 1) {
+            return visualMetronomeTickColor;
+        }
+        return (tickInCycle % 2 == 0) ? visualMetronomeTickColor : visualMetronomeTockColor;
+    }
+
+
+
+    private void drawVisualMetronomeOverlay() {
+        if (!visualMetronomePluginEnabled) {
+            return;
+        }
+
+        int nowInTick = (int) ((System.currentTimeMillis() - visualMetronomeTickAnchorMs) % 600L);
+        int alpha = nowInTick < 140 ? 220 : 120;
+        Color color = withAlpha(visualMetronomeCurrentColor, alpha);
+
+        int boxWidth = 42;
+        int boxHeight = 22;
+        int boxX = frameMode == ScreenMode.FIXED ? 12 : 12;
+        int boxY = frameMode == ScreenMode.FIXED ? 12 : 12;
+
+        Rasterizer2D.fillRectangle(boxX, boxY, boxWidth, boxHeight, color.getRGB() & 0xFFFFFF, color.getAlpha());
+        Rasterizer2D.drawBoxOutline(boxX, boxY, boxWidth, boxHeight, 0x111111);
+        smallText.drawTextWithPotentialShadow(true, boxX + 15, 0xffffff, String.valueOf(visualMetronomeTickCounter + 1), boxY + 15);
+    }
+
+
+
+    private void updateShortestPathState() {
+        if (!shortestPathPluginEnabled || localPlayer == null || collisionMaps == null || collisionMaps[plane] == null) {
+            shortestPathPoints.clear();
+            return;
+        }
+
+        int targetX;
+        int targetY;
+        if (shortestPathUseManualTarget && shortestPathManualTargetX >= 0 && shortestPathManualTargetY >= 0) {
+            targetX = shortestPathManualTargetX;
+            targetY = shortestPathManualTargetY;
+        } else if (destinationX > 0 && destinationY > 0) {
+            targetX = destinationX;
+            targetY = destinationY;
+        } else {
+            shortestPathPoints.clear();
+            shortestPathTargetX = -1;
+            shortestPathTargetY = -1;
+            return;
+        }
+
+        int startX = localPlayer.x >> 7;
+        int startY = localPlayer.y >> 7;
+        if (startX < 0 || startY < 0 || startX >= 104 || startY >= 104) {
+            shortestPathPoints.clear();
+            return;
+        }
+
+        if (startX == shortestPathStartX && startY == shortestPathStartY
+                && targetX == shortestPathTargetX && targetY == shortestPathTargetY
+                && !shortestPathPoints.isEmpty()) {
+            return;
+        }
+
+        shortestPathStartX = startX;
+        shortestPathStartY = startY;
+        shortestPathTargetX = targetX;
+        shortestPathTargetY = targetY;
+        shortestPathPoints = findShortestPath(startX, startY, targetX, targetY);
+    }
+
+
+
+    private List<Point> findShortestPath(int startX, int startY, int targetX, int targetY) {
+        int[][] clipData = collisionMaps[plane].clipData;
+        int[][] directions = new int[104][104];
+        int[][] cost = new int[104][104];
+        for (int x = 0; x < 104; x++) {
+            Arrays.fill(cost[x], 0x5f5e0ff);
+        }
+
+        int[] queueX = new int[104 * 104];
+        int[] queueY = new int[104 * 104];
+        int head = 0;
+        int tail = 0;
+
+        directions[startX][startY] = 99;
+        cost[startX][startY] = 0;
+        queueX[tail] = startX;
+        queueY[tail++] = startY;
+
+        boolean found = false;
+        int baseX = startX;
+        int baseY = startY;
+        while (head != tail) {
+            baseX = queueX[head];
+            baseY = queueY[head];
+            head = (head + 1) % queueX.length;
+
+            if (baseX == targetX && baseY == targetY) {
+                found = true;
+                break;
+            }
+
+            int stepCost = cost[baseX][baseY] + 1;
+            if (baseX > 0 && directions[baseX - 1][baseY] == 0 && (clipData[baseX - 1][baseY] & 0x1280108) == 0) {
+                queueX[tail] = baseX - 1;
+                queueY[tail] = baseY;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX - 1][baseY] = 2;
+                cost[baseX - 1][baseY] = stepCost;
+            }
+            if (baseX < 103 && directions[baseX + 1][baseY] == 0 && (clipData[baseX + 1][baseY] & 0x1280180) == 0) {
+                queueX[tail] = baseX + 1;
+                queueY[tail] = baseY;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX + 1][baseY] = 8;
+                cost[baseX + 1][baseY] = stepCost;
+            }
+            if (baseY > 0 && directions[baseX][baseY - 1] == 0 && (clipData[baseX][baseY - 1] & 0x1280102) == 0) {
+                queueX[tail] = baseX;
+                queueY[tail] = baseY - 1;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX][baseY - 1] = 1;
+                cost[baseX][baseY - 1] = stepCost;
+            }
+            if (baseY < 103 && directions[baseX][baseY + 1] == 0 && (clipData[baseX][baseY + 1] & 0x1280120) == 0) {
+                queueX[tail] = baseX;
+                queueY[tail] = baseY + 1;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX][baseY + 1] = 4;
+                cost[baseX][baseY + 1] = stepCost;
+            }
+            if (baseX > 0 && baseY > 0 && directions[baseX - 1][baseY - 1] == 0
+                    && (clipData[baseX - 1][baseY - 1] & 0x128010e) == 0
+                    && (clipData[baseX - 1][baseY] & 0x1280108) == 0
+                    && (clipData[baseX][baseY - 1] & 0x1280102) == 0) {
+                queueX[tail] = baseX - 1;
+                queueY[tail] = baseY - 1;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX - 1][baseY - 1] = 3;
+                cost[baseX - 1][baseY - 1] = stepCost;
+            }
+            if (baseX < 103 && baseY > 0 && directions[baseX + 1][baseY - 1] == 0
+                    && (clipData[baseX + 1][baseY - 1] & 0x1280183) == 0
+                    && (clipData[baseX + 1][baseY] & 0x1280180) == 0
+                    && (clipData[baseX][baseY - 1] & 0x1280102) == 0) {
+                queueX[tail] = baseX + 1;
+                queueY[tail] = baseY - 1;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX + 1][baseY - 1] = 9;
+                cost[baseX + 1][baseY - 1] = stepCost;
+            }
+            if (baseX > 0 && baseY < 103 && directions[baseX - 1][baseY + 1] == 0
+                    && (clipData[baseX - 1][baseY + 1] & 0x1280138) == 0
+                    && (clipData[baseX - 1][baseY] & 0x1280108) == 0
+                    && (clipData[baseX][baseY + 1] & 0x1280120) == 0) {
+                queueX[tail] = baseX - 1;
+                queueY[tail] = baseY + 1;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX - 1][baseY + 1] = 6;
+                cost[baseX - 1][baseY + 1] = stepCost;
+            }
+            if (baseX < 103 && baseY < 103 && directions[baseX + 1][baseY + 1] == 0
+                    && (clipData[baseX + 1][baseY + 1] & 0x12801e0) == 0
+                    && (clipData[baseX + 1][baseY] & 0x1280180) == 0
+                    && (clipData[baseX][baseY + 1] & 0x1280120) == 0) {
+                queueX[tail] = baseX + 1;
+                queueY[tail] = baseY + 1;
+                tail = (tail + 1) % queueX.length;
+                directions[baseX + 1][baseY + 1] = 12;
+                cost[baseX + 1][baseY + 1] = stepCost;
+            }
+        }
+
+        if (!found) {
+            int nearestDistance = Integer.MAX_VALUE;
+            int nearestCost = Integer.MAX_VALUE;
+            int nearestX = -1;
+            int nearestY = -1;
+            for (int x = Math.max(0, targetX - 1); x <= Math.min(103, targetX + 1); x++) {
+                for (int y = Math.max(0, targetY - 1); y <= Math.min(103, targetY + 1); y++) {
+                    if (cost[x][y] >= 0x5f5e0ff) {
+                        continue;
+                    }
+                    int dist = (Math.abs(x - targetX) + Math.abs(y - targetY));
+                    if (dist < nearestDistance || (dist == nearestDistance && cost[x][y] < nearestCost)) {
+                        nearestDistance = dist;
+                        nearestCost = cost[x][y];
+                        nearestX = x;
+                        nearestY = y;
+                    }
+                }
+            }
+            if (nearestX == -1) {
+                return new ArrayList<>();
+            }
+            baseX = nearestX;
+            baseY = nearestY;
+        }
+
+        List<Point> path = new ArrayList<>();
+        path.add(new Point(baseX, baseY));
+        int direction = directions[baseX][baseY];
+        int previousDirection = direction;
+        while (baseX != startX || baseY != startY) {
+            if (direction != previousDirection) {
+                path.add(new Point(baseX, baseY));
+                previousDirection = direction;
+            }
+
+            if ((direction & 2) != 0) {
+                baseX++;
+            } else if ((direction & 8) != 0) {
+                baseX--;
+            }
+
+            if ((direction & 1) != 0) {
+                baseY++;
+            } else if ((direction & 4) != 0) {
+                baseY--;
+            }
+            direction = directions[baseX][baseY];
+        }
+        path.add(new Point(startX, startY));
+        Collections.reverse(path);
+        return path;
+    }
+
+
+
+    private void drawShortestPathOverlay() {
+        if (!shortestPathPluginEnabled || shortestPathPoints == null || shortestPathPoints.isEmpty()) {
+            return;
+        }
+
+        Graphics2D graphics2D = Rasterizer2D.createGraphics(false);
+        graphics2D.setColor(shortestPathColor);
+        graphics2D.setStroke(new BasicStroke(2f));
+
+        Point previousCenter = null;
+        for (Point step : shortestPathPoints) {
+            drawTileOverlay(step.x, step.y, withAlpha(shortestPathColor, 220), withAlpha(shortestPathColor, 40), 1);
+
+            int centerWorldX = (step.x << 7) + 64;
+            int centerWorldY = (step.y << 7) + 64;
+            Point center = projectToCanvas(centerWorldX, centerWorldY, getCenterHeight(plane, centerWorldY, centerWorldX));
+            if (center != null && previousCenter != null) {
+                graphics2D.drawLine(previousCenter.x, previousCenter.y, center.x, center.y);
+            }
+            if (center != null) {
+                previousCenter = center;
+            }
+        }
+
+        if (shortestPathTargetX >= 0 && shortestPathTargetY >= 0) {
+            drawTileOverlay(shortestPathTargetX, shortestPathTargetY, new Color(255, 255, 0, 230), new Color(255, 255, 0, 35), 2);
+        }
+        graphics2D.dispose();
+    }
+
+    private void updateXpTrackerState() {
+        if (!xpTrackerPluginEnabled) {
+            xpTrackerSessionStartMs = 0L;
+            xpTrackerSessionStartTotalExp = 0L;
+            xpTrackerSessionPausedMs = 0L;
+            xpTrackerPauseStartedMs = 0L;
+            xpTrackerLastXpGainMs = 0L;
+            xpTrackerLastObservedTotalExp = 0L;
+            Arrays.fill(xpTrackerSkillStartXp, 0L);
+            return;
+        }
+        if (xpTrackerSessionStartMs == 0L) {
+            xpTrackerSessionStartMs = System.currentTimeMillis();
+            xpTrackerSessionStartTotalExp = totalExp;
+            xpTrackerSessionPausedMs = 0L;
+            xpTrackerPauseStartedMs = 0L;
+            xpTrackerLastXpGainMs = xpTrackerSessionStartMs;
+            xpTrackerLastObservedTotalExp = totalExp;
+            for (int i = 0; i < Math.min(currentExp.length, xpTrackerSkillStartXp.length); i++) {
+                xpTrackerSkillStartXp[i] = currentExp[i];
+            }
+        }
+
+        long now = System.currentTimeMillis();
+        if (xpTrackerPauseOnLogout && !loggedIn) {
+            if (xpTrackerPauseStartedMs == 0L) {
+                xpTrackerPauseStartedMs = now;
+            }
+            return;
+        }
+        boolean gainedXp = totalExp > xpTrackerLastObservedTotalExp;
+        xpTrackerLastObservedTotalExp = totalExp;
+
+        if (gainedXp) {
+            xpTrackerLastXpGainMs = now;
+            if (xpTrackerPauseStartedMs > 0L) {
+                xpTrackerSessionPausedMs += Math.max(0L, now - xpTrackerPauseStartedMs);
+                xpTrackerPauseStartedMs = 0L;
+            }
+        } else if (xpTrackerAutoPauseMinutes > 0) {
+            long idleMs = now - Math.max(xpTrackerLastXpGainMs, xpTrackerSessionStartMs);
+            long pauseThresholdMs = xpTrackerAutoPauseMinutes * 60_000L;
+            if (idleMs >= pauseThresholdMs && xpTrackerPauseStartedMs == 0L) {
+                xpTrackerPauseStartedMs = now;
+            }
+        }
+    }
+
+    private void updateIdleNotifierState() {
+        if (!idleNotifierPluginEnabled) {
+            idleNotifierTriggered = false;
+            return;
+        }
+
+        int idleCyclesThreshold = Math.max(5, idleNotifierThresholdSeconds) * 50;
+        if (idleTime >= idleCyclesThreshold) {
+            if (!idleNotifierTriggered) {
+                Toolkit.getDefaultToolkit().beep();
+                sendMessage("You are now idle.", 0, "");
+                idleNotifierTriggered = true;
+            }
+        } else {
+            idleNotifierTriggered = false;
+        }
+    }
+
+    private void updateAmmoNotifierState() {
+        if (!ammoPluginEnabled) {
+            ammoLowNotifierTriggered = false;
+            return;
+        }
+
+        int ammoAmount = getEquippedAmmoAmount();
+        if (ammoAmount > 0 && ammoAmount <= ammoLowWarningThreshold) {
+            if (!ammoLowNotifierTriggered) {
+                Toolkit.getDefaultToolkit().beep();
+                sendMessage("Ammo is low (" + ammoAmount + ").", 0, "");
+                ammoLowNotifierTriggered = true;
+            }
+        } else {
+            ammoLowNotifierTriggered = false;
+        }
+    }
+
+    private void updateBoostsInfoState() {
+        if (!boostsInfoPluginEnabled || !boostsNotifyOnThreshold || boostsThreshold <= 0) {
+            boostsThresholdNotifiedSkills.clear();
+            return;
+        }
+
+        int[] skillIds = getBoostDisplaySkillIds();
+        for (int skillId : skillIds) {
+            int delta = currentLevels[skillId] - maximumLevels[skillId];
+            if (delta <= -boostsThreshold) {
+                if (!boostsThresholdNotifiedSkills.contains(skillId)) {
+                    boostsThresholdNotifiedSkills.add(skillId);
+                    sendMessage(SkillConstants.SKILL_NAMES[skillId] + " has drained by " + Math.abs(delta) + ".", 0, "");
+                }
+            } else {
+                boostsThresholdNotifiedSkills.remove(skillId);
+            }
+        }
+    }
+
+    private void updateNpcAggressionTimerState() {
+        if (!npcAggressionTimerPluginEnabled || localPlayer == null) {
+            npcAggressionTimerStartMs = 0L;
+            npcAggressionStartTileX = -1;
+            npcAggressionStartTileY = -1;
+            return;
+        }
+
+        if (currentInteract instanceof Npc && !combatBoxTimer.finished()) {
+            if (npcAggressionTimerStartMs == 0L) {
+                npcAggressionTimerStartMs = System.currentTimeMillis();
+                npcAggressionStartTileX = localPlayer.x >> 7;
+                npcAggressionStartTileY = localPlayer.y >> 7;
+            }
+        }
+
+        if (npcAggressionTimerStartMs > 0L && npcAggressionStartTileX >= 0 && npcAggressionStartTileY >= 0) {
+            int currentTileX = localPlayer.x >> 7;
+            int currentTileY = localPlayer.y >> 7;
+            if (Math.abs(currentTileX - npcAggressionStartTileX) >= 10 || Math.abs(currentTileY - npcAggressionStartTileY) >= 10) {
+                npcAggressionTimerStartMs = System.currentTimeMillis();
+                npcAggressionStartTileX = currentTileX;
+                npcAggressionStartTileY = currentTileY;
+            }
+        }
+    }
+
+    private void updateBossTimersState() {
+        long now = System.currentTimeMillis();
+        bossRespawnEntries.removeIf(entry -> entry.respawnAtMs <= now);
+
+        Set<Integer> seenNpcIndices = new HashSet<>();
+        for (int i = 0; i < npcCount; i++) {
+            int npcIndex = npcIndices[i];
+            Npc npc = npcs[npcIndex];
+            if (npc == null || npc.desc == null || npc.desc.name == null) {
+                continue;
+            }
+
+            seenNpcIndices.add(npcIndex);
+            int currentHp = Math.max(0, npc.currentHealth);
+            Integer previousHp = bossLastKnownHealth.put(npcIndex, currentHp);
+            if (!bossTimersPluginEnabled) {
+                continue;
+            }
+            if (currentHp > 0) {
+                bossDeathHandledNpcIndices.remove(npcIndex);
+                continue;
+            }
+            if (previousHp == null || previousHp <= 0 || bossDeathHandledNpcIndices.contains(npcIndex)) {
+                continue;
+            }
+
+            Integer respawnSeconds = BOSS_RESPAWN_SECONDS.get(npc.desc.name.toLowerCase(Locale.ROOT));
+            if (respawnSeconds == null) {
+                continue;
+            }
+            bossRespawnEntries.add(new BossRespawnEntry(npc.desc.name, now + respawnSeconds * 1000L));
+            bossDeathHandledNpcIndices.add(npcIndex);
+        }
+
+        bossLastKnownHealth.keySet().removeIf(index -> !seenNpcIndices.contains(index));
+        bossDeathHandledNpcIndices.removeIf(index -> !seenNpcIndices.contains(index));
+        bossRespawnEntries.sort((a, b) -> Long.compare(a.respawnAtMs, b.respawnAtMs));
+    }
+
+    private void updateLootTrackerState() {
+        Widget inventory = Widget.interfaceCache[3214];
+        if (inventory == null || inventory.inventoryItemId == null || inventory.inventoryAmounts == null) {
+            return;
+        }
+
+        Map<Integer, Integer> currentTotals = new HashMap<>();
+        for (int slot = 0; slot < inventory.inventoryItemId.length; slot++) {
+            int currentId = inventory.inventoryItemId[slot];
+            int currentAmount = inventory.inventoryAmounts[slot];
+            if (currentId <= 0 || currentAmount <= 0) {
+                continue;
+            }
+            int itemId = currentId - 1;
+            currentTotals.merge(itemId, currentAmount, Integer::sum);
+        }
+
+        if (lootTrackerPluginEnabled && !lootTrackerLastTotals.isEmpty() && openInterfaceId != 5292) {
+            for (Map.Entry<Integer, Integer> entry : currentTotals.entrySet()) {
+                int itemId = entry.getKey();
+                int currentAmount = entry.getValue();
+                int previousAmount = lootTrackerLastTotals.getOrDefault(itemId, 0);
+                int gained = currentAmount - previousAmount;
+                if (gained <= 0) {
+                    continue;
+                }
+
+                ItemDefinition itemDefinition = ItemDefinition.lookup(itemId);
+                String itemName = itemDefinition == null || itemDefinition.name == null ? ("item " + itemId) : itemDefinition.name;
+                String entryText = "+" + gained + " " + itemName;
+                lootTrackerRecentEntries.add(0, entryText);
+                if (lootTrackerShowNpcKillChat) {
+                    sendMessage("[Loot] " + entryText, 0, "");
+                }
+                while (lootTrackerRecentEntries.size() > Math.max(1, lootTrackerMaxEntries)) {
+                    lootTrackerRecentEntries.remove(lootTrackerRecentEntries.size() - 1);
+                }
+            }
+        }
+
+        lootTrackerLastTotals.clear();
+        lootTrackerLastTotals.putAll(currentTotals);
+    }
+
+    private void drawNpcIndicatorsOverlay() {
+        if (!npcIndicatorsPluginEnabled || !npcIndicatorsHighlightTile || npcIndicatorTargetTokens.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < npcCount; i++) {
+            Npc npc = npcs[npcIndices[i]];
+            if (!isNpcIndicatorTarget(npc)) {
+                continue;
+            }
+
+            int tileX = npc.x >> 7;
+            int tileY = npc.y >> 7;
+            drawTileOverlay(tileX, tileY, withAlpha(npcIndicatorsColor, 210), withAlpha(npcIndicatorsColor, 35), 1);
+        }
+    }
+
+    private void drawCorePluginStatusOverlays() {
+        int x = 12;
+        int y = 42;
+
+        if (ammoPluginEnabled) {
+            int ammoAmount = getEquippedAmmoAmount();
+            int color = ammoAmount > 0 && ammoAmount <= ammoLowWarningThreshold ? 0xFF6B6B : 0xFFFFFF;
+            y = drawSimpleStatusRow(x, y, "Ammo", ammoAmount > 0 ? String.valueOf(ammoAmount) : "-", color);
+        }
+
+        if (boostsInfoPluginEnabled) {
+            StringBuilder boosts = new StringBuilder();
+            int[] skillIds = getBoostDisplaySkillIds();
+            for (int skillId : skillIds) {
+                int delta = currentLevels[skillId] - maximumLevels[skillId];
+                if (delta != 0) {
+                    if (boosts.length() > 0) {
+                        boosts.append(" ");
+                    }
+                    int displayValue = boostsUseRelativeBoosts ? delta : currentLevels[skillId];
+                    boosts.append(SkillConstants.SKILL_NAMES[skillId].substring(0, Math.min(3, SkillConstants.SKILL_NAMES[skillId].length())))
+                            .append(boostsUseRelativeBoosts ? (delta > 0 ? "+" : "") + delta : "/" + maximumLevels[skillId] + "=" + displayValue);
+                }
+            }
+            if (boosts.length() > 0) {
+                y = drawSimpleStatusRow(x, y, "Boosts", boosts.toString(), 0xFFFFFF);
+            }
+        }
+
+        if (npcAggressionTimerPluginEnabled && npcAggressionTimerStartMs > 0L) {
+            long elapsed = (System.currentTimeMillis() - npcAggressionTimerStartMs) / 1000L;
+            long remaining = Math.max(0L, npcAggressionDurationSeconds - elapsed);
+            y = drawSimpleStatusRow(x, y, "NPC Aggro", formatSeconds((int) remaining), remaining <= 30 ? 0xFF6B6B : 0xFFFFFF);
+        }
+
+        if (xpTrackerPluginEnabled && xpTrackerSessionStartMs > 0L) {
+            long gained = Math.max(0L, totalExp - xpTrackerSessionStartTotalExp);
+            long elapsedMs = Math.max(1L, getXpTrackerActiveElapsedMs());
+            long perHour = gained * 3600000L / elapsedMs;
+            String suffix = isXpTrackerPaused() ? " [Paused]" : "";
+            y = drawSimpleStatusRow(x, y, "XP", StringUtils.insertCommasToNumber(String.valueOf(gained)) + " (" + StringUtils.insertCommasToNumber(String.valueOf(perHour)) + "/h)" + suffix, 0xFFFFFF);
+
+            int bestSkill = -1;
+            long bestGained = 0L;
+            for (int i = 0; i < Math.min(currentExp.length, xpTrackerSkillStartXp.length); i++) {
+                long skillGained = Math.max(0L, currentExp[i] - xpTrackerSkillStartXp[i]);
+                if (skillGained > bestGained) {
+                    bestGained = skillGained;
+                    bestSkill = i;
+                }
+            }
+            if (bestSkill >= 0 && bestGained > 0L) {
+                y = drawSimpleStatusRow(x, y, "Top Skill",
+                        SkillConstants.SKILL_NAMES[bestSkill] + " +" + StringUtils.insertCommasToNumber(String.valueOf(bestGained)),
+                        0xFFFFFF);
+            }
+        }
+
+        if (bossTimersPluginEnabled && !bossRespawnEntries.isEmpty()) {
+            int count = Math.min(Math.max(1, bossTimersOverlayLimit), bossRespawnEntries.size());
+            for (int i = 0; i < count; i++) {
+                BossRespawnEntry entry = bossRespawnEntries.get(i);
+                int seconds = Math.max(0, (int) ((entry.respawnAtMs - System.currentTimeMillis()) / 1000L));
+                y = drawSimpleStatusRow(x, y, i == 0 ? "Boss" : "Boss+", entry.name + " " + formatSeconds(seconds), 0xFFFFFF);
+            }
+        }
+
+        if (idleNotifierPluginEnabled && idleNotifierTriggered) {
+            y = drawSimpleStatusRow(x, y, "Idle", "Player is idle", 0xFFCC66);
+        }
+
+        if (lootTrackerPluginEnabled && !lootTrackerRecentEntries.isEmpty()) {
+            y = drawSimpleStatusRow(x, y, "Loot", lootTrackerRecentEntries.get(0), 0xFFFFFF);
+        }
+
+        drawItemStatsOverlay();
+    }
+
+    private int drawSimpleStatusRow(int x, int y, String label, String value, int textColor) {
+        int width = 190;
+        int height = 18;
+        Rasterizer2D.fillRectangle(x, y, width, height, 0x111111, 145);
+        Rasterizer2D.drawBoxOutline(x, y, width, height, 0x2A2A2A);
+        smallText.drawTextWithPotentialShadow(true, x + 4, 0xFFB347, label + ":", y + 13);
+        smallText.drawTextWithPotentialShadow(true, x + 58, textColor, value, y + 13);
+        return y + height + 2;
+    }
+
+    private void drawItemStatsOverlay() {
+        if (!itemStatsPluginEnabled || itemStatsHoveredItemId < 0) {
+            return;
+        }
+
+        ItemDefinition definition = ItemDefinition.lookup(itemStatsHoveredItemId);
+        if (definition == null) {
+            return;
+        }
+
+        String name = definition.name == null ? "Unknown item" : definition.name;
+        boolean wieldable = definition.actions != null && Arrays.stream(definition.actions).anyMatch(a -> a != null && (a.equalsIgnoreCase("wear") || a.equalsIgnoreCase("wield")));
+
+        int dynamicLines = 2; // stackable + equipable
+        if (itemStatsHoveredAmount > 1) {
+            dynamicLines++;
+        }
+        if (itemStatsShowItemId) {
+            dynamicLines++;
+        }
+        if (itemStatsShowItemValue) {
+            dynamicLines++;
+        }
+        if (itemStatsShowMembershipInfo) {
+            dynamicLines++;
+        }
+        if (itemStatsShowNoteInfo) {
+            dynamicLines++;
+        }
+        if (itemStatsShowActions) {
+            dynamicLines++;
+        }
+        if (itemStatsShowGroundActions) {
+            dynamicLines++;
+        }
+
+        int width = 230;
+        int height = 20 + (dynamicLines * 12);
+        int x = Math.min(frameWidth - width - 4, Math.max(6, super.mouseX + 14));
+        int y = Math.min(frameHeight - height - 6, Math.max(16, super.mouseY - 8));
+        Rasterizer2D.fillRectangle(x, y, width, height, 0x0F0F0F, 195);
+        Rasterizer2D.drawBoxOutline(x, y, width, height, 0x4A4A4A);
+        smallText.drawTextWithPotentialShadow(true, x + 4, 0xFFFFFF, name, y + 14);
+
+        int lineY = y + 28;
+        smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Stackable: " + (definition.stackable ? "Yes" : "No"), lineY);
+        lineY += 12;
+        smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Equipable: " + (wieldable ? "Yes" : "No"), lineY);
+        lineY += 12;
+
+        if (itemStatsHoveredAmount > 1) {
+            smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Amount: " + itemStatsHoveredAmount, lineY);
+            lineY += 12;
+        }
+        if (itemStatsShowItemId) {
+            smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Item ID: " + definition.id, lineY);
+            lineY += 12;
+        }
+        if (itemStatsShowItemValue) {
+            smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Value: " + StringUtils.insertCommasToNumber(String.valueOf(Math.max(0, definition.value))), lineY);
+            lineY += 12;
+        }
+        if (itemStatsShowMembershipInfo) {
+            smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Members: " + (definition.is_members_only ? "Yes" : "No") + " Team: " + definition.team, lineY);
+            lineY += 12;
+        }
+        if (itemStatsShowNoteInfo) {
+            boolean isNote = definition.noted_item_id != -1 || definition.unnoted_item_id != -1;
+            smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Noted: " + (isNote ? "Yes" : "No"), lineY);
+            lineY += 12;
+        }
+        if (itemStatsShowActions && definition.actions != null) {
+            String action = Arrays.stream(definition.actions).filter(Objects::nonNull).findFirst().orElse("None");
+            smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Action: " + action, lineY);
+            lineY += 12;
+        }
+        if (itemStatsShowGroundActions && definition.groundActions != null) {
+            String action = Arrays.stream(definition.groundActions).filter(Objects::nonNull).findFirst().orElse("None");
+            smallText.drawTextWithPotentialShadow(true, x + 4, 0xCCCCCC, "Ground: " + action, lineY);
+        }
+    }
+
+    private int getEquippedAmmoAmount() {
+        Widget ammoWidget = Widget.interfaceCache[45057];
+        if (ammoWidget == null || ammoWidget.inventoryItemId == null || ammoWidget.inventoryAmounts == null || ammoWidget.inventoryItemId.length == 0) {
+            return 0;
+        }
+        if (ammoWidget.inventoryItemId[0] <= 0) {
+            return 0;
+        }
+        return Math.max(0, ammoWidget.inventoryAmounts[0]);
+    }
+
+    private String formatSeconds(int seconds) {
+        int mins = seconds / 60;
+        int secs = seconds % 60;
+        return mins + ":" + (secs < 10 ? "0" : "") + secs;
+    }
+
+    private int[] getBoostDisplaySkillIds() {
+        if (boostsShowCombatSkills && boostsShowNonCombatSkills) {
+            int[] ids = new int[SkillConstants.SKILL_COUNT];
+            for (int i = 0; i < ids.length; i++) {
+                ids[i] = i;
+            }
+            return ids;
+        }
+        if (boostsShowNonCombatSkills) {
+            return new int[]{2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17, 18, 19, 20, 21, 22};
+        }
+        return new int[]{0, 1, 3, 6, 9, 12, 15};
+    }
+
+    private boolean isXpTrackerPaused() {
+        return xpTrackerPauseStartedMs > 0L;
+    }
+
+    private long getXpTrackerActiveElapsedMs() {
+        if (xpTrackerSessionStartMs <= 0L) {
+            return 1L;
+        }
+        long now = System.currentTimeMillis();
+        long pausedMs = xpTrackerSessionPausedMs;
+        if (xpTrackerPauseStartedMs > 0L) {
+            pausedMs += Math.max(0L, now - xpTrackerPauseStartedMs);
+        }
+        return Math.max(1L, now - xpTrackerSessionStartMs - pausedMs);
+    }
+
+    private void parseTimerSpriteFilters() {
+        timersIncludeSpriteIds.clear();
+        timersExcludeSpriteIds.clear();
+        parseTimerSpriteCsvIntoSet(timersIncludeSpriteIdsCsv, timersIncludeSpriteIds);
+        parseTimerSpriteCsvIntoSet(timersExcludeSpriteIdsCsv, timersExcludeSpriteIds);
+    }
+
+    private void parseTimerSpriteCsvIntoSet(String csv, Set<Integer> out) {
+        if (csv == null || csv.isEmpty()) {
+            return;
+        }
+        String[] split = csv.split(",");
+        for (String token : split) {
+            try {
+                out.add(Integer.parseInt(token.trim()));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+    }
+
+    private void parseNpcIndicatorTargets() {
+        npcIndicatorTargetTokens.clear();
+        if (npcIndicatorTargetsCsv == null || npcIndicatorTargetsCsv.isEmpty()) {
+            return;
+        }
+        String[] split = npcIndicatorTargetsCsv.split(",");
+        for (String token : split) {
+            String trimmed = token.trim();
+            if (!trimmed.isEmpty()) {
+                npcIndicatorTargetTokens.add(trimmed);
+            }
+        }
+    }
+
+    private boolean isNpcIndicatorTarget(Npc npc) {
+        if (npc == null || npc.desc == null || npc.desc.name == null || npcIndicatorTargetTokens.isEmpty()) {
+            return false;
+        }
+        if (npcIndicatorsIgnoreDead && npc.currentHealth <= 0) {
+            return false;
+        }
+        String npcName = npc.desc.name;
+        for (String token : npcIndicatorTargetTokens) {
+            if (matchesByMode(npcName, token, npcIndicatorsMatchMode, npcIndicatorsCaseSensitive)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void parseInventoryTagItemIds() {
+        parseInventoryTagItemIdsForGroup(0);
+    }
+
+    private void parseInventoryTagItemNames() {
+        parseInventoryTagItemNamesForGroup(0);
+    }
+
+    private void parseInventoryTagItemIdsForGroup(int group) {
+        Set<Integer> out = getInventoryTagIdSetForGroup(group);
+        String csv = getInventoryTagIdsCsvForGroup(group);
+        out.clear();
+        if (csv == null || csv.isEmpty()) {
+            return;
+        }
+        String[] split = csv.split(",");
+        for (String token : split) {
+            try {
+                out.add(Integer.parseInt(token.trim()));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+    }
+
+    private void parseInventoryTagItemNamesForGroup(int group) {
+        List<String> out = getInventoryTagNameTokensForGroup(group);
+        String csv = getInventoryTagNamesCsvForGroup(group);
+        out.clear();
+        if (csv == null || csv.isEmpty()) {
+            return;
+        }
+        String[] split = csv.split(",");
+        for (String token : split) {
+            String trimmed = token.trim();
+            if (!trimmed.isEmpty()) {
+                out.add(trimmed);
+            }
+        }
+    }
+
+    private Color getInventoryTagColorForItem(int itemId) {
+        ItemDefinition definition = ItemDefinition.lookup(itemId);
+        String itemName = definition == null ? null : definition.name;
+
+        if (isInventoryItemTaggedByGroup(itemId, itemName, 0)) {
+            return inventoryTagsColor;
+        }
+        if (isInventoryItemTaggedByGroup(itemId, itemName, 1)) {
+            return inventoryTagsColor2;
+        }
+        if (isInventoryItemTaggedByGroup(itemId, itemName, 2)) {
+            return inventoryTagsColor3;
+        }
+        if (isInventoryItemTaggedByGroup(itemId, itemName, 3)) {
+            return inventoryTagsColor4;
+        }
+        return null;
+    }
+
+    private boolean isInventoryItemTaggedByGroup(int itemId, String itemName, int group) {
+        Set<Integer> idSet = getInventoryTagIdSetForGroup(group);
+        List<String> nameTokens = getInventoryTagNameTokensForGroup(group);
+        if (idSet.contains(itemId)) {
+            return true;
+        }
+        if (nameTokens.isEmpty() || itemName == null) {
+            return false;
+        }
+        for (String token : nameTokens) {
+            if (matchesByMode(itemName, token, inventoryTagsNameMatchMode, inventoryTagsCaseSensitive)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Set<Integer> getInventoryTagIdSetForGroup(int group) {
+        switch (group) {
+            case 1:
+                return inventoryTagItemIds2;
+            case 2:
+                return inventoryTagItemIds3;
+            case 3:
+                return inventoryTagItemIds4;
+            default:
+                return inventoryTagItemIds;
+        }
+    }
+
+    private List<String> getInventoryTagNameTokensForGroup(int group) {
+        switch (group) {
+            case 1:
+                return inventoryTagItemNameTokens2;
+            case 2:
+                return inventoryTagItemNameTokens3;
+            case 3:
+                return inventoryTagItemNameTokens4;
+            default:
+                return inventoryTagItemNameTokens;
+        }
+    }
+
+    private String getInventoryTagIdsCsvForGroup(int group) {
+        switch (group) {
+            case 1:
+                return inventoryTagsItemIdsCsv2;
+            case 2:
+                return inventoryTagsItemIdsCsv3;
+            case 3:
+                return inventoryTagsItemIdsCsv4;
+            default:
+                return inventoryTagsItemIdsCsv;
+        }
+    }
+
+    private String getInventoryTagNamesCsvForGroup(int group) {
+        switch (group) {
+            case 1:
+                return inventoryTagsItemNamesCsv2;
+            case 2:
+                return inventoryTagsItemNamesCsv3;
+            case 3:
+                return inventoryTagsItemNamesCsv4;
+            default:
+                return inventoryTagsItemNamesCsv;
+        }
+    }
+
+    private void setInventoryTagIdsCsvForGroup(int group, String csv) {
+        String safe = csv == null ? "" : csv;
+        switch (group) {
+            case 1:
+                inventoryTagsItemIdsCsv2 = safe;
+                break;
+            case 2:
+                inventoryTagsItemIdsCsv3 = safe;
+                break;
+            case 3:
+                inventoryTagsItemIdsCsv4 = safe;
+                break;
+            default:
+                inventoryTagsItemIdsCsv = safe;
+                break;
+        }
+        parseInventoryTagItemIdsForGroup(group);
+    }
+
+    private void setInventoryTagNamesCsvForGroup(int group, String csv) {
+        String safe = csv == null ? "" : csv;
+        switch (group) {
+            case 1:
+                inventoryTagsItemNamesCsv2 = safe;
+                break;
+            case 2:
+                inventoryTagsItemNamesCsv3 = safe;
+                break;
+            case 3:
+                inventoryTagsItemNamesCsv4 = safe;
+                break;
+            default:
+                inventoryTagsItemNamesCsv = safe;
+                break;
+        }
+        parseInventoryTagItemNamesForGroup(group);
+    }
+
+    private Color getInventoryTagColorForGroup(int group) {
+        switch (group) {
+            case 1:
+                return inventoryTagsColor2;
+            case 2:
+                return inventoryTagsColor3;
+            case 3:
+                return inventoryTagsColor4;
+            default:
+                return inventoryTagsColor;
+        }
+    }
+
+    private void setInventoryTagColorForGroup(int group, Color color) {
+        Color safe = withAlpha(color, 200);
+        switch (group) {
+            case 1:
+                inventoryTagsColor2 = safe;
+                break;
+            case 2:
+                inventoryTagsColor3 = safe;
+                break;
+            case 3:
+                inventoryTagsColor4 = safe;
+                break;
+            default:
+                inventoryTagsColor = safe;
+                break;
+        }
+    }
+
+    private boolean isInventoryItemTagged(int itemId) {
+        return getInventoryTagColorForItem(itemId) != null;
+    }
+
+    private boolean matchesByMode(String source, String token, int mode, boolean caseSensitive) {
+        if (source == null || token == null) {
+            return false;
+        }
+        String left = caseSensitive ? source : source.toLowerCase(Locale.ROOT);
+        String right = caseSensitive ? token : token.toLowerCase(Locale.ROOT);
+        switch (mode) {
+            case 1:
+                return left.equals(right);
+            case 2:
+                return left.startsWith(right);
+            default:
+                return left.contains(right);
+        }
+    }
+
+    private int extractChargesFromItemName(int itemId) {
+        ItemDefinition definition = ItemDefinition.lookup(itemId);
+        if (definition == null || definition.name == null) {
+            return -1;
+        }
+        String name = definition.name;
+        int open = name.lastIndexOf('(');
+        int close = name.lastIndexOf(')');
+        if (open == -1 || close == -1 || close <= open + 1) {
+            return -1;
+        }
+        String number = name.substring(open + 1, close).trim();
+        try {
+            return Integer.parseInt(number);
+        } catch (NumberFormatException ex) {
+            return -1;
+        }
+    }
+
+    private boolean isInventoryWidgetInterface(int id, int parentId) {
+        return id == 3214 || parentId == 3214 || id == 5064 || parentId == 5064;
+    }
+
+    private static Map<String, Integer> createBossRespawnMap() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("general graardor", 90);
+        map.put("k'ril tsutsaroth", 90);
+        map.put("kree'arra", 90);
+        map.put("commander zilyana", 90);
+        map.put("callisto", 7);
+        map.put("artio", 7);
+        map.put("chaos elemental", 8);
+        map.put("chaos fanatic", 8);
+        map.put("crazy archaeologist", 9);
+        map.put("king black dragon", 9);
+        map.put("scorpia", 8);
+        map.put("venenatis", 6);
+        map.put("spindel", 5);
+        map.put("vet'ion", 9);
+        map.put("calvar'ion", 8);
+        map.put("dagannoth prime", 90);
+        map.put("dagannoth rex", 90);
+        map.put("dagannoth supreme", 90);
+        map.put("corporeal beast", 30);
+        map.put("giant mole", 9);
+        map.put("cerberus", 8);
+        map.put("thermonuclear smoke devil", 8);
+        map.put("kraken", 8);
+        map.put("kalphite queen", 30);
+        map.put("dusk", 300);
+        map.put("alchemical hydra", 25);
+        map.put("sarachnis", 10);
+        map.put("zalcano", 22);
+        map.put("phantom muspah", 30);
+        map.put("the leviathan", 18);
+        map.put("araxxor", 9);
+        map.put("amoxliatl", 17);
+        map.put("hueycoatl", 30);
+        map.put("scurrius", 17);
+        return map;
+    }
+
+    private static final Map<String, Integer> BOSS_RESPAWN_SECONDS = createBossRespawnMap();
+
+    private static final class BossRespawnEntry {
+        private final String name;
+        private final long respawnAtMs;
+
+        private BossRespawnEntry(String name, long respawnAtMs) {
+            this.name = name;
+            this.respawnAtMs = respawnAtMs;
+        }
+    }
+
+
+
+    private Color withAlpha(Color color, int alpha) {
+        if (color == null) {
+            return new Color(255, 255, 255, alpha);
+        }
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(0, Math.min(255, alpha)));
+    }
+
+
+
+    public boolean isTileIndicatorsPluginEnabled() {
+        return tileIndicatorsPluginEnabled;
+    }
+
+
+
+    public void setTileIndicatorsPluginEnabled(boolean tileIndicatorsPluginEnabled) {
+        this.tileIndicatorsPluginEnabled = tileIndicatorsPluginEnabled;
+        savePluginData();
+    }
+
+
+
+    public boolean isTileIndicatorDestinationEnabled() {
+        return tileIndicatorDestinationEnabled;
+    }
+
+
+
+    public void setTileIndicatorDestinationEnabled(boolean tileIndicatorDestinationEnabled) {
+        this.tileIndicatorDestinationEnabled = tileIndicatorDestinationEnabled;
+        savePluginData();
+    }
+
+
+
+    public boolean isTileIndicatorCurrentEnabled() {
+        return tileIndicatorCurrentEnabled;
+    }
+
+
+
+    public void setTileIndicatorCurrentEnabled(boolean tileIndicatorCurrentEnabled) {
+        this.tileIndicatorCurrentEnabled = tileIndicatorCurrentEnabled;
+        savePluginData();
+    }
+
+
+
+    public Color getTileIndicatorDestinationColor() {
+        return tileIndicatorDestinationBorderColor;
+    }
+
+
+
+    public void setTileIndicatorDestinationColor(Color color) {
+        if (color == null) {
+            return;
+        }
+        tileIndicatorDestinationBorderColor = withAlpha(color, 220);
+        tileIndicatorDestinationFillColor = withAlpha(color, 50);
+        savePluginData();
+    }
+
+
+
+    public Color getTileIndicatorCurrentColor() {
+        return tileIndicatorCurrentBorderColor;
+    }
+
+
+
+    public void setTileIndicatorCurrentColor(Color color) {
+        if (color == null) {
+            return;
+        }
+        tileIndicatorCurrentBorderColor = withAlpha(color, 220);
+        tileIndicatorCurrentFillColor = withAlpha(color, 50);
+        savePluginData();
+    }
+
+
+
+    public boolean isVisualMetronomePluginEnabled() {
+        return visualMetronomePluginEnabled;
+    }
+
+
+
+    public void setVisualMetronomePluginEnabled(boolean visualMetronomePluginEnabled) {
+        this.visualMetronomePluginEnabled = visualMetronomePluginEnabled;
+        if (!visualMetronomePluginEnabled) {
+            visualMetronomeTickAnchorMs = 0L;
+        }
+        savePluginData();
+    }
+
+
+
+    public boolean isVisualMetronomeHighlightTrueTile() {
+        return visualMetronomeHighlightTrueTile;
+    }
+
+
+
+    public void setVisualMetronomeHighlightTrueTile(boolean visualMetronomeHighlightTrueTile) {
+        this.visualMetronomeHighlightTrueTile = visualMetronomeHighlightTrueTile;
+        savePluginData();
+    }
+
+
+
+    public int getVisualMetronomeCycleLength() {
+        return visualMetronomeCycleLength;
+    }
+
+
+
+    public void setVisualMetronomeCycleLength(int visualMetronomeCycleLength) {
+        this.visualMetronomeCycleLength = Math.max(1, Math.min(10, visualMetronomeCycleLength));
+        savePluginData();
+    }
+
+
+
+    public Color getVisualMetronomeTickColor() {
+        return visualMetronomeTickColor;
+    }
+
+
+
+    public void setVisualMetronomeTickColor(Color visualMetronomeTickColor) {
+        if (visualMetronomeTickColor == null) {
+            return;
+        }
+        this.visualMetronomeTickColor = withAlpha(visualMetronomeTickColor, 190);
+        savePluginData();
+    }
+
+
+
+    public Color getVisualMetronomeTockColor() {
+        return visualMetronomeTockColor;
+    }
+
+
+
+    public void setVisualMetronomeTockColor(Color visualMetronomeTockColor) {
+        if (visualMetronomeTockColor == null) {
+            return;
+        }
+        this.visualMetronomeTockColor = withAlpha(visualMetronomeTockColor, 190);
+        savePluginData();
+    }
+
+
+
+    public boolean isShortestPathPluginEnabled() {
+        return shortestPathPluginEnabled;
+    }
+
+
+
+    public void setShortestPathPluginEnabled(boolean shortestPathPluginEnabled) {
+        this.shortestPathPluginEnabled = shortestPathPluginEnabled;
+        if (!shortestPathPluginEnabled) {
+            shortestPathPoints.clear();
+            shortestPathSelectTargetMode = false;
+        }
+        savePluginData();
+    }
+
+
+
+    public Color getShortestPathColor() {
+        return shortestPathColor;
+    }
+
+
+
+    public void setShortestPathColor(Color shortestPathColor) {
+        if (shortestPathColor == null) {
+            return;
+        }
+        this.shortestPathColor = withAlpha(shortestPathColor, 190);
+        savePluginData();
+    }
+
+
+
+    public boolean isShortestPathUseManualTarget() {
+        return shortestPathUseManualTarget;
+    }
+
+
+
+    public void setShortestPathUseManualTarget(boolean shortestPathUseManualTarget) {
+        this.shortestPathUseManualTarget = shortestPathUseManualTarget;
+        if (!shortestPathUseManualTarget) {
+            shortestPathSelectTargetMode = false;
+            shortestPathManualTargetX = -1;
+            shortestPathManualTargetY = -1;
+        }
+        shortestPathPoints.clear();
+        savePluginData();
+    }
+
+
+
+    public boolean isShortestPathSelectTargetMode() {
+        return shortestPathSelectTargetMode;
+    }
+
+
+
+    public void setShortestPathSelectTargetMode(boolean shortestPathSelectTargetMode) {
+        if (!shortestPathPluginEnabled || !shortestPathUseManualTarget) {
+            this.shortestPathSelectTargetMode = false;
+            savePluginData();
+            return;
+        }
+        this.shortestPathSelectTargetMode = shortestPathSelectTargetMode;
+        savePluginData();
+    }
+
+
+
+    public void useCurrentDestinationAsShortestPathTarget() {
+        if (destinationX > 0 && destinationY > 0) {
+            shortestPathManualTargetX = destinationX;
+            shortestPathManualTargetY = destinationY;
+            shortestPathUseManualTarget = true;
+            shortestPathSelectTargetMode = false;
+            shortestPathPoints.clear();
+            savePluginData();
+        }
+    }
+
+
+
+    public void clearShortestPathTarget() {
+        shortestPathManualTargetX = -1;
+        shortestPathManualTargetY = -1;
+        shortestPathTargetX = -1;
+        shortestPathTargetY = -1;
+        shortestPathUseManualTarget = false;
+        shortestPathSelectTargetMode = false;
+        shortestPathPoints.clear();
+        savePluginData();
+    }
+
+    public boolean isAmmoPluginEnabled() {
+        return ammoPluginEnabled;
+    }
+
+    public void setAmmoPluginEnabled(boolean ammoPluginEnabled) {
+        this.ammoPluginEnabled = ammoPluginEnabled;
+        if (!ammoPluginEnabled) {
+            ammoLowNotifierTriggered = false;
+        }
+        savePluginData();
+    }
+
+    public int getAmmoLowWarningThreshold() {
+        return ammoLowWarningThreshold;
+    }
+
+    public void setAmmoLowWarningThreshold(int ammoLowWarningThreshold) {
+        this.ammoLowWarningThreshold = Math.max(1, ammoLowWarningThreshold);
+        savePluginData();
+    }
+
+    public boolean isBoostsInfoPluginEnabled() {
+        return boostsInfoPluginEnabled;
+    }
+
+    public void setBoostsInfoPluginEnabled(boolean boostsInfoPluginEnabled) {
+        this.boostsInfoPluginEnabled = boostsInfoPluginEnabled;
+        if (!boostsInfoPluginEnabled) {
+            boostsThresholdNotifiedSkills.clear();
+        }
+        savePluginData();
+    }
+
+    public boolean isBoostsShowCombatSkills() {
+        return boostsShowCombatSkills;
+    }
+
+    public void setBoostsShowCombatSkills(boolean boostsShowCombatSkills) {
+        this.boostsShowCombatSkills = boostsShowCombatSkills;
+        savePluginData();
+    }
+
+    public boolean isBoostsShowNonCombatSkills() {
+        return boostsShowNonCombatSkills;
+    }
+
+    public void setBoostsShowNonCombatSkills(boolean boostsShowNonCombatSkills) {
+        this.boostsShowNonCombatSkills = boostsShowNonCombatSkills;
+        savePluginData();
+    }
+
+    public boolean isBoostsUseRelativeBoosts() {
+        return boostsUseRelativeBoosts;
+    }
+
+    public void setBoostsUseRelativeBoosts(boolean boostsUseRelativeBoosts) {
+        this.boostsUseRelativeBoosts = boostsUseRelativeBoosts;
+        savePluginData();
+    }
+
+    public int getBoostsThreshold() {
+        return boostsThreshold;
+    }
+
+    public void setBoostsThreshold(int boostsThreshold) {
+        this.boostsThreshold = Math.max(0, boostsThreshold);
+        boostsThresholdNotifiedSkills.clear();
+        savePluginData();
+    }
+
+    public boolean isBoostsNotifyOnThreshold() {
+        return boostsNotifyOnThreshold;
+    }
+
+    public void setBoostsNotifyOnThreshold(boolean boostsNotifyOnThreshold) {
+        this.boostsNotifyOnThreshold = boostsNotifyOnThreshold;
+        if (!boostsNotifyOnThreshold) {
+            boostsThresholdNotifiedSkills.clear();
+        }
+        savePluginData();
+    }
+
+    public boolean isBossTimersPluginEnabled() {
+        return bossTimersPluginEnabled;
+    }
+
+    public void setBossTimersPluginEnabled(boolean bossTimersPluginEnabled) {
+        this.bossTimersPluginEnabled = bossTimersPluginEnabled;
+        if (!bossTimersPluginEnabled) {
+            bossRespawnEntries.clear();
+            bossLastKnownHealth.clear();
+            bossDeathHandledNpcIndices.clear();
+        }
+        savePluginData();
+    }
+
+    public int getBossTimersOverlayLimit() {
+        return bossTimersOverlayLimit;
+    }
+
+    public void setBossTimersOverlayLimit(int bossTimersOverlayLimit) {
+        this.bossTimersOverlayLimit = Math.max(1, Math.min(10, bossTimersOverlayLimit));
+        savePluginData();
+    }
+
+    public void clearBossTimers() {
+        bossRespawnEntries.clear();
+        bossDeathHandledNpcIndices.clear();
+        savePluginData();
+    }
+
+    public List<String> getBossTimersSummary() {
+        long now = System.currentTimeMillis();
+        List<String> lines = new ArrayList<>();
+        for (BossRespawnEntry entry : bossRespawnEntries) {
+            int remaining = Math.max(0, (int) ((entry.respawnAtMs - now) / 1000L));
+            lines.add(entry.name + " - " + formatSeconds(remaining));
+        }
+        return lines;
+    }
+
+    public boolean isItemStatsPluginEnabled() {
+        return itemStatsPluginEnabled;
+    }
+
+    public void setItemStatsPluginEnabled(boolean itemStatsPluginEnabled) {
+        this.itemStatsPluginEnabled = itemStatsPluginEnabled;
+        savePluginData();
+    }
+
+    public boolean isItemStatsShowItemId() {
+        return itemStatsShowItemId;
+    }
+
+    public void setItemStatsShowItemId(boolean itemStatsShowItemId) {
+        this.itemStatsShowItemId = itemStatsShowItemId;
+        savePluginData();
+    }
+
+    public boolean isItemStatsShowItemValue() {
+        return itemStatsShowItemValue;
+    }
+
+    public void setItemStatsShowItemValue(boolean itemStatsShowItemValue) {
+        this.itemStatsShowItemValue = itemStatsShowItemValue;
+        savePluginData();
+    }
+
+    public boolean isItemStatsShowActions() {
+        return itemStatsShowActions;
+    }
+
+    public void setItemStatsShowActions(boolean itemStatsShowActions) {
+        this.itemStatsShowActions = itemStatsShowActions;
+        savePluginData();
+    }
+
+    public boolean isItemStatsShowGroundActions() {
+        return itemStatsShowGroundActions;
+    }
+
+    public void setItemStatsShowGroundActions(boolean itemStatsShowGroundActions) {
+        this.itemStatsShowGroundActions = itemStatsShowGroundActions;
+        savePluginData();
+    }
+
+    public boolean isItemStatsShowMembershipInfo() {
+        return itemStatsShowMembershipInfo;
+    }
+
+    public void setItemStatsShowMembershipInfo(boolean itemStatsShowMembershipInfo) {
+        this.itemStatsShowMembershipInfo = itemStatsShowMembershipInfo;
+        savePluginData();
+    }
+
+    public boolean isItemStatsShowNoteInfo() {
+        return itemStatsShowNoteInfo;
+    }
+
+    public void setItemStatsShowNoteInfo(boolean itemStatsShowNoteInfo) {
+        this.itemStatsShowNoteInfo = itemStatsShowNoteInfo;
+        savePluginData();
+    }
+
+    public boolean isNpcAggressionTimerPluginEnabled() {
+        return npcAggressionTimerPluginEnabled;
+    }
+
+    public void setNpcAggressionTimerPluginEnabled(boolean npcAggressionTimerPluginEnabled) {
+        this.npcAggressionTimerPluginEnabled = npcAggressionTimerPluginEnabled;
+        if (!npcAggressionTimerPluginEnabled) {
+            npcAggressionTimerStartMs = 0L;
+            npcAggressionStartTileX = -1;
+            npcAggressionStartTileY = -1;
+        }
+        savePluginData();
+    }
+
+    public int getNpcAggressionDurationSeconds() {
+        return npcAggressionDurationSeconds;
+    }
+
+    public void setNpcAggressionDurationSeconds(int npcAggressionDurationSeconds) {
+        this.npcAggressionDurationSeconds = Math.max(10, npcAggressionDurationSeconds);
+        savePluginData();
+    }
+
+    public boolean isNpcIndicatorsPluginEnabled() {
+        return npcIndicatorsPluginEnabled;
+    }
+
+    public void setNpcIndicatorsPluginEnabled(boolean npcIndicatorsPluginEnabled) {
+        this.npcIndicatorsPluginEnabled = npcIndicatorsPluginEnabled;
+        savePluginData();
+    }
+
+    public boolean isNpcIndicatorsHighlightTile() {
+        return npcIndicatorsHighlightTile;
+    }
+
+    public void setNpcIndicatorsHighlightTile(boolean npcIndicatorsHighlightTile) {
+        this.npcIndicatorsHighlightTile = npcIndicatorsHighlightTile;
+        savePluginData();
+    }
+
+    public boolean isNpcIndicatorsHighlightName() {
+        return npcIndicatorsHighlightName;
+    }
+
+    public void setNpcIndicatorsHighlightName(boolean npcIndicatorsHighlightName) {
+        this.npcIndicatorsHighlightName = npcIndicatorsHighlightName;
+        savePluginData();
+    }
+
+    public boolean isNpcIndicatorsHighlightMinimap() {
+        return npcIndicatorsHighlightMinimap;
+    }
+
+    public void setNpcIndicatorsHighlightMinimap(boolean npcIndicatorsHighlightMinimap) {
+        this.npcIndicatorsHighlightMinimap = npcIndicatorsHighlightMinimap;
+        savePluginData();
+    }
+
+    public boolean isNpcIndicatorsIgnoreDead() {
+        return npcIndicatorsIgnoreDead;
+    }
+
+    public void setNpcIndicatorsIgnoreDead(boolean npcIndicatorsIgnoreDead) {
+        this.npcIndicatorsIgnoreDead = npcIndicatorsIgnoreDead;
+        savePluginData();
+    }
+
+    public int getNpcIndicatorsMatchMode() {
+        return npcIndicatorsMatchMode;
+    }
+
+    public void setNpcIndicatorsMatchMode(int npcIndicatorsMatchMode) {
+        this.npcIndicatorsMatchMode = Math.max(0, Math.min(2, npcIndicatorsMatchMode));
+        savePluginData();
+    }
+
+    public boolean isNpcIndicatorsCaseSensitive() {
+        return npcIndicatorsCaseSensitive;
+    }
+
+    public void setNpcIndicatorsCaseSensitive(boolean npcIndicatorsCaseSensitive) {
+        this.npcIndicatorsCaseSensitive = npcIndicatorsCaseSensitive;
+        savePluginData();
+    }
+
+    public String getNpcIndicatorTargetsCsv() {
+        return npcIndicatorTargetsCsv;
+    }
+
+    public void setNpcIndicatorTargetsCsv(String npcIndicatorTargetsCsv) {
+        this.npcIndicatorTargetsCsv = npcIndicatorTargetsCsv == null ? "" : npcIndicatorTargetsCsv;
+        parseNpcIndicatorTargets();
+        savePluginData();
+    }
+
+    public Color getNpcIndicatorsColor() {
+        return npcIndicatorsColor;
+    }
+
+    public void setNpcIndicatorsColor(Color npcIndicatorsColor) {
+        if (npcIndicatorsColor == null) {
+            return;
+        }
+        this.npcIndicatorsColor = withAlpha(npcIndicatorsColor, 190);
+        savePluginData();
+    }
+
+    public boolean isXpDropsPluginEnabled() {
+        return xpDropsPluginEnabled;
+    }
+
+    public void setXpDropsPluginEnabled(boolean xpDropsPluginEnabled) {
+        this.xpDropsPluginEnabled = xpDropsPluginEnabled;
+        savePluginData();
+    }
+
+    public boolean isXpTrackerPluginEnabled() {
+        return xpTrackerPluginEnabled;
+    }
+
+    public void setXpTrackerPluginEnabled(boolean xpTrackerPluginEnabled) {
+        this.xpTrackerPluginEnabled = xpTrackerPluginEnabled;
+        if (!xpTrackerPluginEnabled) {
+            xpTrackerSessionStartMs = 0L;
+            xpTrackerSessionStartTotalExp = 0L;
+            xpTrackerSessionPausedMs = 0L;
+            xpTrackerPauseStartedMs = 0L;
+            xpTrackerLastXpGainMs = 0L;
+            xpTrackerLastObservedTotalExp = 0L;
+            Arrays.fill(xpTrackerSkillStartXp, 0L);
+        }
+        savePluginData();
+    }
+
+    public boolean isXpTrackerPauseOnLogout() {
+        return xpTrackerPauseOnLogout;
+    }
+
+    public void setXpTrackerPauseOnLogout(boolean xpTrackerPauseOnLogout) {
+        this.xpTrackerPauseOnLogout = xpTrackerPauseOnLogout;
+        savePluginData();
+    }
+
+    public int getXpTrackerAutoPauseMinutes() {
+        return xpTrackerAutoPauseMinutes;
+    }
+
+    public void setXpTrackerAutoPauseMinutes(int xpTrackerAutoPauseMinutes) {
+        this.xpTrackerAutoPauseMinutes = Math.max(0, Math.min(120, xpTrackerAutoPauseMinutes));
+        savePluginData();
+    }
+
+    public void resetXpTrackerSession() {
+        xpTrackerSessionStartMs = 0L;
+        xpTrackerSessionStartTotalExp = 0L;
+        xpTrackerSessionPausedMs = 0L;
+        xpTrackerPauseStartedMs = 0L;
+        xpTrackerLastXpGainMs = 0L;
+        xpTrackerLastObservedTotalExp = 0L;
+        Arrays.fill(xpTrackerSkillStartXp, 0L);
+    }
+
+    public String getXpTrackerSessionSummary() {
+        if (!xpTrackerPluginEnabled || xpTrackerSessionStartMs <= 0L) {
+            return "Session not started";
+        }
+        long gained = Math.max(0L, totalExp - xpTrackerSessionStartTotalExp);
+        long perHour = gained * 3600000L / Math.max(1L, getXpTrackerActiveElapsedMs());
+        return StringUtils.insertCommasToNumber(String.valueOf(gained)) + " xp (" + StringUtils.insertCommasToNumber(String.valueOf(perHour)) + "/h)"
+                + (isXpTrackerPaused() ? " [Paused]" : "");
+    }
+
+    public boolean isIdleNotifierPluginEnabled() {
+        return idleNotifierPluginEnabled;
+    }
+
+    public void setIdleNotifierPluginEnabled(boolean idleNotifierPluginEnabled) {
+        this.idleNotifierPluginEnabled = idleNotifierPluginEnabled;
+        if (!idleNotifierPluginEnabled) {
+            idleNotifierTriggered = false;
+        }
+        savePluginData();
+    }
+
+    public int getIdleNotifierThresholdSeconds() {
+        return idleNotifierThresholdSeconds;
+    }
+
+    public void setIdleNotifierThresholdSeconds(int idleNotifierThresholdSeconds) {
+        this.idleNotifierThresholdSeconds = Math.max(5, idleNotifierThresholdSeconds);
+        savePluginData();
+    }
+
+    public boolean isInventoryTagsPluginEnabled() {
+        return inventoryTagsPluginEnabled;
+    }
+
+    public void setInventoryTagsPluginEnabled(boolean inventoryTagsPluginEnabled) {
+        this.inventoryTagsPluginEnabled = inventoryTagsPluginEnabled;
+        savePluginData();
+    }
+
+    public String getInventoryTagsItemIdsCsv() {
+        return inventoryTagsItemIdsCsv;
+    }
+
+    public void setInventoryTagsItemIdsCsv(String inventoryTagsItemIdsCsv) {
+        this.inventoryTagsItemIdsCsv = inventoryTagsItemIdsCsv == null ? "" : inventoryTagsItemIdsCsv;
+        parseInventoryTagItemIds();
+        savePluginData();
+    }
+
+    public String getInventoryTagsItemNamesCsv() {
+        return inventoryTagsItemNamesCsv;
+    }
+
+    public void setInventoryTagsItemNamesCsv(String inventoryTagsItemNamesCsv) {
+        this.inventoryTagsItemNamesCsv = inventoryTagsItemNamesCsv == null ? "" : inventoryTagsItemNamesCsv;
+        parseInventoryTagItemNames();
+        savePluginData();
+    }
+
+    public int getInventoryTagsSelectedGroup() {
+        return inventoryTagsSelectedGroup;
+    }
+
+    public void setInventoryTagsSelectedGroup(int inventoryTagsSelectedGroup) {
+        this.inventoryTagsSelectedGroup = Math.max(0, Math.min(3, inventoryTagsSelectedGroup));
+        savePluginData();
+    }
+
+    public String getInventoryTagsGroupItemIdsCsv(int group) {
+        return getInventoryTagIdsCsvForGroup(group);
+    }
+
+    public void setInventoryTagsGroupItemIdsCsv(int group, String csv) {
+        setInventoryTagIdsCsvForGroup(group, csv);
+        savePluginData();
+    }
+
+    public String getInventoryTagsGroupItemNamesCsv(int group) {
+        return getInventoryTagNamesCsvForGroup(group);
+    }
+
+    public void setInventoryTagsGroupItemNamesCsv(int group, String csv) {
+        setInventoryTagNamesCsvForGroup(group, csv);
+        savePluginData();
+    }
+
+    public Color getInventoryTagsGroupColor(int group) {
+        return getInventoryTagColorForGroup(group);
+    }
+
+    public void setInventoryTagsGroupColor(int group, Color color) {
+        if (color == null) {
+            return;
+        }
+        setInventoryTagColorForGroup(group, color);
+        savePluginData();
+    }
+
+    public int getInventoryTagsNameMatchMode() {
+        return inventoryTagsNameMatchMode;
+    }
+
+    public void setInventoryTagsNameMatchMode(int inventoryTagsNameMatchMode) {
+        this.inventoryTagsNameMatchMode = Math.max(0, Math.min(2, inventoryTagsNameMatchMode));
+        savePluginData();
+    }
+
+    public boolean isInventoryTagsCaseSensitive() {
+        return inventoryTagsCaseSensitive;
+    }
+
+    public void setInventoryTagsCaseSensitive(boolean inventoryTagsCaseSensitive) {
+        this.inventoryTagsCaseSensitive = inventoryTagsCaseSensitive;
+        savePluginData();
+    }
+
+    public Color getInventoryTagsColor() {
+        return inventoryTagsColor;
+    }
+
+    public void setInventoryTagsColor(Color inventoryTagsColor) {
+        if (inventoryTagsColor == null) {
+            return;
+        }
+        this.inventoryTagsColor = withAlpha(inventoryTagsColor, 200);
+        savePluginData();
+    }
+
+    public boolean isItemChargesPluginEnabled() {
+        return itemChargesPluginEnabled;
+    }
+
+    public void setItemChargesPluginEnabled(boolean itemChargesPluginEnabled) {
+        this.itemChargesPluginEnabled = itemChargesPluginEnabled;
+        savePluginData();
+    }
+
+    public int getItemChargesLowWarningThreshold() {
+        return itemChargesLowWarningThreshold;
+    }
+
+    public void setItemChargesLowWarningThreshold(int itemChargesLowWarningThreshold) {
+        this.itemChargesLowWarningThreshold = Math.max(0, itemChargesLowWarningThreshold);
+        savePluginData();
+    }
+
+    public boolean isItemChargesShowWhenZero() {
+        return itemChargesShowWhenZero;
+    }
+
+    public void setItemChargesShowWhenZero(boolean itemChargesShowWhenZero) {
+        this.itemChargesShowWhenZero = itemChargesShowWhenZero;
+        savePluginData();
+    }
+
+    public Color getItemChargesTextColor() {
+        return itemChargesTextColor;
+    }
+
+    public void setItemChargesTextColor(Color itemChargesTextColor) {
+        if (itemChargesTextColor == null) {
+            return;
+        }
+        this.itemChargesTextColor = withAlpha(itemChargesTextColor, 230);
+        savePluginData();
+    }
+
+    public Color getItemChargesLowColor() {
+        return itemChargesLowColor;
+    }
+
+    public void setItemChargesLowColor(Color itemChargesLowColor) {
+        if (itemChargesLowColor == null) {
+            return;
+        }
+        this.itemChargesLowColor = withAlpha(itemChargesLowColor, 230);
+        savePluginData();
+    }
+
+    public boolean isLootTrackerPluginEnabled() {
+        return lootTrackerPluginEnabled;
+    }
+
+    public void setLootTrackerPluginEnabled(boolean lootTrackerPluginEnabled) {
+        this.lootTrackerPluginEnabled = lootTrackerPluginEnabled;
+        if (!lootTrackerPluginEnabled) {
+            lootTrackerRecentEntries.clear();
+            lootTrackerLastTotals.clear();
+        }
+        savePluginData();
+    }
+
+    public int getLootTrackerMaxEntries() {
+        return lootTrackerMaxEntries;
+    }
+
+    public void setLootTrackerMaxEntries(int lootTrackerMaxEntries) {
+        this.lootTrackerMaxEntries = Math.max(1, Math.min(50, lootTrackerMaxEntries));
+        while (lootTrackerRecentEntries.size() > this.lootTrackerMaxEntries) {
+            lootTrackerRecentEntries.remove(lootTrackerRecentEntries.size() - 1);
+        }
+        savePluginData();
+    }
+
+    public boolean isLootTrackerShowNpcKillChat() {
+        return lootTrackerShowNpcKillChat;
+    }
+
+    public void setLootTrackerShowNpcKillChat(boolean lootTrackerShowNpcKillChat) {
+        this.lootTrackerShowNpcKillChat = lootTrackerShowNpcKillChat;
+        savePluginData();
+    }
+
+    public void clearLootTrackerEntries() {
+        lootTrackerRecentEntries.clear();
+        lootTrackerLastTotals.clear();
+    }
+
+    public List<String> getLootTrackerRecentEntries() {
+        return Collections.unmodifiableList(lootTrackerRecentEntries);
+    }
+
+    public boolean isTimersPluginEnabled() {
+        return timersPluginEnabled;
+    }
+
+    public void setTimersPluginEnabled(boolean timersPluginEnabled) {
+        this.timersPluginEnabled = timersPluginEnabled;
+        savePluginData();
+    }
+
+    public boolean isTimersShowSecondsOnly() {
+        return timersShowSecondsOnly;
+    }
+
+    public void setTimersShowSecondsOnly(boolean timersShowSecondsOnly) {
+        this.timersShowSecondsOnly = timersShowSecondsOnly;
+        savePluginData();
+    }
+
+    public int getTimersOverlayOffsetX() {
+        return timersOverlayOffsetX;
+    }
+
+    public void setTimersOverlayOffsetX(int timersOverlayOffsetX) {
+        this.timersOverlayOffsetX = Math.max(-1200, Math.min(1200, timersOverlayOffsetX));
+        savePluginData();
+    }
+
+    public int getTimersOverlayOffsetY() {
+        return timersOverlayOffsetY;
+    }
+
+    public void setTimersOverlayOffsetY(int timersOverlayOffsetY) {
+        this.timersOverlayOffsetY = Math.max(-1200, Math.min(1200, timersOverlayOffsetY));
+        savePluginData();
+    }
+
+    public Color getTimersTextColor() {
+        return timersTextColor;
+    }
+
+    public void setTimersTextColor(Color timersTextColor) {
+        if (timersTextColor == null) {
+            return;
+        }
+        this.timersTextColor = timersTextColor;
+        savePluginData();
+    }
+
+    public int getTimersMinSeconds() {
+        return timersMinSeconds;
+    }
+
+    public void setTimersMinSeconds(int timersMinSeconds) {
+        this.timersMinSeconds = Math.max(0, timersMinSeconds);
+        savePluginData();
+    }
+
+    public int getTimersMaxVisible() {
+        return timersMaxVisible;
+    }
+
+    public void setTimersMaxVisible(int timersMaxVisible) {
+        this.timersMaxVisible = Math.max(1, Math.min(20, timersMaxVisible));
+        savePluginData();
+    }
+
+    public boolean isTimersSortAscending() {
+        return timersSortAscending;
+    }
+
+    public void setTimersSortAscending(boolean timersSortAscending) {
+        this.timersSortAscending = timersSortAscending;
+        savePluginData();
+    }
+
+    public boolean isTimersShowSpriteId() {
+        return timersShowSpriteId;
+    }
+
+    public void setTimersShowSpriteId(boolean timersShowSpriteId) {
+        this.timersShowSpriteId = timersShowSpriteId;
+        savePluginData();
+    }
+
+    public String getTimersIncludeSpriteIdsCsv() {
+        return timersIncludeSpriteIdsCsv;
+    }
+
+    public void setTimersIncludeSpriteIdsCsv(String timersIncludeSpriteIdsCsv) {
+        this.timersIncludeSpriteIdsCsv = timersIncludeSpriteIdsCsv == null ? "" : timersIncludeSpriteIdsCsv;
+        parseTimerSpriteFilters();
+        savePluginData();
+    }
+
+    public String getTimersExcludeSpriteIdsCsv() {
+        return timersExcludeSpriteIdsCsv;
+    }
+
+    public void setTimersExcludeSpriteIdsCsv(String timersExcludeSpriteIdsCsv) {
+        this.timersExcludeSpriteIdsCsv = timersExcludeSpriteIdsCsv == null ? "" : timersExcludeSpriteIdsCsv;
+        parseTimerSpriteFilters();
+        savePluginData();
     }
 
 
@@ -25716,7 +28412,11 @@ public class Client extends GameApplet {
 
                     int mapY = npc.y / 32 - localPlayer.y / 32;
 
-                    markMinimap(mapDotNPC, mapX, mapY);
+                    Sprite npcDot = mapDotNPC;
+                    if (npcIndicatorsPluginEnabled && npcIndicatorsHighlightMinimap && isNpcIndicatorTarget(npc)) {
+                        npcDot = mapDotFriend != null ? mapDotFriend : mapDotNPC;
+                    }
+                    markMinimap(npcDot, mapX, mapY);
 
                 }
 
@@ -28374,7 +31074,7 @@ public class Client extends GameApplet {
 
                 }
 
-                if (Configuration.expCounterOpen) {
+                if (Configuration.expCounterOpen && xpDropsPluginEnabled) {
 
                     addToXPCounter(skillId, experience);
 
@@ -31294,6 +33994,16 @@ public class Client extends GameApplet {
 
         Model.anInt1686 = super.mouseY - (frameMode == ScreenMode.FIXED ? 4 : 0);
 
+        updateVisualMetronomeState();
+        updateShortestPathState();
+        updateNpcAggressionTimerState();
+        updateBossTimersState();
+        updateIdleNotifierState();
+        updateAmmoNotifierState();
+        updateBoostsInfoState();
+        updateLootTrackerState();
+        updateXpTrackerState();
+
         Rasterizer2D.clear();
 
         scene.render(xCameraPos, yCameraPos, xCameraCurve, zCameraPos, j, yCameraCurve);
@@ -31309,6 +34019,13 @@ public class Client extends GameApplet {
         updateEntities();
 
         drawHeadIcon();
+
+        drawTileIndicatorsOverlay();
+
+        drawVisualMetronomeOverlay();
+
+        drawShortestPathOverlay();
+        drawNpcIndicatorsOverlay();
 
         writeBackgroundTexture(k2);
 
@@ -31334,7 +34051,7 @@ public class Client extends GameApplet {
 
             }
 
-            if (Configuration.expCounterOpen) {
+            if (Configuration.expCounterOpen && xpDropsPluginEnabled) {
 
                 drawExpCounterDrops();
 

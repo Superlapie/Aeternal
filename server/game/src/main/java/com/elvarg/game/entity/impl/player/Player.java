@@ -199,6 +199,10 @@ public class Player extends Mobile {
 	private int amountDonated;
 	// Blowpipe
 	private int blowpipeScales;
+	private int blowpipeDarts;
+	private int blowpipeDartItemId = -1;
+	private int noxiousHalberdMinHit;
+	private int noxiousHalberdMinHitPending;
 	private int scytheCharges;
 	private double npcDropRateMultiplier = 1.0;
 	// Bounty hunter
@@ -1410,15 +1414,56 @@ public class Player extends Mobile {
 	}
 
 	public void setBlowpipeScales(int blowpipeScales) {
-		this.blowpipeScales = blowpipeScales;
+		this.blowpipeScales = Math.max(0, blowpipeScales);
 	}
 
 	public void incrementBlowpipeScales(int blowpipeScales) {
-		this.blowpipeScales += blowpipeScales;
+		this.blowpipeScales = Math.max(0, this.blowpipeScales + blowpipeScales);
 	}
 
 	public int decrementAndGetBlowpipeScales() {
 		return this.blowpipeScales--;
+	}
+
+	public int getBlowpipeDarts() {
+		return blowpipeDarts;
+	}
+
+	public void setBlowpipeDarts(int blowpipeDarts) {
+		this.blowpipeDarts = Math.max(0, blowpipeDarts);
+		if (this.blowpipeDarts == 0) {
+			this.blowpipeDartItemId = -1;
+		}
+	}
+
+	public int getBlowpipeDartItemId() {
+		return blowpipeDartItemId;
+	}
+
+	public void setBlowpipeDartItemId(int blowpipeDartItemId) {
+		this.blowpipeDartItemId = blowpipeDartItemId;
+	}
+
+	public void resetBlowpipeState() {
+		this.blowpipeScales = 0;
+		this.blowpipeDarts = 0;
+		this.blowpipeDartItemId = -1;
+	}
+
+	public int getNoxiousHalberdMinHit() {
+		return noxiousHalberdMinHit;
+	}
+
+	public void setNoxiousHalberdMinHit(int noxiousHalberdMinHit) {
+		this.noxiousHalberdMinHit = Math.max(0, noxiousHalberdMinHit);
+	}
+
+	public int getNoxiousHalberdMinHitPending() {
+		return noxiousHalberdMinHitPending;
+	}
+
+	public void setNoxiousHalberdMinHitPending(int noxiousHalberdMinHitPending) {
+		this.noxiousHalberdMinHitPending = Math.max(0, noxiousHalberdMinHitPending);
 	}
 
 	public int getScytheCharges() {

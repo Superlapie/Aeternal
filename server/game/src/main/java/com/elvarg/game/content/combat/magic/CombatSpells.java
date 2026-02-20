@@ -2878,7 +2878,7 @@ public enum CombatSpells {
 
         @Override
         public Projectile projectile() {
-            return new ProjectileBuilder().setId(1040).setStart(23).setEnd(15).setDuration(25).setSpan(5).create();
+            return poweredStaffProjectile(1040);
         }
 
         @Override
@@ -2920,7 +2920,65 @@ public enum CombatSpells {
         public int spellId() {
             return 1;
         }
-   });
+   }),
+    SANGUINESTI_STAFF(new CombatNormalSpell() {
+        @Override
+        public Optional<Animation> castAnimation() {
+            return Optional.of(new Animation(1167));
+        }
+
+        @Override
+        public int getAttackSpeed() {
+            return 4;
+        }
+
+        @Override
+        public Projectile projectile() {
+            return poweredStaffProjectile(1540);
+        }
+
+        @Override
+        public Optional<Graphic> endGraphic() {
+            // Cache 2446 hit splash gfx.
+            return Optional.of(new Graphic(1541));
+        }
+
+        @Override
+        public int maximumHit() {
+            return 20;
+        }
+
+        @Override
+        public Optional<Graphic> startGraphic() {
+            // Cache 2446 cast/start gfx.
+            return Optional.of(new Graphic(1539, GraphicHeight.HIGH));
+        }
+
+        @Override
+        public int baseExperience() {
+            return 50;
+        }
+
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) {
+            return Optional.empty();
+        }
+
+        @Override
+        public int levelRequired() {
+            return 75;
+        }
+
+        @Override
+        public int spellId() {
+            return 1;
+        }
+    });
 
     /**
      * The spell attached to this element.
@@ -2944,6 +3002,11 @@ public enum CombatSpells {
      */
     public final CombatSpell getSpell() {
         return spell;
+    }
+
+    private static Projectile poweredStaffProjectile(int projectileId) {
+        // Keep powered-staff projectile timing/curve identical between trident variants and Sanguinesti.
+        return new ProjectileBuilder().setId(projectileId).setStart(23).setEnd(15).setDuration(25).setSpan(5).create();
     }
 
     /**

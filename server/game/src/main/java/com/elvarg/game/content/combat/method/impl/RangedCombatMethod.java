@@ -150,4 +150,16 @@ public class RangedCombatMethod extends CombatMethod {
 		}
 		return 6;
     }
+
+    @Override
+    public int attackSpeed(Mobile character) {
+        int speed = super.attackSpeed(character);
+        if (character.isPlayer()
+                && character.getCombat().getRangedWeapon() == RangedWeapon.TOXIC_BLOWPIPE
+                && character.getCombat().getTarget() != null
+                && character.getCombat().getTarget().isPlayer()) {
+            return speed + 1;
+        }
+        return speed;
+    }
 }

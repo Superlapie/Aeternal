@@ -295,6 +295,14 @@ public class AccuracyFormulasDpsCalc {
         int attLevel = effectiveRangedAttack(entity);
         int attRoll = attLevel * (accuracyBonus + 64);
 
+        if (entity.isPlayer()) {
+            Player player = entity.getAsPlayer();
+            if (player.isSpecialActivated() && player.getCombatSpecial() != null
+                    && player.getCombatSpecial().getCombatMethod().type() == CombatType.RANGED) {
+                attRoll = (int) Math.floor(attRoll * player.getCombatSpecial().getAccuracyMultiplier());
+            }
+        }
+
         // Salve amulet/twisted bow bonus if/when added
 
         return attRoll;

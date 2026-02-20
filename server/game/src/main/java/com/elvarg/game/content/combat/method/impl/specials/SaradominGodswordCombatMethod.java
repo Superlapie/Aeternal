@@ -24,10 +24,13 @@ public class SaradominGodswordCombatMethod extends MeleeCombatMethod {
 
     @Override
     public void handleAfterHitEffects(PendingHit hit) {
+        if (!hit.isAccurate()) {
+            return;
+        }
         Player player = hit.getAttacker().getAsPlayer();
         int damage = hit.getTotalDamage();
-        int damageHeal = (int) (damage * 0.5);
-        int damagePrayerHeal = (int) (damage * 0.25);
+        int damageHeal = Math.max(10, (int) Math.floor(damage * 0.5));
+        int damagePrayerHeal = Math.max(5, (int) Math.floor(damage * 0.25));
         if (player.getSkillManager().getCurrentLevel(Skill.HITPOINTS) < player.getSkillManager()
                 .getMaxLevel(Skill.HITPOINTS)) {
             int level = player.getSkillManager().getCurrentLevel(Skill.HITPOINTS) + damageHeal > player
