@@ -21,16 +21,18 @@ OUT_DIR = Path("client/Cache")
 ATLATL_JSON = Path("_ext/animations_export_8_itemsATLATL.json")
 VOIDWAKER_JSON = Path("_ext/animations_export_4_itemsVOIDWAKER.json")
 YAMA_JSON = Path("_ext/animations_export_62_itemsYAMA.json")
+NOX_JSON = Path("_ext/NoxAnimations.json")
 
 SEQ_IDS = [
     10815, 10818, 10819,
     11051, 11052, 11053, 11055,
     11057, 11058, 11059, 11060, 11061, 11062, 11063, 11064,
     11240, 11275, 11463, 11464,
+    11455, 11587,
     11338, 11339, 11340, 11342, 11345, 11346, 11350, 11352, 11355, 11358,
     12140, 12141,
 ]
-SPOT_IDS = [2709, 2710, 2711, 2712, 2795, 2796, 2797, 2798, 3017, 3030]
+SPOT_IDS = [2709, 2710, 2711, 2712, 2795, 2796, 2797, 2798, 2914, 3017, 3030]
 
 
 class Reader:
@@ -211,6 +213,7 @@ def main() -> None:
     write_json_backed_sequences(ATLATL_JSON)
     write_json_backed_sequences(VOIDWAKER_JSON)
     write_json_backed_sequences(YAMA_JSON)
+    write_json_backed_sequences(NOX_JSON)
 
 
 def write_json_backed_sequences(json_path: Path) -> None:

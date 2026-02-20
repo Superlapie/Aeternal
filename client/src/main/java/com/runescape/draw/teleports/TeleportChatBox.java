@@ -289,6 +289,7 @@ public class TeleportChatBox {
 			// Send packet
 			final int[] index = teleport.getIndex();
 			if (index.length == 2) {
+				Client.instance.setLastPortalNexusTeleportName(teleport.getName());
 				Client.instance.packetSender.sendTeleportSelection(index[0], index[1]);
 			}
 

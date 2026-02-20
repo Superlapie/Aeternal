@@ -463,7 +463,7 @@ public final class WeaponInterfaces {
         VERACS_FLAIL(3796, 3799, 5, new FightType[]{FightType.VERACS_FLAIL_POUND,
                 FightType.VERACS_FLAIL_PUMMEL, FightType.VERACS_FLAIL_SPIKE,
                 FightType.VERACS_FLAIL_BLOCK}, 7624, 7636),
-        SCYTHE(776, 779, 4, new FightType[]{FightType.SCYTHE_REAP,
+        SCYTHE(776, 779, 5, new FightType[]{FightType.SCYTHE_REAP,
                 FightType.SCYTHE_CHOP, FightType.SCYTHE_JAB,
                 FightType.SCYTHE_BLOCK}),
         BATTLEAXE(1698, 1701, 5, new FightType[]{FightType.BATTLEAXE_CHOP,

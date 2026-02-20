@@ -267,16 +267,151 @@ public final class ItemDefinition {
                 itemDef.inventory_model = 47422;
                 itemDef.equipped_model_male_1 = 47212;
                 itemDef.equipped_model_female_1 = 47217;
+                itemDef.equipped_model_male_2 = -1;
+                itemDef.equipped_model_female_2 = -1;
+                itemDef.equipped_model_male_3 = -1;
+                itemDef.equipped_model_female_3 = -1;
                 itemDef.modelZoom = 1723;
                 itemDef.rotation_x = 539;
                 itemDef.rotation_y = 678;
                 itemDef.rotation_z = 0;
                 itemDef.translate_x = 1;
                 itemDef.translate_yz = -1;
+                itemDef.original_model_colors = null;
+                itemDef.modified_model_colors = null;
                 break;
             case 27691: // Voidwaker (noted)
                 itemDef.copy(lookup(1306)); // Dragon longsword note base behavior
                 itemDef.name = "Voidwaker";
+                break;
+            case 29801: // Amulet of rancour
+                itemDef.copy(lookup(19553)); // Amulet of torture base behavior
+                itemDef.name = "Amulet of rancour";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wear";
+                // Use only explicit rancour models to avoid inheriting unrelated equip parts.
+                itemDef.inventory_model = 54296;
+                itemDef.equipped_model_male_1 = 54326;
+                itemDef.equipped_model_female_1 = 54322;
+                itemDef.equipped_model_male_2 = -1;
+                itemDef.equipped_model_female_2 = -1;
+                itemDef.equipped_model_male_3 = -1;
+                itemDef.equipped_model_female_3 = -1;
+                itemDef.equipped_model_male_dialogue_1 = -1;
+                itemDef.equipped_model_male_dialogue_2 = -1;
+                itemDef.equipped_model_female_dialogue_1 = -1;
+                itemDef.equipped_model_female_dialogue_2 = -1;
+                // 2446 rancour face colours decode too dark/invisible in this renderer.
+                itemDef.original_model_colors = new int[]{-10366, -11122, -11126, 26444, 26448, 26419, 29084};
+                itemDef.modified_model_colors = new int[]{33, 24, 16, 103, 96, 90, 61};
+                // Use known-good amulet icon transforms for this client's software rasterizer.
+                itemDef.modelZoom = 620;
+                itemDef.rotation_x = 68;
+                itemDef.rotation_y = 424;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = 1;
+                itemDef.translate_yz = 16;
+                break;
+            case 29802: // Amulet of rancour (noted)
+                itemDef.copy(lookup(19554)); // Amulet of torture note base behavior
+                itemDef.name = "Amulet of rancour";
+                break;
+            case 29803: // Amulet of rancour (placeholder)
+                itemDef.copy(lookup(19555)); // Placeholder-style base behavior
+                itemDef.name = "Amulet of rancour";
+                break;
+            case 29796: // Noxious halberd
+                itemDef.copy(lookup(3204)); // Dragon halberd base behavior
+                itemDef.name = "Noxious halberd";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.inventory_model = 54299;
+                itemDef.equipped_model_male_1 = 54316;
+                itemDef.equipped_model_female_1 = 54315;
+                itemDef.modelZoom = 1840;
+                itemDef.rotation_x = 524;
+                itemDef.rotation_y = 120;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = -4;
+                itemDef.translate_yz = 5;
+                itemDef.original_model_colors = new int[] {61};
+                itemDef.modified_model_colors = new int[] {0};
+                break;
+            case 29797: // Noxious halberd (noted)
+                itemDef.copy(lookup(3205)); // Dragon halberd noted base behavior
+                itemDef.name = "Noxious halberd";
+                break;
+            case 29798: // Noxious halberd (placeholder)
+                itemDef.copy(lookup(19555)); // Placeholder-style base behavior
+                itemDef.name = "Noxious halberd";
+                break;
+            case 29799: // Araxyte fang
+                itemDef.copy(lookup(4155)); // Gem-like material base behavior
+                itemDef.name = "Araxyte fang";
+                itemDef.actions = new String[5];
+                itemDef.actions[2] = "Take";
+                itemDef.inventory_model = 54304;
+                itemDef.modelZoom = 800;
+                itemDef.rotation_x = 545;
+                itemDef.rotation_y = 12;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = 0;
+                itemDef.translate_yz = 5;
+                break;
+            case 29800: // Araxyte fang (placeholder)
+                itemDef.copy(lookup(19555)); // Placeholder-style base behavior
+                itemDef.name = "Araxyte fang";
+                break;
+            case 29790: // Noxious point
+                itemDef.copy(lookup(4155)); // Material base behavior
+                itemDef.name = "Noxious point";
+                itemDef.actions = new String[5];
+                itemDef.actions[2] = "Take";
+                itemDef.inventory_model = 54300;
+                itemDef.modelZoom = 1349;
+                itemDef.rotation_x = 576;
+                itemDef.rotation_y = 2015;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = 3;
+                itemDef.translate_yz = 2;
+                break;
+            case 29791: // Noxious point (placeholder)
+                itemDef.copy(lookup(19555)); // Placeholder-style base behavior
+                itemDef.name = "Noxious point";
+                break;
+            case 29792: // Noxious blade
+                itemDef.copy(lookup(4155)); // Material base behavior
+                itemDef.name = "Noxious blade";
+                itemDef.actions = new String[5];
+                itemDef.actions[2] = "Take";
+                itemDef.inventory_model = 54301;
+                itemDef.modelZoom = 1360;
+                itemDef.rotation_x = 465;
+                itemDef.rotation_y = 114;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = 0;
+                itemDef.translate_yz = 6;
+                break;
+            case 29793: // Noxious blade (placeholder)
+                itemDef.copy(lookup(19555)); // Placeholder-style base behavior
+                itemDef.name = "Noxious blade";
+                break;
+            case 29794: // Noxious pommel
+                itemDef.copy(lookup(4155)); // Material base behavior
+                itemDef.name = "Noxious pommel";
+                itemDef.actions = new String[5];
+                itemDef.actions[2] = "Take";
+                itemDef.inventory_model = 54298;
+                itemDef.modelZoom = 848;
+                itemDef.rotation_x = 501;
+                itemDef.rotation_y = 1958;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = 2;
+                itemDef.translate_yz = 8;
+                break;
+            case 29795: // Noxious pommel (placeholder)
+                itemDef.copy(lookup(19555)); // Placeholder-style base behavior
+                itemDef.name = "Noxious pommel";
                 break;
         }
         return itemDef;

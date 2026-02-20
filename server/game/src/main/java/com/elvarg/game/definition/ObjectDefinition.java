@@ -7,6 +7,7 @@ import com.elvarg.game.GameConstants;
 import com.elvarg.game.collision.Buffer;
 import com.elvarg.util.FileUtil;
 import com.elvarg.util.ObjectIdentifiers;
+import java.util.Locale;
 
 public final class ObjectDefinition extends ObjectIdentifiers {
 
@@ -127,6 +128,45 @@ public final class ObjectDefinition extends ObjectIdentifiers {
             objectDef.interactions = null;
         }
 
+        if (id == 11357) {
+            ObjectDefinition nexusVisual = ObjectDefinition.forId(33410);
+            if (nexusVisual != null) {
+                objectDef.modelIds = nexusVisual.modelIds != null ? nexusVisual.modelIds.clone() : null;
+                objectDef.modelTypes = nexusVisual.modelTypes != null ? nexusVisual.modelTypes.clone() : null;
+                objectDef.objectSizeX = nexusVisual.objectSizeX;
+                objectDef.objectSizeY = nexusVisual.objectSizeY;
+                objectDef.animation = nexusVisual.animation;
+                objectDef.scaleX = nexusVisual.scaleX;
+                objectDef.scaleY = nexusVisual.scaleY;
+                objectDef.scaleZ = nexusVisual.scaleZ;
+                objectDef.translateX = nexusVisual.translateX;
+                objectDef.translateY = nexusVisual.translateY;
+                objectDef.translateZ = nexusVisual.translateZ;
+                objectDef.originalModelColors = nexusVisual.originalModelColors != null ? nexusVisual.originalModelColors.clone() : null;
+                objectDef.modifiedModelColors = nexusVisual.modifiedModelColors != null ? nexusVisual.modifiedModelColors.clone() : null;
+            }
+            objectDef.name = "Portal nexus";
+            objectDef.isInteractive = true;
+            objectDef.childrenIDs = null;
+            objectDef.varbit = -1;
+            objectDef.varp = -1;
+            objectDef.interactions = new String[5];
+            objectDef.interactions[0] = "Teleport";
+            objectDef.interactions[2] = "Previous";
+        }
+
+        if (id == 33408 || id == 33409 || id == 33410) {
+            objectDef.name = "Portal nexus";
+            objectDef.isInteractive = true;
+            objectDef.childrenIDs = null;
+            objectDef.varbit = -1;
+            objectDef.varp = -1;
+            objectDef.interactions = new String[5];
+            objectDef.interactions[0] = "Teleport";
+            objectDef.interactions[1] = "Configure";
+            objectDef.interactions[2] = "Previous";
+        }
+
         if (id == 6552) {
             objectDef.interactions = new String[5];
             objectDef.interactions[0] = "Venerate";
@@ -174,8 +214,42 @@ public final class ObjectDefinition extends ObjectIdentifiers {
                 return objectDef;
         }
 
+        applyUniversalBankBoothInteractions(objectDef);
 
         return objectDef;
+    }
+
+    private static void applyUniversalBankBoothInteractions(ObjectDefinition objectDef) {
+        if (objectDef == null || objectDef.name == null) {
+            return;
+        }
+
+        final String lowered = objectDef.name.toLowerCase(Locale.ROOT);
+        final boolean bankLikeName = lowered.equals("bank")
+                || lowered.contains("bank booth")
+                || lowered.contains("bank chest");
+
+        if (!bankLikeName) {
+            return;
+        }
+
+        if (objectDef.interactions == null) {
+            objectDef.interactions = new String[5];
+        }
+
+        boolean hasBankInteraction = false;
+        for (String interaction : objectDef.interactions) {
+            if (interaction != null && interaction.equalsIgnoreCase("Bank")) {
+                hasBankInteraction = true;
+                break;
+            }
+        }
+
+        if (!hasBankInteraction) {
+            objectDef.interactions[0] = "Bank";
+        }
+
+        objectDef.isInteractive = true;
     }
 
     public static void init() {

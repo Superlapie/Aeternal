@@ -159,6 +159,9 @@ public class Player extends Mobile {
 	private MagicSpellbook spellbook = MagicSpellbook.NORMAL;
 	private final Map<TeleportButton, Location> previousTeleports = new HashMap<>();
 	private boolean teleportInterfaceOpen;
+	private boolean portalNexusInterfaceOpen;
+	private Location previousPortalNexusTeleport;
+	private String previousPortalNexusTeleportName;
 	private int destroyItem = -1;
 	private boolean updateInventory; // Updates inventory on next tick
 	private boolean newPlayer;
@@ -196,6 +199,7 @@ public class Player extends Mobile {
 	private int amountDonated;
 	// Blowpipe
 	private int blowpipeScales;
+	private int scytheCharges;
 	private double npcDropRateMultiplier = 1.0;
 	// Bounty hunter
 	private int targetKills;
@@ -292,6 +296,13 @@ public class Player extends Mobile {
 
 	@Override
 	public int getAttackAnim() {
+		// Noxious halberd uses the standard halberd attack rig.
+		if (getEquipment().hasAt(Equipment.WEAPON_SLOT, 29796)) {
+			if (getFightType() == FightType.HALBERD_JAB) {
+				return 428; // stab
+			}
+			return 440; // slash/crush
+		}
 		return getFightType().getAnimation();
 	}
 
@@ -304,6 +315,10 @@ public class Player extends Mobile {
 	public int getBlockAnim() {
 		final Item shield = getEquipment().getItems()[Equipment.SHIELD_SLOT];
 		final Item weapon = getEquipment().getItems()[Equipment.WEAPON_SLOT];
+		if (weapon != null && weapon.getId() > 0
+				&& com.elvarg.game.content.combat.ScytheData.isScythe(weapon.getId())) {
+			return 435;
+		}
 		ItemDefinition definition = shield.getId() > 0 ? shield.getDefinition() : weapon.getDefinition();
 		return definition.getBlockAnim();
 	}
@@ -370,6 +385,11 @@ public class Player extends Mobile {
 		// Voidwaker is a 4-tick weapon.
 		if (getEquipment().hasAt(Equipment.WEAPON_SLOT, 27690)) {
 			return 4;
+		}
+
+		// Noxious halberd is a 5-tick weapon.
+		if (getEquipment().hasAt(Equipment.WEAPON_SLOT, 29796)) {
+			return 5;
 		}
 
 		int speed = getWeapon().getSpeed();
@@ -1401,6 +1421,14 @@ public class Player extends Mobile {
 		return this.blowpipeScales--;
 	}
 
+	public int getScytheCharges() {
+		return scytheCharges;
+	}
+
+	public void setScytheCharges(int scytheCharges) {
+		this.scytheCharges = Math.max(0, scytheCharges);
+	}
+
 	public double getNpcDropRateMultiplier() {
 		return npcDropRateMultiplier;
 	}
@@ -1588,6 +1616,30 @@ public class Player extends Mobile {
 
 	public void setTeleportInterfaceOpen(boolean teleportInterfaceOpen) {
 		this.teleportInterfaceOpen = teleportInterfaceOpen;
+	}
+
+	public boolean isPortalNexusInterfaceOpen() {
+		return portalNexusInterfaceOpen;
+	}
+
+	public void setPortalNexusInterfaceOpen(boolean portalNexusInterfaceOpen) {
+		this.portalNexusInterfaceOpen = portalNexusInterfaceOpen;
+	}
+
+	public Location getPreviousPortalNexusTeleport() {
+		return previousPortalNexusTeleport;
+	}
+
+	public void setPreviousPortalNexusTeleport(Location previousPortalNexusTeleport) {
+		this.previousPortalNexusTeleport = previousPortalNexusTeleport;
+	}
+
+	public String getPreviousPortalNexusTeleportName() {
+		return previousPortalNexusTeleportName;
+	}
+
+	public void setPreviousPortalNexusTeleportName(String previousPortalNexusTeleportName) {
+		this.previousPortalNexusTeleportName = previousPortalNexusTeleportName;
 	}
 
 	@Override

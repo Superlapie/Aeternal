@@ -12,6 +12,7 @@ import java.util.*;
  * when they're not available in the main cache.
  */
 public final class MoonModelLoader {
+    private static final boolean VERBOSE_MOON_LOGS = Boolean.getBoolean("client.verboseMoonLogs");
 
     // Moon equipment model mappings (item ID -> model ID)
     private static final Map<Integer, Integer> MOON_MODEL_MAPPINGS = new HashMap<>();
@@ -68,38 +69,36 @@ public final class MoonModelLoader {
             return fallbackModelId;
         }
 
-        // Enable debug mode to see model format detection
-        String oldDebug = System.getProperty("model.debugcompat");
-        System.setProperty("model.debugcompat", "true");
-        
         try {
             // Check if model is already in our main cache store 7 (from import)
             if (Model.isCached(externalModelId)) {
                 // Try to get model to test if it's compatible
                 Model testModel = Model.getModel(externalModelId);
                 if (testModel != null) {
-                    System.out.println("SUCCESS: Using moon model " + externalModelId + " for item " + itemId);
+                    if (VERBOSE_MOON_LOGS) {
+                        System.out.println("SUCCESS: Using moon model " + externalModelId + " for item " + itemId);
+                    }
                     return externalModelId;
                 } else {
-                    System.err.println("FAILED: Model.getModel returned null for " + externalModelId);
+                    if (VERBOSE_MOON_LOGS) {
+                        System.err.println("FAILED: Model.getModel returned null for " + externalModelId);
+                    }
                 }
             } else {
-                System.err.println("FAILED: Model.isCached returned false for " + externalModelId);
+                if (VERBOSE_MOON_LOGS) {
+                    System.err.println("FAILED: Model.isCached returned false for " + externalModelId);
+                }
             }
         } catch (Exception e) {
-            System.err.println("FAILED: Moon model " + externalModelId + " crashed for item " + itemId + ": " + e.getClass().getSimpleName() + " - " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            // Restore original debug setting
-            if (oldDebug != null) {
-                System.setProperty("model.debugcompat", oldDebug);
-            } else {
-                System.clearProperty("model.debugcompat");
+            if (VERBOSE_MOON_LOGS) {
+                System.err.println("FAILED: Moon model " + externalModelId + " crashed for item " + itemId + ": " + e.getClass().getSimpleName() + " - " + e.getMessage());
             }
         }
 
         // Final fallback to provided model
-        System.out.println("FALLBACK: Using model " + fallbackModelId + " for item " + itemId);
+        if (VERBOSE_MOON_LOGS) {
+            System.out.println("FALLBACK: Using model " + fallbackModelId + " for item " + itemId);
+        }
         return fallbackModelId;
     }
 
@@ -117,7 +116,9 @@ public final class MoonModelLoader {
         try {
             // Check if model is already in our main cache store 7 (from import)
             if (Model.isCached(modelId)) {
-                System.out.println("Model " + modelId + " already cached");
+                if (VERBOSE_MOON_LOGS) {
+                    System.out.println("Model " + modelId + " already cached");
+                }
                 return true;
             }
             
@@ -132,13 +133,17 @@ public final class MoonModelLoader {
             // Try store 7 first (where moon models are located)
             if (Files.exists(modelFile7)) {
                 modelData = Files.readAllBytes(modelFile7);
-                System.out.println("Found model " + modelId + " in store 7");
+                if (VERBOSE_MOON_LOGS) {
+                    System.out.println("Found model " + modelId + " in store 7");
+                }
             }
             // Try store 1 as fallback
             else if (Files.exists(modelFile1)) {
                 modelData = Files.readAllBytes(modelFile1);
                 targetStore = 1;
-                System.out.println("Found model " + modelId + " in store 1");
+                if (VERBOSE_MOON_LOGS) {
+                    System.out.println("Found model " + modelId + " in store 1");
+                }
             }
             
             if (modelData != null && modelData.length > 0) {
@@ -147,7 +152,9 @@ public final class MoonModelLoader {
             }
             
         } catch (Exception e) {
-            System.err.println("Error loading external model " + modelId + ": " + e.getMessage());
+            if (VERBOSE_MOON_LOGS) {
+                System.err.println("Error loading external model " + modelId + ": " + e.getMessage());
+            }
         }
         
         return false;
@@ -170,7 +177,9 @@ public final class MoonModelLoader {
             return archivedData;
             
         } catch (Exception e) {
-            System.err.println("Failed to decompress model archive " + modelId + ": " + e.getMessage());
+            if (VERBOSE_MOON_LOGS) {
+                System.err.println("Failed to decompress model archive " + modelId + ": " + e.getMessage());
+            }
             return null;
         }
     }
@@ -207,13 +216,17 @@ public final class MoonModelLoader {
                 if (success) {
                     // Clear the model cache to force reload
                     Model.clear();
-                    System.out.println("Successfully added model " + modelId + " to store " + targetStoreIndex);
+                    if (VERBOSE_MOON_LOGS) {
+                        System.out.println("Successfully added model " + modelId + " to store " + targetStoreIndex);
+                    }
                     return true;
                 }
             }
             
         } catch (Exception e) {
-            System.err.println("Error adding model " + modelId + " to main cache: " + e.getMessage());
+            if (VERBOSE_MOON_LOGS) {
+                System.err.println("Error adding model " + modelId + " to main cache: " + e.getMessage());
+            }
         }
         
         return false;
@@ -223,7 +236,9 @@ public final class MoonModelLoader {
      * Preloads all available moon models (no longer needed since models are imported)
      */
     public static void preloadMoonModels() {
-        System.out.println("Moon models already imported to idx1 - skipping preload");
+        if (VERBOSE_MOON_LOGS) {
+            System.out.println("Moon models already imported to idx1 - skipping preload");
+        }
     }
 
     /**

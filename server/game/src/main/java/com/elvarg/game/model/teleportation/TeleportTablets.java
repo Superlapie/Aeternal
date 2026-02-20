@@ -36,7 +36,7 @@ public class TeleportTablets {
      * @author Dennis
      */
     public enum TeleportTablet {
-        HOME(1, new Location(3222, 3222, 0)),
+        HOME(1, new Location(5856, 5920, 0)),
         LUMBRIDGE(8008, new Location(3222, 3218, 0)),
         FALADOR(8009, new Location(2965, 3379, 0)),
         CAMELOT(8010, new Location(2757, 3477, 0)),

@@ -71,7 +71,13 @@ public final class Npc extends Mob {
             }
         }
 
-        return desc.getAnimatedModel(movementFrame, emoteFrame, interleave);
+        // Preserve legacy call semantics:
+        // - If emote exists, blend movement(primary) + emote(secondary)
+        // - If only movement exists, apply it as secondary (single transform path)
+        if (emoteFrame != -1) {
+            return desc.getAnimatedModel(movementFrame, emoteFrame, interleave);
+        }
+        return desc.getAnimatedModel(-1, movementFrame, null);
     }
 
     public Model getRotatedModel() {

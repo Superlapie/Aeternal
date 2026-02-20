@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class Animation {
+    private static final boolean VERBOSE_ANIM_LOGS = Boolean.getBoolean("client.verboseAnimLogs");
     private static final Set<Integer> ALLOWED_2446_OVERRIDES = new HashSet<>(Arrays.asList(
             10815, 10818, 10819,
             11051, 11052, 11053, 11055,
@@ -146,7 +147,9 @@ public final class Animation {
 
             if (aliasGroup >= Frame.animationlist.length || Frame.animationlist[aliasGroup] == null) {
                 if (contains(yamaProbeIds, id)) {
-                    System.out.println("Animaya fallback skipped seq " + id + " (group " + sourceGroup + " not loadable)");
+                    if (VERBOSE_ANIM_LOGS) {
+                        System.out.println("Animaya fallback skipped seq " + id + " (group " + sourceGroup + " not loadable)");
+                    }
                 }
                 continue;
             }
@@ -160,7 +163,9 @@ public final class Animation {
             }
             if (available == 0) {
                 if (contains(yamaProbeIds, id)) {
-                    System.out.println("Animaya fallback skipped seq " + id + " (group " + sourceGroup + " has 0 classic frames)");
+                    if (VERBOSE_ANIM_LOGS) {
+                        System.out.println("Animaya fallback skipped seq " + id + " (group " + sourceGroup + " has 0 classic frames)");
+                    }
                 }
                 continue;
             }
@@ -184,7 +189,9 @@ public final class Animation {
             }
             if (frameCount == 0) {
                 if (contains(yamaProbeIds, id)) {
-                    System.out.println("Animaya fallback skipped seq " + id + " (no frames in selected range)");
+                    if (VERBOSE_ANIM_LOGS) {
+                        System.out.println("Animaya fallback skipped seq " + id + " (no frames in selected range)");
+                    }
                 }
                 continue;
             }
@@ -206,10 +213,12 @@ public final class Animation {
             anim.clearSkeletalFlags();
             converted++;
             if (contains(yamaProbeIds, id)) {
-                System.out.println("Animaya fallback materialized seq " + id + " from group " + sourceGroup + " using " + frameCount + " frames");
+                if (VERBOSE_ANIM_LOGS) {
+                    System.out.println("Animaya fallback materialized seq " + id + " from group " + sourceGroup + " using " + frameCount + " frames");
+                }
             }
         }
-        if (converted > 0) {
+        if (VERBOSE_ANIM_LOGS && converted > 0) {
             System.out.println("Materialized Animaya fallbacks: " + converted);
         }
     }
@@ -264,7 +273,7 @@ public final class Animation {
         } catch (IOException ignored) {
         }
 
-        if (loaded > 0) {
+        if (VERBOSE_ANIM_LOGS && loaded > 0) {
             System.out.println("Loaded 2446 sequence overrides: " + loaded);
         }
     }
@@ -328,7 +337,7 @@ public final class Animation {
             System.out.println("Failed loading Araxxor animation overrides: " + ex.getMessage());
             return;
         }
-        if (loaded > 0) {
+        if (VERBOSE_ANIM_LOGS && loaded > 0) {
             System.out.println("Loaded Araxxor animation overrides: " + loaded);
         }
     }
@@ -400,7 +409,7 @@ public final class Animation {
             }
             for (int modelId : eclipseMainhandModelIds) {
                 if (a.playerMainhand == modelId || a.playerOffhand == modelId) {
-                    System.out.println("ECLIPSE_ANIM_CANDIDATE seq=" + i
+                    if (VERBOSE_ANIM_LOGS) System.out.println("ECLIPSE_ANIM_CANDIDATE seq=" + i
                             + " frames=" + a.frameCount
                             + " mainhand=" + a.playerMainhand
                             + " offhand=" + a.playerOffhand
@@ -412,14 +421,16 @@ public final class Animation {
             if (a.playerMainhand != -1 || a.playerOffhand != -1) {
                 explicitHandAnimations++;
                 if (a.playerMainhand >= 50000 || a.playerOffhand >= 50000) {
-                    System.out.println("HAND_ANIM_HIGH_MODEL seq=" + i
+                    if (VERBOSE_ANIM_LOGS) System.out.println("HAND_ANIM_HIGH_MODEL seq=" + i
                             + " mainhand=" + a.playerMainhand
                             + " offhand=" + a.playerOffhand
                             + " frames=" + a.frameCount);
                 }
             }
         }
-        System.out.println("HAND_ANIM_TOTAL=" + explicitHandAnimations);
+        if (VERBOSE_ANIM_LOGS) {
+            System.out.println("HAND_ANIM_TOTAL=" + explicitHandAnimations);
+        }
     }
 
     public int duration(int i) {
@@ -490,7 +501,9 @@ public final class Animation {
         }
         for (int group : remappedGroups) {
             int aliasGroup = 20000 + group;
-            System.out.println("Remapped 2446 low frame group " + group + " -> " + aliasGroup + " for seq " + sequenceId);
+            if (VERBOSE_ANIM_LOGS) {
+                System.out.println("Remapped 2446 low frame group " + group + " -> " + aliasGroup + " for seq " + sequenceId);
+            }
         }
     }
 
@@ -580,7 +593,7 @@ public final class Animation {
             } else if (opcode == 18 || opcode == 19 || opcode == 35) {
                 // Newer cache feature flags with no payload for this client.
             } else {
-                if (loggedUnknownOpcodes.add(opcode)) {
+                if (VERBOSE_ANIM_LOGS && loggedUnknownOpcodes.add(opcode)) {
                     System.out.println("seq invalid opcode: " + opcode + " (resyncing entry)");
                 }
                 // Resync this sequence entry by scanning until its 0 terminator so

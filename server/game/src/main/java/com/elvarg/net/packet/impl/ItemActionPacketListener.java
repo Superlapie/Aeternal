@@ -5,6 +5,7 @@ import com.elvarg.game.content.Food;
 import com.elvarg.game.content.Gambling;
 import com.elvarg.game.content.PotionConsumable;
 import com.elvarg.game.content.combat.CombatSpecial;
+import com.elvarg.game.content.combat.ScytheData;
 import com.elvarg.game.content.minigames.impl.Barrows;
 import com.elvarg.game.content.skill.skillable.impl.Herblore;
 import com.elvarg.game.content.skill.skillable.impl.Prayer;
@@ -232,6 +233,9 @@ public class ItemActionPacketListener implements PacketExecutor {
 		if (Runecrafting.handlePouch(player, itemId, 2)) {
 			return;
 		}
+		if (ScytheData.handleUncharge(player, itemId, slot)) {
+			return;
+		}
 
 		switch (itemId) {
 		case 2550:
@@ -269,6 +273,9 @@ public class ItemActionPacketListener implements PacketExecutor {
 			return;
 		}
 		if (Runecrafting.handlePouch(player, itemId, 3)) {
+			return;
+		}
+		if (ScytheData.handleCheck(player, itemId)) {
 			return;
 		}
 

@@ -27,6 +27,7 @@ public class TeleportPacketListener implements PacketExecutor {
 			player.getPacketSender().sendInterfaceRemoval();
 			return;
 		}
+		final boolean fromPortalNexus = player.isPortalNexusInterfaceOpen();
 		// Any teleport selection should close the UI immediately.
 		player.getPacketSender().sendInterfaceRemoval();
 
@@ -37,6 +38,10 @@ public class TeleportPacketListener implements PacketExecutor {
 				Location teleportPosition = teleport.getPosition();
 				if (TeleportHandler.checkReqs(player, teleportPosition)) {
 					player.getPreviousTeleports().put(teleport.getTeleportButton(), teleportPosition);
+					if (fromPortalNexus) {
+						player.setPreviousPortalNexusTeleport(teleportPosition.clone());
+						player.setPreviousPortalNexusTeleportName(teleport.getDisplayName());
+					}
 					TeleportHandler.teleport(player, teleportPosition, player.getSpellbook().getTeleportType(), true);
 				}
 				break;

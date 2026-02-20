@@ -581,6 +581,7 @@ public class PacketSender {
 		player.setInterfaceId(-1);
 		player.setSearchingBank(false);
 		player.setTeleportInterfaceOpen(false);
+		player.setPortalNexusInterfaceOpen(false);
 		player.getAppearance().setCanChangeAppearance(false);
 		player.getSession().write(new PacketBuilder(219));
 		return this;

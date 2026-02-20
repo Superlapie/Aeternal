@@ -3,6 +3,7 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.game.World;
 import com.elvarg.game.content.cannon.DwarfCannon;
 import com.elvarg.game.content.combat.CombatFactory;
+import com.elvarg.game.content.combat.ScytheData;
 import com.elvarg.game.content.minigames.impl.CastleWars;
 import com.elvarg.game.content.skill.skillable.impl.*;
 import com.elvarg.game.content.skill.skillable.impl.Cooking.Cookable;
@@ -67,6 +68,16 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
 
         //Firemaking
         if (Firemaking.init(player, used.getId(), usedWith.getId())) {
+            return;
+        }
+
+        int scytheSlot = -1;
+        if (ScytheData.isScythe(used.getId())) {
+            scytheSlot = itemUsedSlot;
+        } else if (ScytheData.isScythe(usedWith.getId())) {
+            scytheSlot = usedWithSlot;
+        }
+        if (ScytheData.handleItemOnItemCharge(player, used.getId(), usedWith.getId(), scytheSlot)) {
             return;
         }
 

@@ -41,6 +41,7 @@ public class PlayerSave {
     private int recoilDamage;
     private int poisonDamage;
     private int blowpipeScales;
+    private int scytheCharges;
     private double npcDropRateMultiplier;
     private int barrowsCrypt;
     private int barrowsChests;
@@ -234,6 +235,14 @@ public class PlayerSave {
 
     public void setBlowpipeScales(int blowpipeScales) {
         this.blowpipeScales = blowpipeScales;
+    }
+
+    public int getScytheCharges() {
+        return scytheCharges;
+    }
+
+    public void setScytheCharges(int scytheCharges) {
+        this.scytheCharges = scytheCharges;
     }
 
     public double getNpcDropRateMultiplier() {
@@ -569,6 +578,7 @@ public class PlayerSave {
         player.setPoints(this.points);
         player.setPoisonDamage(this.poisonDamage);
         player.setBlowpipeScales(this.blowpipeScales);
+        player.setScytheCharges(this.scytheCharges);
         player.setNpcDropRateMultiplier(this.npcDropRateMultiplier <= 0 ? 1.0 : this.npcDropRateMultiplier);
 
         player.setBarrowsCrypt(this.barrowsCrypt);
@@ -657,6 +667,7 @@ public class PlayerSave {
         playerSave.points = player.getPoints();
         playerSave.poisonDamage = player.getPoisonDamage();
         playerSave.blowpipeScales = player.getBlowpipeScales();
+        playerSave.scytheCharges = player.getScytheCharges();
         playerSave.npcDropRateMultiplier = player.getNpcDropRateMultiplier();
 
         playerSave.barrowsCrypt = player.getBarrowsCrypt();

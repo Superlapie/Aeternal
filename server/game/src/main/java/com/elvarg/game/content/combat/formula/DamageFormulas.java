@@ -141,7 +141,7 @@ public class DamageFormulas {
         return (int) Math.floor(maxHit);
     }
 
-    private static float effectiveRangedStrength(Player player) {
+    private static int effectiveRangedStrength(Player player) {
         float rngStrength = player.getSkillManager().getCurrentLevel(Skill.RANGED);
 
         // Prayers
@@ -172,10 +172,9 @@ public class DamageFormulas {
         if (CombatEquipment.wearingVoid(player, CombatType.RANGED)) {
             // should be 1.125 if elite void
             rngStrength *= 1.1f;
-
         }
 
-        return rngStrength;
+        return (int) Math.floor(rngStrength);
     }
 
     private static int maximumRangeHitDpsCalc(Player player) {
@@ -184,7 +183,9 @@ public class DamageFormulas {
                 ? player.getBonusManager().getOtherBonus()[BonusManager.STRENGTH]
                 : player.getBonusManager().getOtherBonus()[BonusManager.RANGED_STRENGTH];
 
-        float maxHit = usingEclipseAtlatl ? effectiveStrengthLevel(player) : effectiveRangedStrength(player);
+        // Eclipse atlatl scales from ranged level/prayers (as a ranged weapon),
+        // but uses melee strength bonus for max-hit.
+        float maxHit = effectiveRangedStrength(player);
         maxHit *= (strengthBonus + 64);
         maxHit += 320;
         maxHit /= 640;

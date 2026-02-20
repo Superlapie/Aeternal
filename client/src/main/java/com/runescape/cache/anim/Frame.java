@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public final class Frame {
+    private static final boolean VERBOSE_FRAME_LOGS = Boolean.getBoolean("client.verboseFrameLogs");
     private static Path flatCacheRoot;
     public static Frame[][] animationlist;
     private static final Set<Integer> failedFrameFiles = new HashSet<>();
@@ -70,11 +71,10 @@ public final class Frame {
             final FrameBase b2 = new FrameBase(ay);
             final int n = ay.readUShort();
             animationlist[file] = new Frame[n * 3];
-            final int transformCapacity = Math.max(1, b2.transformationType.length);
-            final int[] array2 = new int[transformCapacity];
-            final int[] array3 = new int[transformCapacity];
-            final int[] array4 = new int[transformCapacity];
-            final int[] array5 = new int[transformCapacity];
+            final int[] array2 = new int[500];
+            final int[] array3 = new int[500];
+            final int[] array4 = new int[500];
+            final int[] array5 = new int[500];
             for (int j = 0; j < n; ++j) {
                 final int k = ay.readUShort();
                 final Frame[] array6 = animationlist[file];
@@ -86,19 +86,12 @@ public final class Frame {
                 final int f = ay.readUnsignedByte();
                 int c2 = 0;
                 int n3 = -1;
-                final int limit = Math.min(f, b2.transformationType.length);
-                for (int l = 0; l < limit; ++l) {
+                for (int l = 0; l < f; ++l) {
                     final int f2;
                     if ((f2 = ay.readUnsignedByte()) > 0) {
-                        if (c2 >= transformCapacity) {
-                            break;
-                        }
                         if (b2.transformationType[l] != 0) {
                             for (int n4 = l - 1; n4 > n3; --n4) {
                                 if (b2.transformationType[n4] == 0) {
-                                    if (c2 >= transformCapacity) {
-                                        break;
-                                    }
                                     array2[c2] = n4;
                                     array3[c2] = 0;
                                     array5[c2] = (array4[c2] = 0);
@@ -129,19 +122,6 @@ public final class Frame {
                         }
                         n3 = l;
                         ++c2;
-                    }
-                }
-                // Consume any trailing flag bytes if malformed/extended data advertises more transforms.
-                for (int l = limit; l < f; ++l) {
-                    final int f2 = ay.readUnsignedByte();
-                    if ((f2 & 0x1) != 0) {
-                        ay.readShort2();
-                    }
-                    if ((f2 & 0x2) != 0) {
-                        ay.readShort2();
-                    }
-                    if ((f2 & 0x4) != 0) {
-                        ay.readShort2();
                     }
                 }
                 q2.transformationCount = c2;
@@ -233,7 +213,9 @@ public final class Frame {
             Path normalized = candidate.normalize();
             if (Files.exists(normalized.resolve("0")) && Files.exists(normalized.resolve("1")) && Files.exists(normalized.resolve("255"))) {
                 flatCacheRoot = normalized;
-                System.out.println("Using 2446 flat cache root: " + flatCacheRoot);
+                if (VERBOSE_FRAME_LOGS) {
+                    System.out.println("Using 2446 flat cache root: " + flatCacheRoot);
+                }
                 return flatCacheRoot;
             }
         }
@@ -319,9 +301,13 @@ public final class Frame {
             animationlist[groupId] = frames;
             failedFrameFiles.remove(groupId);
             if (aliasedSource != null) {
-                System.out.println("Loaded 2446 frame group alias " + groupId + " -> " + sourceGroupId + " (" + loaded + " frames)");
+                if (VERBOSE_FRAME_LOGS) {
+                    System.out.println("Loaded 2446 frame group alias " + groupId + " -> " + sourceGroupId + " (" + loaded + " frames)");
+                }
             } else {
-                System.out.println("Loaded 2446 frame group " + groupId + " (" + loaded + " frames)");
+                if (VERBOSE_FRAME_LOGS) {
+                    System.out.println("Loaded 2446 frame group " + groupId + " (" + loaded + " frames)");
+                }
             }
             return true;
         } catch (Exception ex) {

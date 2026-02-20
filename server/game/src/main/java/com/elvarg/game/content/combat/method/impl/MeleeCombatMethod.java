@@ -2,6 +2,7 @@ package com.elvarg.game.content.combat.method.impl;
 
 import com.elvarg.game.content.sound.SoundManager;
 import com.elvarg.game.content.combat.CombatFactory;
+import com.elvarg.game.content.combat.ScytheData;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.WeaponInterfaces.WeaponInterface;
 import com.elvarg.game.content.combat.formula.DamageFormulas;
@@ -30,6 +31,13 @@ public class MeleeCombatMethod extends CombatMethod {
 
     @Override
     public PendingHit[] hits(Mobile character, Mobile target) {
+        if (character.isPlayer() && ScytheData.isScythe(character.getAsPlayer().getEquipment().getWeapon().getId())) {
+            int hitAmount = ScytheData.getHitAmount(target);
+            PendingHit scytheHit = new PendingHit(character, target, this, true, hitAmount, 0);
+            ScytheData.applyHitScaling(scytheHit);
+            return new PendingHit[]{scytheHit};
+        }
+
         if (CombatFactory.fullVeracs(character) && Misc.getRandom(4) == 1) {
         	if(!character.isNpc()) //gfx does not play on npcs.
         		target.performGraphic(new Graphic(1041));

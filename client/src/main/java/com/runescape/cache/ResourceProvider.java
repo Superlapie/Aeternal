@@ -231,8 +231,6 @@ public final class ResourceProvider implements Runnable {
             mapFiles[i2] = stream.readUShort();
             landscapes[i2] = stream.readUShort();
         }
-        addMapBridgeEntry(14744, 4227, 4228);
-
         System.out.println("Loaded: " + file_amounts[3] + " maps");
 
         data = archive.readFile("midi_index");
@@ -564,7 +562,6 @@ public final class ResourceProvider implements Runnable {
         mapFiles[newLen - 1] = terrainArchive;
         landscapes[newLen - 1] = objectArchive;
         file_amounts[3] = newLen;
-        System.out.println("Added map bridge region " + regionId + " -> " + terrainArchive + "," + objectArchive);
     }
 
     private void requestMandatory() {

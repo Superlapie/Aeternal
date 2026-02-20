@@ -15,6 +15,8 @@ import java.util.zip.GZIPInputStream;
 
 public class Model extends Renderable {
     private static final boolean DEBUG_COMPAT = Boolean.getBoolean("model.debugcompat");
+    // Keep Animaya-weighted transforms opt-in; legacy 317 frames should use classic skin groups.
+    private static final boolean ENABLE_ANIMAYA_TRANSFORMS = Boolean.getBoolean("model.enableAnimayaTransforms");
 
     public static int anInt1620;
     public static Model EMPTY_MODEL = new Model(true);
@@ -106,9 +108,7 @@ public class Model extends Renderable {
 
     public Model(int modelId) {
         byte[] data = modelHeader[modelId].aByteArray368;
-        if (DEBUG_COMPAT) {
-            System.out.println("[ModelCompat] model=" + modelId + " len=" + (data == null ? -1 : data.length));
-        }
+        if (DEBUG_COMPAT) System.out.println("[ModelCompat] model=" + modelId + " len=" + (data == null ? -1 : data.length));
         try {
             if (data[data.length - 1] == -3 && data[data.length - 2] == -1) {
                 if (DEBUG_COMPAT) System.out.println("[ModelCompat] fast path type3");
@@ -2189,7 +2189,7 @@ public class Model extends Renderable {
     }
 
     private void transformSkin(int animationType, int[] skin, int x, int y, int z) {
-        if (animationType != 5 && transformSkinAnimaya(animationType, skin, x, y, z)) {
+        if (ENABLE_ANIMAYA_TRANSFORMS && animationType != 5 && transformSkinAnimaya(animationType, skin, x, y, z)) {
             return;
         }
 

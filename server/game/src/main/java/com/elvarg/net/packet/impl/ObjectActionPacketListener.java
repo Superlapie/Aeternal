@@ -25,6 +25,7 @@ import com.elvarg.game.model.areas.impl.ZulrahArea;
 import com.elvarg.game.model.dialogues.builders.impl.SpellBookDialogue;
 import com.elvarg.game.model.rights.PlayerRights;
 import com.elvarg.game.model.teleportation.TeleportHandler;
+import com.elvarg.game.model.teleportation.TeleportButton;
 import com.elvarg.game.model.teleportation.TeleportType;
 import com.elvarg.game.task.Task;
 import com.elvarg.game.task.TaskManager;
@@ -54,6 +55,13 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	 *            The packet containing the object's information.
 	 */
     private static void firstClick(Player player, GameObject object) {
+        if (isPortalNexusId(object.getId())) {
+            player.setPortalNexusInterfaceOpen(true);
+            player.getPacketSender().sendMessage("You attune the Portal Nexus.");
+            player.getPacketSender().sendTeleportInterface(TeleportButton.BOSSES.menu);
+            return;
+        }
+
         if(doorHandler(player, object)) {
 	        return;
 	    }
@@ -79,8 +87,7 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
                 return;
             }
 
-            if (isBankObject(defs)) {
-                player.getBank(player.getCurrentBankTab()).open();
+            if (openBankIfBankObject(player, defs)) {
                 return;
             }
 
@@ -99,6 +106,13 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
                 }
                 WebHandler.handleSlashWeb(player, object, false);
                 break;
+        case PORTAL_MACHINE:
+            player.getPacketSender().sendMessage("The Portal Nexus hums with ancient power.");
+            player.getPacketSender().sendTeleportInterface(TeleportButton.BOSSES.menu);
+            break;
+        case PORTAL_HOME:
+            player.getPacketSender().sendTeleportInterface(TeleportButton.MINIGAME.menu);
+            break;
         case SACRIFICIAL_BOAT:
             boardSacrificialBoat(player);
             break;
@@ -207,9 +221,14 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
      *            The packet containing the object's information.
      */
     private static void secondClick(Player player, GameObject object) {
+        if (isPortalNexusId(object.getId())) {
+            player.setPortalNexusInterfaceOpen(true);
+            player.getPacketSender().sendTeleportInterface(TeleportButton.MINIGAME.menu);
+            return;
+        }
+
         final ObjectDefinition defs = object.getDefinition();
-        if (defs != null && isBankObject(defs)) {
-            player.getBank(player.getCurrentBankTab()).open();
+        if (openBankIfBankObject(player, defs)) {
             return;
         }
 
@@ -226,6 +245,12 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
         switch (object.getId()) {
         case PORTAL_51:
             //DialogueManager.sendStatement(player, "Construction will be avaliable in the future.");
+            break;
+        case PORTAL_MACHINE:
+            player.getPacketSender().sendTeleportInterface(TeleportButton.MINIGAME.menu);
+            break;
+        case PORTAL_HOME:
+            player.getPacketSender().sendTeleportInterface(TeleportButton.WILDERNESS.menu);
             break;
         case FURNACE_18:
             for (Bar bar : Bar.values()) {
@@ -257,6 +282,22 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	 *            The packet containing the object's information.
 	 */
 	private static void thirdClick(Player player, GameObject object) {
+        if (isPortalNexusId(object.getId())) {
+            Location previous = player.getPreviousPortalNexusTeleport();
+            if (previous == null) {
+                player.getPacketSender().sendMessage("No previous Portal Nexus destination set yet.");
+                return;
+            }
+            if (TeleportHandler.checkReqs(player, previous)) {
+                TeleportHandler.teleport(player, previous, player.getSpellbook().getTeleportType(), true);
+            }
+            return;
+        }
+
+        if (openBankIfBankObject(player, object.getDefinition())) {
+            return;
+        }
+
         if (com.elvarg.game.content.cannon.DwarfCannon.isObject(object)) {
             player.getDwarfCannon().handleInteraction(object, 3);
             return;
@@ -264,6 +305,10 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 		switch (object.getId()) {
         case PORTAL_51:
             //DialogueManager.sendStatement(player, "Construction will be avaliable in the future.");
+            break;
+        case PORTAL_MACHINE:
+        case PORTAL_HOME:
+            player.getPacketSender().sendTeleportInterface(TeleportButton.WILDERNESS.menu);
             break;
         case ANCIENT_ALTAR:
             player.getPacketSender().sendInterfaceRemoval();
@@ -281,6 +326,10 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	 *            The packet containing the object's information.
 	 */
 	private static void fourthClick(Player player, GameObject object) {
+        if (openBankIfBankObject(player, object.getDefinition())) {
+            return;
+        }
+
 	    switch (object.getId()) {
         case PORTAL_51:
             //DialogueManager.sendStatement(player, "Construction will be avaliable in the future.");
@@ -477,6 +526,18 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
         }
 
         return false;
+    }
+
+    private static boolean isPortalNexusId(int objectId) {
+        return objectId == 11357;
+    }
+
+    private static boolean openBankIfBankObject(Player player, ObjectDefinition defs) {
+        if (!isBankObject(defs)) {
+            return false;
+        }
+        player.getBank(player.getCurrentBankTab()).open();
+        return true;
     }
 
 	@Override

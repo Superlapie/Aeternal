@@ -422,6 +422,10 @@ public class CombatFactory {
 		if (attacker.isPlayer()) {
 			Player p = attacker.getAsPlayer();
 
+			if (method.type() == CombatType.MELEE && !ScytheData.canAttack(p)) {
+				return CanAttackResponse.COMBAT_METHOD_NOT_ALLOWED;
+			}
+
 			// Check if we're using a special attack..
 			if (p.isSpecialActivated() && p.getCombatSpecial() != null) {
 				// Check if we have enough special attack percentage.
@@ -562,6 +566,8 @@ public class CombatFactory {
 				method.handleAfterHitEffects(qHit);
 			}
 		}
+
+		ScytheData.consumeChargeOnSuccessfulHit(qHit);
 
 		// Check for poisonous weapons..
 		// And do other effects, such as barrows effects..

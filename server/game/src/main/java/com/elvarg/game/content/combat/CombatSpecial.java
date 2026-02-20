@@ -29,6 +29,7 @@ import com.elvarg.game.content.combat.method.impl.specials.DragonWarhammerCombat
 import com.elvarg.game.content.combat.method.impl.specials.GraniteMaulCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.MagicShortbowCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.MorrigansJavelinCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.NoxiousHalberdCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.SaradominGodswordCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.SaradominSwordCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ShoveCombatMethod;
@@ -94,6 +95,8 @@ public enum CombatSpecial {
 
     // Multiple hits
     DRAGON_HALBERD(new int[]{3204}, 30, 1.1, 1.35, new DragonHalberdCombatMethod(),
+            WeaponInterface.HALBERD),
+    NOXIOUS_HALBERD(new int[]{29796}, 50, 1.1, 1.35, new NoxiousHalberdCombatMethod(),
             WeaponInterface.HALBERD),
     DRAGON_DAGGER(new int[]{1215, 1231, 5680, 5698}, 25, 1.15, 1.20,
             new DragonDaggerCombatMethod(), WeaponInterface.DRAGON_DAGGER),

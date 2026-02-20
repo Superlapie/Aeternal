@@ -3,6 +3,7 @@ package com.elvarg.game.model.teleportation;
 import com.elvarg.game.content.minigames.impl.CastleWars;
 import com.elvarg.game.content.minigames.impl.pestcontrol.PestControl;
 import com.elvarg.game.model.Location;
+import java.util.Locale;
 
 public enum Teleportable {
 	
@@ -58,5 +59,23 @@ public enum Teleportable {
 
 	public Location getPosition() {
 		return position;
+	}
+
+	public String getDisplayName() {
+		if (this == VET_ION) {
+			return "Vet'ion";
+		}
+		String[] parts = name().toLowerCase(Locale.ENGLISH).split("_");
+		StringBuilder nameBuilder = new StringBuilder();
+		for (String part : parts) {
+			if (part.isEmpty()) {
+				continue;
+			}
+			if (nameBuilder.length() > 0) {
+				nameBuilder.append(' ');
+			}
+			nameBuilder.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+		}
+		return nameBuilder.toString();
 	}
 }

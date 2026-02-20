@@ -3218,5 +3218,38 @@
         "y": 9752,
         "z": 2
       }
+    },
+    {
+      "facing": "NORTH",
+      "radius": 0,
+      "description": "Eerie Home Guide",
+      "id": 7456,
+      "position": {
+        "x": 5856,
+        "y": 5924,
+        "z": 0
+      }
+    },
+    {
+      "facing": "NORTH",
+      "radius": 0,
+      "description": "Eerie Home Utility NPC",
+      "id": 315,
+      "position": {
+        "x": 5854,
+        "y": 5924,
+        "z": 0
+      }
+    },
+    {
+      "facing": "NORTH",
+      "radius": 0,
+      "description": "Eerie Home Support NPC",
+      "id": 394,
+      "position": {
+        "x": 5858,
+        "y": 5924,
+        "z": 0
+      }
     }
 ]
