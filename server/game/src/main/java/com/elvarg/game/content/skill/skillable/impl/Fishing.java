@@ -13,8 +13,8 @@ import com.elvarg.game.task.Task;
 import com.elvarg.game.task.TaskManager;
 import com.elvarg.util.Chance;
 import com.elvarg.util.Misc;
+import com.elvarg.util.NpcIdentifiers;
 
-import javax.tools.Tool;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +26,80 @@ import java.util.List;
  * @author Lare96
  */
 public class Fishing extends DefaultSkillable {
+
+    public static boolean handleNpcInteraction(Player player, NPC npc, int option) {
+        FishingTool tool = getToolForSpotOption(npc.getId(), option);
+        if (tool == null) {
+            return false;
+        }
+        player.getSkillManager().startSkillable(new Fishing(npc, tool));
+        return true;
+    }
+
+    private static FishingTool getToolForSpotOption(int npcId, int option) {
+        switch (npcId) {
+            // Shrimp / Anchovies
+            case NpcIdentifiers.FISHING_SPOT_6: // 1506
+            case NpcIdentifiers.FISHING_SPOT_30: // 1530
+            case NpcIdentifiers.FISHING_SPOT_31: // 1531
+                if (option == 1) {
+                    return FishingTool.NET;
+                }
+                break;
+
+            // Sardine / Herring (bait) + Pike (bait)
+            case NpcIdentifiers.FISHING_SPOT_2: // 1497
+            case NpcIdentifiers.FISHING_SPOT_3: // 1498
+            case NpcIdentifiers.FISHING_SPOT_4: // 1499
+            case NpcIdentifiers.FISHING_SPOT_5: // 1500
+                if (option == 1 || option == 2) {
+                    return FishingTool.FISHING_ROD;
+                }
+                break;
+
+            // Trout / Salmon (lure) + pike/bait at some spots
+            case NpcIdentifiers.FISHING_SPOT_8: // 1508
+            case NpcIdentifiers.FISHING_SPOT_9: // 1509
+                if (option == 1) {
+                    return FishingTool.FLY_FISHING_ROD;
+                }
+                if (option == 2) {
+                    return FishingTool.FISHING_ROD;
+                }
+                break;
+
+            // Lobster / Swordfish / Tuna
+            case NpcIdentifiers.FISHING_SPOT_11: // 1511
+            case NpcIdentifiers.FISHING_SPOT_12: // 1512
+            case NpcIdentifiers.FISHING_SPOT_40: // 2653
+            case NpcIdentifiers.FISHING_SPOT_41: // 2654
+            case NpcIdentifiers.FISHING_SPOT_42: // 2655
+                if (option == 1) {
+                    return FishingTool.LOBSTER_POT;
+                }
+                if (option == 2) {
+                    return FishingTool.HARPOON;
+                }
+                break;
+
+            // Big net / shark + harpoon variants (e.g. Catherby)
+            case NpcIdentifiers.FISHING_SPOT_48: // 3913
+            case NpcIdentifiers.FISHING_SPOT_49: // 3914
+            case NpcIdentifiers.FISHING_SPOT_50: // 3915
+            case NpcIdentifiers.FISHING_SPOT_51: // 4079
+            case NpcIdentifiers.FISHING_SPOT_52: // 4080
+            case NpcIdentifiers.FISHING_SPOT_53: // 4081
+            case NpcIdentifiers.FISHING_SPOT_54: // 4082
+                if (option == 1) {
+                    return FishingTool.BIG_NET;
+                }
+                if (option == 2) {
+                    return FishingTool.SHARK_HARPOON;
+                }
+                break;
+        }
+        return null;
+    }
 
     /**
      * All of the possible items you can get from a casket.

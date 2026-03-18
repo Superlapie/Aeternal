@@ -10,7 +10,6 @@ import com.elvarg.game.content.combat.magic.CombatSpells;
 import com.elvarg.game.content.combat.method.CombatMethod;
 import com.elvarg.game.content.quests.QuestHandler;
 import com.elvarg.game.content.skill.skillable.impl.Fishing;
-import com.elvarg.game.content.skill.skillable.impl.Fishing.FishingTool;
 import com.elvarg.game.content.skill.skillable.impl.Thieving.Pickpocketing;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.npc.impl.Barricades;
@@ -201,9 +200,13 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 
         npc.setPositionToFace(player.getLocation());
 
-        if (opcode == PacketConstants.FIRST_CLICK_NPC_OPCODE) {
+		if (opcode == PacketConstants.FIRST_CLICK_NPC_OPCODE) {
             if (PetHandler.interact(player, npc)) {
 				// Player was interacting with their pet
+                return;
+            }
+
+            if (Fishing.handleNpcInteraction(player, npc, 1)) {
                 return;
             }
 
@@ -280,6 +283,10 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 				return;
 			}
 
+            if (Fishing.handleNpcInteraction(player, npc, 2)) {
+                return;
+            }
+
 			if (NPCInteractionSystem.handleSecondOption(player, npc)) {
 				// Player is interacting with a defined NPC
 				return;
@@ -298,10 +305,6 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 case BANKER_7:
                 case TZHAAR_KET_ZUH:
                     player.getBank(player.getCurrentBankTab()).open();
-                    break;
-                case 1497: // Net and bait
-                case 1498: // Net and bait
-                    player.getSkillManager().startSkillable(new Fishing(npc, FishingTool.FISHING_ROD));
                     break;
                 case RICHARD_2:
                     ShopManager.open(player, ShopIdentifiers.TEAMCAPE_SHOP);

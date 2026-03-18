@@ -10,6 +10,14 @@ public enum Teleportable {
 	EDGEVILLE_DITCH(TeleportButton.WILDERNESS, 0, 0, new Location(3088, 3520)),
 	WEST_DRAGONS(TeleportButton.WILDERNESS, 0, 1, new Location(2979, 3592)),
 	EAST_DRAGONS(TeleportButton.WILDERNESS, 0, 2, new Location(3356, 3675)),
+
+	FISHING_GUILD(TeleportButton.SKILLS, 3, 0, new Location(2611, 3391)),
+	CATHERBY(TeleportButton.SKILLS, 3, 1, new Location(2836, 3433)),
+	BARBARIAN_OUTPOST(TeleportButton.SKILLS, 3, 2, new Location(2542, 3569)),
+	SEERS_VILLAGE(TeleportButton.SKILLS, 3, 3, new Location(2725, 3492)),
+	CRAFTING_GUILD(TeleportButton.SKILLS, 3, 4, new Location(2933, 3287)),
+	RIMMINGTON_MINE(TeleportButton.SKILLS, 3, 5, new Location(2977, 3238)),
+	AL_KHARID_MINE(TeleportButton.SKILLS, 3, 6, new Location(3297, 3317)),
 	
 	GODWARS_DUNGEON(TeleportButton.BOSSES, 2, 0, new Location(2831, 5299, 2)),
 	KING_BLACK_DRAGON(TeleportButton.BOSSES, 2, 1, new Location(3005, 3850)),
@@ -29,7 +37,15 @@ public enum Teleportable {
 	BARROWS(TeleportButton.MINIGAME, 1, 1, new Location(3565, 3313)),
 	FIGHT_CAVES(TeleportButton.MINIGAME, 1, 2, new Location(2439, 5171)),
 	CASTLE_WARS(TeleportButton.MINIGAME, 1, 3, CastleWars.LOBBY_TELEPORT),
-	PEST_CONTROL(TeleportButton.MINIGAME, 1, 4, PestControl.GANG_PLANK_START)
+	PEST_CONTROL(TeleportButton.MINIGAME, 1, 4, PestControl.GANG_PLANK_START),
+
+	VARROCK(TeleportButton.CITY, 4, 0, new Location(3210, 3424)),
+	FALADOR(TeleportButton.CITY, 4, 1, new Location(2964, 3378)),
+	LUMBRIDGE(TeleportButton.CITY, 4, 2, new Location(3222, 3218)),
+	SEERS_VILLAGE_CITY(TeleportButton.CITY, 4, 3, new Location(2725, 3492)),
+	ARDOUGNE(TeleportButton.CITY, 4, 4, new Location(2661, 3302)),
+	CAMELOT(TeleportButton.CITY, 4, 5, new Location(2757, 3479)),
+	YANILLE(TeleportButton.CITY, 4, 6, new Location(2606, 3093))
 	
 	;
 	

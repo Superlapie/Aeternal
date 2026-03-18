@@ -14,6 +14,7 @@ public class TeleportChatBox {
 	public static final int MINIGAMES_TELEPORT_TYPE = 1;
 	public static final int BOSSES_TELEPORT_TYPE = 2;
 	public static final int SKILLS_TELEPORT_TYPE = 3;
+	public static final int CITY_TELEPORT_TYPE = 4;
 
 
 	private static final int SUPER_WIDTH = 98;
@@ -329,6 +330,7 @@ public class TeleportChatBox {
 			new BossTeleport(),
 			new MinigameTeleport(),
 			new SkillingTeleport(),
+			new CityTeleport(),
 	};
 
 	private static final class BossTeleport extends ParentHierarchyOption {
@@ -605,7 +607,7 @@ public class TeleportChatBox {
 
 		@Override
 		public HierarchyOption[] getOptions() {
-			return new HierarchyOption[0];
+			return Option.values();
 		}
 
 		@Override
@@ -613,6 +615,131 @@ public class TeleportChatBox {
 			return null;
 		}
 
+		private enum Option implements HierarchyOption {
+			FISHING_GUILD(KeyEvent.VK_F, "Fishing guild"),
+			CATHERBY(KeyEvent.VK_C, "Catherby"),
+			BARBARIAN_OUTPOST(KeyEvent.VK_B, "Barbarian outpost"),
+			SEERS_VILLAGE(KeyEvent.VK_S, "Seers' village"),
+			CRAFTING_GUILD(KeyEvent.VK_R, "Crafting guild"),
+			RIMMINGTON_MINE(KeyEvent.VK_M, "Rimmington mine"),
+			AL_KHARID_MINE(KeyEvent.VK_A, "Al Kharid mine"),
+			;
+
+			Option(int shortcutKey, String name) {
+				this.shortcutKey = shortcutKey;
+				this.name = name;
+			}
+
+			private final int shortcutKey;
+			private final String name;
+
+			@Override
+			public Dimension getDimension() {
+				return new Dimension(170, SUPER_HEIGHT);
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+
+			@Override
+			public int getShortcutKey() {
+				return shortcutKey;
+			}
+
+			@Override
+			public String getDescription() {
+				return null;
+			}
+
+			@Override
+			public int[] getIndex() {
+				return new int[]{SKILLS_TELEPORT_TYPE, ordinal()};
+			}
+
+			@Override
+			public HierarchyOption[] getOptions() {
+				return null;
+			}
+		}
+	}
+
+	private static final class CityTeleport extends ParentHierarchyOption {
+
+		@Override
+		public Dimension getDimension() {
+			return new Dimension(SUPER_WIDTH, SUPER_HEIGHT);
+		}
+
+		@Override
+		public String getName() {
+			return "Cities";
+		}
+
+		@Override
+		public int getShortcutKey() {
+			return KeyEvent.VK_C;
+		}
+
+		@Override
+		public HierarchyOption[] getOptions() {
+			return Option.values();
+		}
+
+		@Override
+		public String getDescription() {
+			return null;
+		}
+
+		private enum Option implements HierarchyOption {
+			VARROCK(KeyEvent.VK_V, "Varrock"),
+			FALADOR(KeyEvent.VK_F, "Falador"),
+			LUMBRIDGE(KeyEvent.VK_L, "Lumbridge"),
+			SEERS_VILLAGE(KeyEvent.VK_S, "Seers' village"),
+			ARDOUGNE(KeyEvent.VK_A, "Ardougne"),
+			CAMELOT(KeyEvent.VK_C, "Camelot"),
+			YANILLE(KeyEvent.VK_Y, "Yanille"),
+			;
+
+			Option(int shortcutKey, String name) {
+				this.shortcutKey = shortcutKey;
+				this.name = name;
+			}
+
+			private final int shortcutKey;
+			private final String name;
+
+			@Override
+			public Dimension getDimension() {
+				return new Dimension(170, SUPER_HEIGHT);
+			}
+
+			@Override
+			public String getName() {
+				return name;
+			}
+
+			@Override
+			public int getShortcutKey() {
+				return shortcutKey;
+			}
+
+			@Override
+			public String getDescription() {
+				return null;
+			}
+
+			@Override
+			public int[] getIndex() {
+				return new int[]{CITY_TELEPORT_TYPE, ordinal()};
+			}
+
+			@Override
+			public HierarchyOption[] getOptions() {
+				return null;
+			}
+		}
 	}
 
 }
