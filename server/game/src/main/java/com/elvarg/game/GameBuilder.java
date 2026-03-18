@@ -6,9 +6,9 @@ import java.util.Queue;
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.clan.ClanChatManager;
 import com.elvarg.game.content.minigames.MinigameHandler;
+import com.elvarg.game.content.skill.cache.CacheSkillObjectLoader;
 import com.elvarg.game.definition.loader.impl.*;
 import com.elvarg.game.task.impl.CombatPoisonEffect.CombatPoisonData;
-import com.elvarg.plugin.PluginManager;
 import com.elvarg.util.BackgroundLoader;
 import com.elvarg.util.PlayerPunishment;
 
@@ -41,8 +41,6 @@ public class GameBuilder {
 
         // Start background tasks..
         backgroundLoader.init(createBackgroundTasks());
-
-        PluginManager.INSTANCE.init();
 
         // Start global tasks..
 
@@ -77,6 +75,9 @@ public class GameBuilder {
         tasks.add(new NpcSpawnDefinitionLoader());
         tasks.add(new GroundItemDefinitionLoader());
         tasks.add(MinigameHandler::init);
+        
+        // Initialize cache-driven skill objects (must be after object definitions are loaded)
+        tasks.add(CacheSkillObjectLoader::initialize);
     //    tasks.add(new NPCSpawnDumper());        
         return tasks;
     }

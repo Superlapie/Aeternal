@@ -1,0 +1,1030 @@
+{
+  "extractorVersion": "2.0.0",
+  "extractionTime": 1773641124083,
+  "cachePath": "../client/Cache",
+  "extractor": "Comprehensive OSRS Cache Extractor",
+  "files": [
+  {
+  "size": 1720316,
+  "sizeFormatted": "1.6 MB",
+  "name": "bsp-3.0.4.jar",
+  "lastModified": 1770806049254,
+  "type": "Archive"
+},
+  {
+  "size": 52,
+  "sizeFormatted": "52 B",
+  "name": "e2446_seq_10815.dat",
+  "lastModified": 1771573711501,
+  "type": "Definition Data"
+},
+  {
+  "size": 36,
+  "sizeFormatted": "36 B",
+  "name": "e2446_seq_10818.dat",
+  "lastModified": 1771573711511,
+  "type": "Definition Data"
+},
+  {
+  "size": 487,
+  "sizeFormatted": "487 B",
+  "name": "e2446_seq_10819.dat",
+  "lastModified": 1771573711518,
+  "type": "Definition Data"
+},
+  {
+  "size": 54,
+  "sizeFormatted": "54 B",
+  "name": "e2446_seq_11051.dat",
+  "lastModified": 1771573711519,
+  "type": "Definition Data"
+},
+  {
+  "size": 14,
+  "sizeFormatted": "14 B",
+  "name": "e2446_seq_11052.dat",
+  "lastModified": 1771573711519,
+  "type": "Definition Data"
+},
+  {
+  "size": 17,
+  "sizeFormatted": "17 B",
+  "name": "e2446_seq_11053.dat",
+  "lastModified": 1771573711519,
+  "type": "Definition Data"
+},
+  {
+  "size": 96,
+  "sizeFormatted": "96 B",
+  "name": "e2446_seq_11055.dat",
+  "lastModified": 1771573711521,
+  "type": "Definition Data"
+},
+  {
+  "size": 99,
+  "sizeFormatted": "99 B",
+  "name": "e2446_seq_11057.dat",
+  "lastModified": 1771573711807,
+  "type": "Definition Data"
+},
+  {
+  "size": 44,
+  "sizeFormatted": "44 B",
+  "name": "e2446_seq_11058.dat",
+  "lastModified": 1771573711810,
+  "type": "Definition Data"
+},
+  {
+  "size": 44,
+  "sizeFormatted": "44 B",
+  "name": "e2446_seq_11059.dat",
+  "lastModified": 1771573711810,
+  "type": "Definition Data"
+},
+  {
+  "size": 146,
+  "sizeFormatted": "146 B",
+  "name": "e2446_seq_11060.dat",
+  "lastModified": 1771573711810,
+  "type": "Definition Data"
+},
+  {
+  "size": 146,
+  "sizeFormatted": "146 B",
+  "name": "e2446_seq_11061.dat",
+  "lastModified": 1771573711807,
+  "type": "Definition Data"
+},
+  {
+  "size": 134,
+  "sizeFormatted": "134 B",
+  "name": "e2446_seq_11062.dat",
+  "lastModified": 1771573711807,
+  "type": "Definition Data"
+},
+  {
+  "size": 80,
+  "sizeFormatted": "80 B",
+  "name": "e2446_seq_11063.dat",
+  "lastModified": 1771573711810,
+  "type": "Definition Data"
+},
+  {
+  "size": 122,
+  "sizeFormatted": "122 B",
+  "name": "e2446_seq_11064.dat",
+  "lastModified": 1771573711809,
+  "type": "Definition Data"
+},
+  {
+  "size": 87,
+  "sizeFormatted": "87 B",
+  "name": "e2446_seq_11240.dat",
+  "lastModified": 1771573711825,
+  "type": "Definition Data"
+},
+  {
+  "size": 93,
+  "sizeFormatted": "93 B",
+  "name": "e2446_seq_11275.dat",
+  "lastModified": 1771573711826,
+  "type": "Definition Data"
+},
+  {
+  "size": 79,
+  "sizeFormatted": "79 B",
+  "name": "e2446_seq_11338.dat",
+  "lastModified": 1771573711632,
+  "type": "Definition Data"
+},
+  {
+  "size": 79,
+  "sizeFormatted": "79 B",
+  "name": "e2446_seq_11339.dat",
+  "lastModified": 1771573711645,
+  "type": "Definition Data"
+},
+  {
+  "size": 102,
+  "sizeFormatted": "102 B",
+  "name": "e2446_seq_11340.dat",
+  "lastModified": 1771573711645,
+  "type": "Definition Data"
+},
+  {
+  "size": 200,
+  "sizeFormatted": "200 B",
+  "name": "e2446_seq_11342.dat",
+  "lastModified": 1771573711658,
+  "type": "Definition Data"
+},
+  {
+  "size": 79,
+  "sizeFormatted": "79 B",
+  "name": "e2446_seq_11345.dat",
+  "lastModified": 1771573711658,
+  "type": "Definition Data"
+},
+  {
+  "size": 102,
+  "sizeFormatted": "102 B",
+  "name": "e2446_seq_11346.dat",
+  "lastModified": 1771573711658,
+  "type": "Definition Data"
+},
+  {
+  "size": 79,
+  "sizeFormatted": "79 B",
+  "name": "e2446_seq_11350.dat",
+  "lastModified": 1771573711660,
+  "type": "Definition Data"
+},
+  {
+  "size": 102,
+  "sizeFormatted": "102 B",
+  "name": "e2446_seq_11352.dat",
+  "lastModified": 1771573711660,
+  "type": "Definition Data"
+},
+  {
+  "size": 266,
+  "sizeFormatted": "266 B",
+  "name": "e2446_seq_11355.dat",
+  "lastModified": 1771573711661,
+  "type": "Definition Data"
+},
+  {
+  "size": 188,
+  "sizeFormatted": "188 B",
+  "name": "e2446_seq_11358.dat",
+  "lastModified": 1771573711662,
+  "type": "Definition Data"
+},
+  {
+  "size": 346,
+  "sizeFormatted": "346 B",
+  "name": "e2446_seq_11455.dat",
+  "lastModified": 1771573711569,
+  "type": "Definition Data"
+},
+  {
+  "size": 105,
+  "sizeFormatted": "105 B",
+  "name": "e2446_seq_11463.dat",
+  "lastModified": 1771573711826,
+  "type": "Definition Data"
+},
+  {
+  "size": 99,
+  "sizeFormatted": "99 B",
+  "name": "e2446_seq_11464.dat",
+  "lastModified": 1771573711826,
+  "type": "Definition Data"
+},
+  {
+  "size": 86,
+  "sizeFormatted": "86 B",
+  "name": "e2446_seq_11516.dat",
+  "lastModified": 1771573711989,
+  "type": "Definition Data"
+},
+  {
+  "size": 98,
+  "sizeFormatted": "98 B",
+  "name": "e2446_seq_11524.dat",
+  "lastModified": 1771573711999,
+  "type": "Definition Data"
+},
+  {
+  "size": 224,
+  "sizeFormatted": "224 B",
+  "name": "e2446_seq_11587.dat",
+  "lastModified": 1771573711569,
+  "type": "Definition Data"
+},
+  {
+  "size": 116,
+  "sizeFormatted": "116 B",
+  "name": "e2446_seq_12095.dat",
+  "lastModified": 1771573711851,
+  "type": "Definition Data"
+},
+  {
+  "size": 278,
+  "sizeFormatted": "278 B",
+  "name": "e2446_seq_12096.dat",
+  "lastModified": 1771573711857,
+  "type": "Definition Data"
+},
+  {
+  "size": 134,
+  "sizeFormatted": "134 B",
+  "name": "e2446_seq_12097.dat",
+  "lastModified": 1771573711859,
+  "type": "Definition Data"
+},
+  {
+  "size": 104,
+  "sizeFormatted": "104 B",
+  "name": "e2446_seq_12098.dat",
+  "lastModified": 1771573711860,
+  "type": "Definition Data"
+},
+  {
+  "size": 272,
+  "sizeFormatted": "272 B",
+  "name": "e2446_seq_12099.dat",
+  "lastModified": 1771573711860,
+  "type": "Definition Data"
+},
+  {
+  "size": 128,
+  "sizeFormatted": "128 B",
+  "name": "e2446_seq_12100.dat",
+  "lastModified": 1771573711861,
+  "type": "Definition Data"
+},
+  {
+  "size": 128,
+  "sizeFormatted": "128 B",
+  "name": "e2446_seq_12101.dat",
+  "lastModified": 1771573711862,
+  "type": "Definition Data"
+},
+  {
+  "size": 284,
+  "sizeFormatted": "284 B",
+  "name": "e2446_seq_12102.dat",
+  "lastModified": 1771573711868,
+  "type": "Definition Data"
+},
+  {
+  "size": 80,
+  "sizeFormatted": "80 B",
+  "name": "e2446_seq_12103.dat",
+  "lastModified": 1771573711870,
+  "type": "Definition Data"
+},
+  {
+  "size": 266,
+  "sizeFormatted": "266 B",
+  "name": "e2446_seq_12104.dat",
+  "lastModified": 1771573711872,
+  "type": "Definition Data"
+},
+  {
+  "size": 146,
+  "sizeFormatted": "146 B",
+  "name": "e2446_seq_12105.dat",
+  "lastModified": 1771573711873,
+  "type": "Definition Data"
+},
+  {
+  "size": 104,
+  "sizeFormatted": "104 B",
+  "name": "e2446_seq_12106.dat",
+  "lastModified": 1771573711873,
+  "type": "Definition Data"
+},
+  {
+  "size": 248,
+  "sizeFormatted": "248 B",
+  "name": "e2446_seq_12107.dat",
+  "lastModified": 1771573711873,
+  "type": "Definition Data"
+},
+  {
+  "size": 104,
+  "sizeFormatted": "104 B",
+  "name": "e2446_seq_12108.dat",
+  "lastModified": 1771573711875,
+  "type": "Definition Data"
+},
+  {
+  "size": 128,
+  "sizeFormatted": "128 B",
+  "name": "e2446_seq_12109.dat",
+  "lastModified": 1771573711875,
+  "type": "Definition Data"
+},
+  {
+  "size": 212,
+  "sizeFormatted": "212 B",
+  "name": "e2446_seq_12110.dat",
+  "lastModified": 1771573711875,
+  "type": "Definition Data"
+},
+  {
+  "size": 344,
+  "sizeFormatted": "344 B",
+  "name": "e2446_seq_12111.dat",
+  "lastModified": 1771573711876,
+  "type": "Definition Data"
+},
+  {
+  "size": 158,
+  "sizeFormatted": "158 B",
+  "name": "e2446_seq_12112.dat",
+  "lastModified": 1771573711893,
+  "type": "Definition Data"
+},
+  {
+  "size": 212,
+  "sizeFormatted": "212 B",
+  "name": "e2446_seq_12113.dat",
+  "lastModified": 1771573711893,
+  "type": "Definition Data"
+},
+  {
+  "size": 230,
+  "sizeFormatted": "230 B",
+  "name": "e2446_seq_12114.dat",
+  "lastModified": 1771573711894,
+  "type": "Definition Data"
+},
+  {
+  "size": 272,
+  "sizeFormatted": "272 B",
+  "name": "e2446_seq_12115.dat",
+  "lastModified": 1771573711894,
+  "type": "Definition Data"
+},
+  {
+  "size": 320,
+  "sizeFormatted": "320 B",
+  "name": "e2446_seq_12116.dat",
+  "lastModified": 1771573711900,
+  "type": "Definition Data"
+},
+  {
+  "size": 218,
+  "sizeFormatted": "218 B",
+  "name": "e2446_seq_12117.dat",
+  "lastModified": 1771573711901,
+  "type": "Definition Data"
+},
+  {
+  "size": 218,
+  "sizeFormatted": "218 B",
+  "name": "e2446_seq_12118.dat",
+  "lastModified": 1771573711902,
+  "type": "Definition Data"
+},
+  {
+  "size": 218,
+  "sizeFormatted": "218 B",
+  "name": "e2446_seq_12119.dat",
+  "lastModified": 1771573711902,
+  "type": "Definition Data"
+},
+  {
+  "size": 248,
+  "sizeFormatted": "248 B",
+  "name": "e2446_seq_12120.dat",
+  "lastModified": 1771573711904,
+  "type": "Definition Data"
+},
+  {
+  "size": 80,
+  "sizeFormatted": "80 B",
+  "name": "e2446_seq_12121.dat",
+  "lastModified": 1771573711904,
+  "type": "Definition Data"
+},
+  {
+  "size": 477,
+  "sizeFormatted": "477 B",
+  "name": "e2446_seq_12128.dat",
+  "lastModified": 1771573711904,
+  "type": "Definition Data"
+},
+  {
+  "size": 122,
+  "sizeFormatted": "122 B",
+  "name": "e2446_seq_12129.dat",
+  "lastModified": 1771573711905,
+  "type": "Definition Data"
+},
+  {
+  "size": 254,
+  "sizeFormatted": "254 B",
+  "name": "e2446_seq_12130.dat",
+  "lastModified": 1771573711909,
+  "type": "Definition Data"
+},
+  {
+  "size": 116,
+  "sizeFormatted": "116 B",
+  "name": "e2446_seq_12138.dat",
+  "lastModified": 1771573711910,
+  "type": "Definition Data"
+},
+  {
+  "size": 14,
+  "sizeFormatted": "14 B",
+  "name": "e2446_seq_12140.dat",
+  "lastModified": 1771573711665,
+  "type": "Definition Data"
+},
+  {
+  "size": 33,
+  "sizeFormatted": "33 B",
+  "name": "e2446_seq_12141.dat",
+  "lastModified": 1771573711665,
+  "type": "Definition Data"
+},
+  {
+  "size": 50,
+  "sizeFormatted": "50 B",
+  "name": "e2446_seq_12149.dat",
+  "lastModified": 1771573711910,
+  "type": "Definition Data"
+},
+  {
+  "size": 147,
+  "sizeFormatted": "147 B",
+  "name": "e2446_seq_12152.dat",
+  "lastModified": 1771573711910,
+  "type": "Definition Data"
+},
+  {
+  "size": 62,
+  "sizeFormatted": "62 B",
+  "name": "e2446_seq_12169.dat",
+  "lastModified": 1771573711924,
+  "type": "Definition Data"
+},
+  {
+  "size": 62,
+  "sizeFormatted": "62 B",
+  "name": "e2446_seq_12170.dat",
+  "lastModified": 1771573711925,
+  "type": "Definition Data"
+},
+  {
+  "size": 62,
+  "sizeFormatted": "62 B",
+  "name": "e2446_seq_12171.dat",
+  "lastModified": 1771573711925,
+  "type": "Definition Data"
+},
+  {
+  "size": 62,
+  "sizeFormatted": "62 B",
+  "name": "e2446_seq_12172.dat",
+  "lastModified": 1771573711925,
+  "type": "Definition Data"
+},
+  {
+  "size": 14,
+  "sizeFormatted": "14 B",
+  "name": "e2446_seq_12173.dat",
+  "lastModified": 1771573711941,
+  "type": "Definition Data"
+},
+  {
+  "size": 68,
+  "sizeFormatted": "68 B",
+  "name": "e2446_seq_12174.dat",
+  "lastModified": 1771573711942,
+  "type": "Definition Data"
+},
+  {
+  "size": 68,
+  "sizeFormatted": "68 B",
+  "name": "e2446_seq_12175.dat",
+  "lastModified": 1771573711942,
+  "type": "Definition Data"
+},
+  {
+  "size": 68,
+  "sizeFormatted": "68 B",
+  "name": "e2446_seq_12176.dat",
+  "lastModified": 1771573711942,
+  "type": "Definition Data"
+},
+  {
+  "size": 68,
+  "sizeFormatted": "68 B",
+  "name": "e2446_seq_12196.dat",
+  "lastModified": 1771573711954,
+  "type": "Definition Data"
+},
+  {
+  "size": 104,
+  "sizeFormatted": "104 B",
+  "name": "e2446_seq_8139.dat",
+  "lastModified": 1771573711463,
+  "type": "Definition Data"
+},
+  {
+  "size": 101,
+  "sizeFormatted": "101 B",
+  "name": "e2446_seq_8140.dat",
+  "lastModified": 1771573711465,
+  "type": "Definition Data"
+},
+  {
+  "size": 295,
+  "sizeFormatted": "295 B",
+  "name": "e2446_seq_8141.dat",
+  "lastModified": 1771573711467,
+  "type": "Definition Data"
+},
+  {
+  "size": 199,
+  "sizeFormatted": "199 B",
+  "name": "e2446_seq_8142.dat",
+  "lastModified": 1771573711469,
+  "type": "Definition Data"
+},
+  {
+  "size": 40,
+  "sizeFormatted": "40 B",
+  "name": "e2446_seq_8531.dat",
+  "lastModified": 1771573711470,
+  "type": "Definition Data"
+},
+  {
+  "size": 104,
+  "sizeFormatted": "104 B",
+  "name": "e2446_seq_8532.dat",
+  "lastModified": 1771573711470,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_1757.dat",
+  "lastModified": 1771573711769,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_1758.dat",
+  "lastModified": 1771573711770,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_1759.dat",
+  "lastModified": 1771573711770,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_1760.dat",
+  "lastModified": 1771573711770,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_1761.dat",
+  "lastModified": 1771573711772,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_1762.dat",
+  "lastModified": 1771573711773,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_2709.dat",
+  "lastModified": 1771573711725,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_2710.dat",
+  "lastModified": 1771573711733,
+  "type": "Definition Data"
+},
+  {
+  "size": 7,
+  "sizeFormatted": "7 B",
+  "name": "e2446_spot_2711.dat",
+  "lastModified": 1771573711734,
+  "type": "Definition Data"
+},
+  {
+  "size": 7,
+  "sizeFormatted": "7 B",
+  "name": "e2446_spot_2712.dat",
+  "lastModified": 1771573711741,
+  "type": "Definition Data"
+},
+  {
+  "size": 7,
+  "sizeFormatted": "7 B",
+  "name": "e2446_spot_2795.dat",
+  "lastModified": 1771573711742,
+  "type": "Definition Data"
+},
+  {
+  "size": 7,
+  "sizeFormatted": "7 B",
+  "name": "e2446_spot_2796.dat",
+  "lastModified": 1771573711753,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_2797.dat",
+  "lastModified": 1771573711759,
+  "type": "Definition Data"
+},
+  {
+  "size": 11,
+  "sizeFormatted": "11 B",
+  "name": "e2446_spot_2798.dat",
+  "lastModified": 1771573711759,
+  "type": "Definition Data"
+},
+  {
+  "size": 7,
+  "sizeFormatted": "7 B",
+  "name": "e2446_spot_2914.dat",
+  "lastModified": 1771573711759,
+  "type": "Definition Data"
+},
+  {
+  "size": 21,
+  "sizeFormatted": "21 B",
+  "name": "e2446_spot_3017.dat",
+  "lastModified": 1771573711760,
+  "type": "Definition Data"
+},
+  {
+  "size": 25,
+  "sizeFormatted": "25 B",
+  "name": "e2446_spot_3030.dat",
+  "lastModified": 1771573711760,
+  "type": "Definition Data"
+},
+  {
+  "size": 2576,
+  "sizeFormatted": "2.5 KB",
+  "name": "flo.dat",
+  "lastModified": 1770945314219,
+  "type": "Definition Data"
+},
+  {
+  "size": 2576,
+  "sizeFormatted": "2.5 KB",
+  "name": "flo.dat.disabled_2446",
+  "lastModified": 1770945314219,
+  "type": "Other"
+},
+  {
+  "size": 2576,
+  "sizeFormatted": "2.5 KB",
+  "name": "flo.dat.off",
+  "lastModified": 1771388349798,
+  "type": "Other"
+},
+  {
+  "size": 1633225,
+  "sizeFormatted": "1.6 MB",
+  "name": "loc.dat",
+  "lastModified": 1771388349832,
+  "type": "Definition Data"
+},
+  {
+  "size": 1633225,
+  "sizeFormatted": "1.6 MB",
+  "name": "loc.dat.disabled_2446",
+  "lastModified": 1770945314212,
+  "type": "Other"
+},
+  {
+  "size": 1633225,
+  "sizeFormatted": "1.6 MB",
+  "name": "loc.dat.off",
+  "lastModified": 1771388349832,
+  "type": "Other"
+},
+  {
+  "size": 94358,
+  "sizeFormatted": "92.1 KB",
+  "name": "loc.idx",
+  "lastModified": 1770945314217,
+  "type": "Definition Index"
+},
+  {
+  "size": 78904690,
+  "sizeFormatted": "75.2 MB",
+  "name": "main_file_cache.dat",
+  "lastModified": 1771551764071,
+  "type": "Main Cache Data"
+},
+  {
+  "size": 78479699,
+  "sizeFormatted": "74.8 MB",
+  "name": "main_file_cache.dat.broken_backup",
+  "lastModified": 1771386073846,
+  "type": "Other"
+},
+  {
+  "size": 54,
+  "sizeFormatted": "54 B",
+  "name": "main_file_cache.idx0",
+  "lastModified": 1771447952846,
+  "type": "Other"
+},
+  {
+  "size": 54,
+  "sizeFormatted": "54 B",
+  "name": "main_file_cache.idx0.backup_before_nightmare_cfg",
+  "lastModified": 1770895696743,
+  "type": "Other"
+},
+  {
+  "size": 54,
+  "sizeFormatted": "54 B",
+  "name": "main_file_cache.idx0.broken_backup",
+  "lastModified": 1771038021850,
+  "type": "Other"
+},
+  {
+  "size": 408018,
+  "sizeFormatted": "398.5 KB",
+  "name": "main_file_cache.idx1",
+  "lastModified": 1771406311597,
+  "type": "Other"
+},
+  {
+  "size": 408018,
+  "sizeFormatted": "398.5 KB",
+  "name": "main_file_cache.idx1.broken_backup",
+  "lastModified": 1771384701222,
+  "type": "Other"
+},
+  {
+  "size": 408018,
+  "sizeFormatted": "398.5 KB",
+  "name": "main_file_cache.idx1.pre_model_test",
+  "lastModified": 1771406311597,
+  "type": "Other"
+},
+  {
+  "size": 17118,
+  "sizeFormatted": "16.7 KB",
+  "name": "main_file_cache.idx2",
+  "lastModified": 1771038022095,
+  "type": "Other"
+},
+  {
+  "size": 17118,
+  "sizeFormatted": "16.7 KB",
+  "name": "main_file_cache.idx2.broken_backup",
+  "lastModified": 1771038022095,
+  "type": "Other"
+},
+  {
+  "size": 3882,
+  "sizeFormatted": "3.8 KB",
+  "name": "main_file_cache.idx3",
+  "lastModified": 1771038022165,
+  "type": "Other"
+},
+  {
+  "size": 3882,
+  "sizeFormatted": "3.8 KB",
+  "name": "main_file_cache.idx3.broken_backup",
+  "lastModified": 1771038022165,
+  "type": "Other"
+},
+  {
+  "size": 37614,
+  "sizeFormatted": "36.7 KB",
+  "name": "main_file_cache.idx4",
+  "lastModified": 1771551764071,
+  "type": "Other"
+},
+  {
+  "size": 36480,
+  "sizeFormatted": "35.6 KB",
+  "name": "main_file_cache.idx4.broken_backup",
+  "lastModified": 1771386735656,
+  "type": "Other"
+},
+  {
+  "size": 4068,
+  "sizeFormatted": "4.0 KB",
+  "name": "main_file_cache.idx5",
+  "lastModified": 1771038022290,
+  "type": "Other"
+},
+  {
+  "size": 4068,
+  "sizeFormatted": "4.0 KB",
+  "name": "main_file_cache.idx5.broken_backup",
+  "lastModified": 1771038022290,
+  "type": "Other"
+},
+  {
+  "size": 5154,
+  "sizeFormatted": "5.0 KB",
+  "name": "main_file_cache.idx6",
+  "lastModified": 1771222390932,
+  "type": "Other"
+},
+  {
+  "size": 360114,
+  "sizeFormatted": "351.7 KB",
+  "name": "main_file_cache.idx7",
+  "lastModified": 1771223682823,
+  "type": "Other"
+},
+  {
+  "size": 44586,
+  "sizeFormatted": "43.5 KB",
+  "name": "main_file_cache.idx8",
+  "lastModified": 1771221964110,
+  "type": "Other"
+},
+  {
+  "size": 1555717,
+  "sizeFormatted": "1.5 MB",
+  "name": "main_file_sprites.dat",
+  "lastModified": 1770806049996,
+  "type": "Definition Data"
+},
+  {
+  "size": 6350,
+  "sizeFormatted": "6.2 KB",
+  "name": "main_file_sprites.idx",
+  "lastModified": 1770806049996,
+  "type": "Definition Index"
+},
+  {
+  "size": 10226,
+  "sizeFormatted": "10.0 KB",
+  "name": "map_index",
+  "lastModified": 1771411415369,
+  "type": "Other"
+},
+  {
+  "size": 10052,
+  "sizeFormatted": "9.8 KB",
+  "name": "map_index.external_1675_disabled",
+  "lastModified": 1771386735680,
+  "type": "Other"
+},
+  {
+  "size": 10052,
+  "sizeFormatted": "9.8 KB",
+  "name": "map_index.external_disabled",
+  "lastModified": 1771386735680,
+  "type": "Other"
+},
+  {
+  "size": 10052,
+  "sizeFormatted": "9.8 KB",
+  "name": "map_index.off",
+  "lastModified": 1771388350884,
+  "type": "Other"
+},
+  {
+  "size": 10052,
+  "sizeFormatted": "9.8 KB",
+  "name": "map_index.sanctuary_backup",
+  "lastModified": 1770941052080,
+  "type": "Other"
+},
+  {
+  "size": 914549,
+  "sizeFormatted": "893.1 KB",
+  "name": "obj.dat",
+  "lastModified": 1770806050003,
+  "type": "Definition Data"
+},
+  {
+  "size": 53134,
+  "sizeFormatted": "51.9 KB",
+  "name": "obj.idx",
+  "lastModified": 1770806050003,
+  "type": "Definition Index"
+},
+  {
+  "size": 192,
+  "sizeFormatted": "192 B",
+  "name": "plugins.dat",
+  "lastModified": 1771569971865,
+  "type": "Definition Data"
+},
+  {
+  "size": 11029698,
+  "sizeFormatted": "10.5 MB",
+  "name": "rsam-gui.jar",
+  "lastModified": 1770806050090,
+  "type": "Archive"
+},
+  {
+  "size": 1316532,
+  "sizeFormatted": "1.3 MB",
+  "name": "seq.dat",
+  "lastModified": 1771388350938,
+  "type": "Definition Data"
+},
+  {
+  "size": 1316532,
+  "sizeFormatted": "1.3 MB",
+  "name": "seq.dat.disabled_full_override",
+  "lastModified": 1771311222676,
+  "type": "Other"
+},
+  {
+  "size": 51,
+  "sizeFormatted": "51 B",
+  "name": "settings.dat",
+  "lastModified": 1773640614837,
+  "type": "Definition Data"
+},
+  {
+  "size": 30909,
+  "sizeFormatted": "30.2 KB",
+  "name": "spotanim.dat",
+  "lastModified": 1771311222681,
+  "type": "Definition Data"
+},
+  {
+  "size": 131072,
+  "sizeFormatted": "128.0 KB",
+  "name": "sprites",
+  "lastModified": 1770806050536,
+  "type": "Other"
+},
+  {
+  "size": 1619498,
+  "sizeFormatted": "1.5 MB",
+  "name": "sprites.zip",
+  "lastModified": 1770806050100,
+  "type": "Other"
+},
+  {
+  "size": 4096,
+  "sizeFormatted": "4.0 KB",
+  "name": "_recovery_backup",
+  "lastModified": 1771387890655,
+  "type": "Other"
+}
+],
+  "statistics": {
+  "mainCacheFiles": 19,
+  "totalSize": 183905546,
+  "definitionFiles": 112,
+  "totalFiles": 145,
+  "totalSizeFormatted": "175.4 MB"
+}
+}

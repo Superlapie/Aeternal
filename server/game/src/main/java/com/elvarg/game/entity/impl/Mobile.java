@@ -61,11 +61,11 @@ public abstract class Mobile extends Entity {
 	}
 
 	public void setAttribute(Object name, Object object) {
+		if (attributes == null) {
+			attributes = Maps.newConcurrentMap();
+		}
 		this.attributes.put(name, object);
 	}
-	/*
-	 * Fields
-	 */
 	private Mobile interactingMobile;
 	private Mobile combatFollowing;
 	private int npcTransformationId = -1;

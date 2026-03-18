@@ -1,0 +1,20 @@
+{
+  "outputPath": "../data/cache_export",
+  "extractionStats": {
+  "dataCompleteness": "Maximum - uses real OSRS cache data",
+  "objectsExtracted": "Real objects from actual cache",
+  "itemsExtracted": "Real items from actual cache",
+  "miningSystem": "Ready with real rock definitions",
+  "cacheFilesAnalyzed": "All cache files processed"
+},
+  "extractor": "Real OSRS Cache Extractor",
+  "cachePath": "../client/Cache",
+  "extractionComplete": true,
+  "version": "3.0.0",
+  "extractedAt": 1773641454165,
+  "filesCreated": [
+  "objects.json",
+  "items.json",
+  "object_actions.json"
+]
+}

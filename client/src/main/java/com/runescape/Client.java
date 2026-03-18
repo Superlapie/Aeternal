@@ -6272,7 +6272,7 @@ public class Client extends GameApplet {
 
                                 lastActiveInvInterface = childInterface.id;
 
-                                if (k2 >= childInterface.inventoryItemId.length) {
+                                if (childInterface.inventoryItemId != null && k2 >= childInterface.inventoryItemId.length) {
 
                                     continue;
 
@@ -6280,7 +6280,7 @@ public class Client extends GameApplet {
 
 
 
-                                if (childInterface.inventoryItemId[k2] > 0) {
+                                if (childInterface.inventoryItemId != null && childInterface.inventoryItemId[k2] > 0) {
 
 
 
@@ -11846,12 +11846,9 @@ public class Client extends GameApplet {
 
                             int j1 = 0;
 
-                            if (anInt913 == 1 && childInterface.contentType == 206)
-
+                            if (anInt913 == 1 && childInterface.inventoryItemId != null && mouseInvInterfaceIndex >= 0 && mouseInvInterfaceIndex < childInterface.inventoryItemId.length)
                                 j1 = 1;
-
-                            if (childInterface.inventoryItemId[mouseInvInterfaceIndex] <= 0)
-
+                            if (childInterface.inventoryItemId != null && mouseInvInterfaceIndex >= 0 && mouseInvInterfaceIndex < childInterface.inventoryItemId.length && childInterface.inventoryItemId[mouseInvInterfaceIndex] <= 0)
                                 j1 = 0;
 
                             if (childInterface.replaceItems) {
@@ -31464,12 +31461,12 @@ public class Client extends GameApplet {
 
                 Widget widget = Widget.interfaceCache[id];
 
-                for (int slot = 0; slot < widget.inventoryItemId.length; slot++) {
-
-                    widget.inventoryItemId[slot] = -1;
-
-                    widget.inventoryItemId[slot] = 0;
-
+                if (widget != null && widget.inventoryItemId != null && widget.inventoryItemId.length > 0) {
+                    for (int slot = 0; slot < widget.inventoryItemId.length; slot++) {
+                        widget.inventoryItemId[slot] = -1;
+                        widget.inventoryItemId[slot] = 0;
+                    }
+                    widget.inventoryItemId = new int[widget.inventoryItemId.length];
                 }
 
                 opcode = -1;

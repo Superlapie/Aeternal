@@ -6,7 +6,7 @@ import com.elvarg.game.content.Trading;
 import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.combat.WeaponInterfaces;
 import com.elvarg.game.content.combat.magic.Autocasting;
-import com.elvarg.game.content.skill.skillable.impl.Smithing.EquipmentMaking;
+import com.elvarg.game.content.skill.impl.smithing.AnvilSmithing;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Flag;
 import com.elvarg.game.model.Item;
@@ -42,13 +42,13 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         }
 
         switch (containerId) {
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_1:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_2:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_3:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_4:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_5:
-                if (player.getInterfaceId() == EquipmentMaking.EQUIPMENT_CREATION_INTERFACE_ID) {
-                    EquipmentMaking.initialize(player, id, containerId, slot, 1);
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_1:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_2:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_3:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_4:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_5:
+                if (player.getInterfaceId() == AnvilSmithing.EQUIPMENT_CREATION_INTERFACE_ID) {
+                    AnvilSmithing.initialize(player, id, containerId, slot, 1);
                 }
                 break;
             // Withdrawing items from duel
@@ -146,13 +146,13 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         }
 
         switch (interfaceId) {
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_1:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_2:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_3:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_4:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_5:
-                if (player.getInterfaceId() == EquipmentMaking.EQUIPMENT_CREATION_INTERFACE_ID) {
-                    EquipmentMaking.initialize(player, id, interfaceId, slot, 5);
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_1:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_2:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_3:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_4:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_5:
+                if (player.getInterfaceId() == AnvilSmithing.EQUIPMENT_CREATION_INTERFACE_ID) {
+                    AnvilSmithing.initialize(player, id, interfaceId, slot, 5);
                 }
                 break;
             case Shop.INVENTORY_INTERFACE_ID:
@@ -210,13 +210,13 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         }
 
         switch (interfaceId) {
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_1:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_2:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_3:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_4:
-            case EquipmentMaking.EQUIPMENT_CREATION_COLUMN_5:
-                if (player.getInterfaceId() == EquipmentMaking.EQUIPMENT_CREATION_INTERFACE_ID) {
-                    EquipmentMaking.initialize(player, id, interfaceId, slot, 10);
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_1:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_2:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_3:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_4:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_5:
+                if (player.getInterfaceId() == AnvilSmithing.EQUIPMENT_CREATION_INTERFACE_ID) {
+                    AnvilSmithing.initialize(player, id, interfaceId, slot, 10);
                 }
                 break;
             case Shop.INVENTORY_INTERFACE_ID:
@@ -339,6 +339,16 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         }
 
         switch (interfaceId) {
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_1:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_2:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_3:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_4:
+            case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_5:
+                if (player.getInterfaceId() == AnvilSmithing.EQUIPMENT_CREATION_INTERFACE_ID) {
+                    player.setEnteredAmountAction((amount) -> AnvilSmithing.initialize(player, id, interfaceId, slot, amount));
+                    player.getPacketSender().sendEnterAmountPrompt("How many would you like to smith?");
+                }
+                break;
             case Shop.INVENTORY_INTERFACE_ID:
                 player.setEnteredAmountAction((amount) -> {
                     ShopManager.sellItem(player, slot, id, amount);

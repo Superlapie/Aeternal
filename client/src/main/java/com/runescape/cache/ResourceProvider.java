@@ -107,6 +107,9 @@ public final class ResourceProvider implements Runnable {
         versions = new int[4][];
         unrequested = new Deque();
         mandatoryRequests = new Deque();
+        
+        // Pre-add known missing map archives to prevent request loops
+        missingMapArchives.add(256);
     }
 
     private void respond() {
@@ -669,9 +672,11 @@ public final class ResourceProvider implements Runnable {
 
 
     private void loadExtra() {
-        while (uncompletedCount == 0 && completedCount < 10) {
+        int loadAttempts = 0;
+        while (uncompletedCount == 0 && completedCount < 10 && loadAttempts < 100) {
             if (maximumPriority == 0)
                 break;
+            loadAttempts++;
             Resource resource;
             synchronized (extras) {
                 resource = (Resource) extras.popHead();

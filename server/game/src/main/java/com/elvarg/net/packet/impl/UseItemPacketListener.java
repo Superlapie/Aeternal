@@ -6,7 +6,14 @@ import com.elvarg.game.content.combat.BlowpipeData;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.ScytheData;
 import com.elvarg.game.content.minigames.impl.CastleWars;
-import com.elvarg.game.content.skill.skillable.impl.*;
+import com.elvarg.game.content.skill.impl.smithing.AnvilSmithing;
+import com.elvarg.game.content.skill.impl.smithing.Smelting;
+import com.elvarg.game.content.skill.impl.smithing.SmeltingData;
+import com.elvarg.game.content.skill.skillable.impl.Cooking;
+import com.elvarg.game.content.skill.skillable.impl.Firemaking;
+import com.elvarg.game.content.skill.skillable.impl.Fletching;
+import com.elvarg.game.content.skill.skillable.impl.Herblore;
+import com.elvarg.game.content.skill.skillable.impl.Crafting;
 import com.elvarg.game.content.skill.skillable.impl.Cooking.Cookable;
 import com.elvarg.game.content.skill.skillable.impl.Firemaking.LightableLog;
 import com.elvarg.game.content.skill.skillable.impl.Prayer.AltarOffering;
@@ -239,7 +246,70 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
             if (CastleWars.handleItemOnObject(player, item, object)) {
                 return;
             }
+            
+            if (isFurnaceObject(object.getId()) && item.getId() == ItemIdentifiers.STEEL_BAR && player.getInventory().contains(ItemIdentifiers.AMMO_MOULD)) {
+                player.getPacketSender().sendCreationMenu(new CreationMenu("How many would you like to make?", Arrays.asList(ItemIdentifiers.CANNONBALL), (productId, amount) -> {
+                    Smelting.startSmelting(player, SmeltingData.CANNONBALL, amount);
+                }));
+                return;
+            }
+
+            // Handle bar on anvil for smithing
+            if (isAnvilObject(object.getId())) {
+                SmeltingData barData = SmeltingData.forBarId(item.getId());
+                if (barData != null) {
+                    AnvilSmithing.openSmithingInterface(player);
+                }
+                return;
+            }
         });
+    }
+
+    private static boolean isAnvilObject(int objectId) {
+        return objectId == ObjectIdentifiers.ANVIL
+                || objectId == ObjectIdentifiers.ANVIL_2
+                || objectId == ObjectIdentifiers.ANVIL_3
+                || objectId == ObjectIdentifiers.ANVIL_4
+                || objectId == ObjectIdentifiers.ANVIL_5
+                || objectId == ObjectIdentifiers.ANVIL_6;
+    }
+
+    private static boolean isFurnaceObject(int objectId) {
+        switch (objectId) {
+            case ObjectIdentifiers.FURNACE_18:
+            case ObjectIdentifiers.FURNACE:
+            case ObjectIdentifiers.FURNACE_2:
+            case ObjectIdentifiers.FURNACE_3:
+            case ObjectIdentifiers.FURNACE_4:
+            case ObjectIdentifiers.FURNACE_5:
+            case ObjectIdentifiers.FURNACE_6:
+            case ObjectIdentifiers.FURNACE_7:
+            case ObjectIdentifiers.FURNACE_8:
+            case ObjectIdentifiers.FURNACE_9:
+            case ObjectIdentifiers.FURNACE_10:
+            case ObjectIdentifiers.FURNACE_11:
+            case ObjectIdentifiers.FURNACE_12:
+            case ObjectIdentifiers.FURNACE_13:
+            case ObjectIdentifiers.FURNACE_14:
+            case ObjectIdentifiers.FURNACE_15:
+            case ObjectIdentifiers.FURNACE_16:
+            case ObjectIdentifiers.FURNACE_17:
+            case ObjectIdentifiers.FURNACE_19:
+            case ObjectIdentifiers.FURNACE_20:
+            case ObjectIdentifiers.SMALL_FURNACE:
+            case ObjectIdentifiers.SMALL_FURNACE_2:
+            case ObjectIdentifiers.BROKEN_FURNACE:
+            case ObjectIdentifiers.REPAIRED_FURNACE:
+            case ObjectIdentifiers.REPAIRED_FURNACE_2:
+            case ObjectIdentifiers.CHARCOAL_FURNACE:
+            case ObjectIdentifiers.CHARCOAL_FURNACE_2:
+            case ObjectIdentifiers.CHARCOAL_FURNACE_3:
+            case ObjectIdentifiers.CHARCOAL_FURNACE_4:
+            case ObjectIdentifiers.LOVAKITE_FURNACE:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @SuppressWarnings("unused")

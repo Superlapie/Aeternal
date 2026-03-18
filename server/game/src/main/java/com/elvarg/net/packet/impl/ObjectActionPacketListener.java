@@ -9,9 +9,9 @@ import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.minigames.impl.FightCaves;
 import com.elvarg.game.content.skill.SkillManager;
-import com.elvarg.game.content.skill.skillable.impl.Smithing;
-import com.elvarg.game.content.skill.skillable.impl.Smithing.Bar;
-import com.elvarg.game.content.skill.skillable.impl.Smithing.EquipmentMaking;
+import com.elvarg.game.content.skill.mining.Mining;
+import com.elvarg.game.content.skill.impl.smithing.AnvilSmithing;
+import com.elvarg.game.content.skill.impl.smithing.Smelting;
 import com.elvarg.game.content.skill.skillable.impl.Thieving.StallThieving;
 import com.elvarg.game.definition.ObjectDefinition;
 import com.elvarg.game.entity.impl.object.GameObject;
@@ -68,6 +68,11 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 
         // Skills..
         if (player.getSkillManager().startSkillable(object)) {
+            return;
+        }
+        
+        // Check cache-driven mining system
+        if (Mining.startMining(player, object)) {
             return;
         }
 
@@ -148,7 +153,12 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             //DialogueManager.sendStatement(player, "Construction will be avaliable in the future.");
             break;
         case ANVIL:
-            EquipmentMaking.openInterface(player);
+        case ANVIL_2:
+        case ANVIL_3:
+        case ANVIL_4:
+        case ANVIL_5:
+        case ANVIL_6:
+            AnvilSmithing.openSmithingInterface(player);
             break;
         case ALTAR:
         case CHAOS_ALTAR_2:
@@ -236,6 +246,11 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
         if (StallThieving.init(player, object)) {
             return;
         }
+        
+        // Check cache-driven mining prospect system
+        if (Mining.prospectRock(player, object.getId())) {
+            return;
+        }
 
         if (com.elvarg.game.content.cannon.DwarfCannon.isObject(object)) {
             player.getDwarfCannon().handleInteraction(object, 2);
@@ -253,10 +268,36 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             player.getPacketSender().sendTeleportInterface(TeleportButton.WILDERNESS.menu);
             break;
         case FURNACE_18:
-            for (Bar bar : Bar.values()) {
-                player.getPacketSender().sendInterfaceModel(bar.getFrame(), bar.getBar(), 150);
-            }
-            player.getPacketSender().sendChatboxInterface(2400);
+        case FURNACE:
+        case FURNACE_2:
+        case FURNACE_3:
+        case FURNACE_4:
+        case FURNACE_5:
+        case FURNACE_6:
+        case FURNACE_7:
+        case FURNACE_8:
+        case FURNACE_9:
+        case FURNACE_10:
+        case FURNACE_11:
+        case FURNACE_12:
+        case FURNACE_13:
+        case FURNACE_14:
+        case FURNACE_15:
+        case FURNACE_16:
+        case FURNACE_17:
+        case FURNACE_19:
+        case FURNACE_20:
+        case SMALL_FURNACE:
+        case SMALL_FURNACE_2:
+        case BROKEN_FURNACE:
+        case REPAIRED_FURNACE:
+        case REPAIRED_FURNACE_2:
+        case CHARCOAL_FURNACE:
+        case CHARCOAL_FURNACE_2:
+        case CHARCOAL_FURNACE_3:
+        case CHARCOAL_FURNACE_4:
+        case LOVAKITE_FURNACE:
+            Smelting.openFurnaceInterface(player);
             break;
         case BANK_CHEST:
         case BANK:

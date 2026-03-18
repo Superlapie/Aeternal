@@ -10,7 +10,7 @@ import com.elvarg.game.content.combat.magic.EffectSpells;
 import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.presets.Presetables;
 import com.elvarg.game.content.quests.QuestHandler;
-import com.elvarg.game.content.skill.skillable.impl.Smithing;
+import com.elvarg.game.content.skill.impl.smithing.Smelting;
 import com.elvarg.game.content.sound.Music;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.container.impl.Bank;
@@ -117,9 +117,12 @@ public class ButtonClickPacketListener implements PacketExecutor {
 		if (player.getDueling().checkRule(button)) {
 			return true;
 		}
-		if (Smithing.handleButton(player, button)) {
+		
+		// Handle furnace smelting buttons
+		if (Smelting.handleMakeXButton(player, button)) {
 			return true;
 		}
+
 		if (Presetables.handleButton(player, button)) {
 			return true;
 		}
