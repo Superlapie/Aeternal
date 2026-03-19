@@ -61,12 +61,6 @@ public class Mining {
             return false;
         }
         
-        if (player.getSkillManager().getCurrentLevel(Skill.ATTACK) < pickaxe.getAttackLevel()) {
-            player.getPacketSender().sendMessage("You need an Attack level of at least " + 
-                                                pickaxe.getAttackLevel() + " to use this pickaxe.");
-            return false;
-        }
-        
         // Check if inventory is full
         if (player.getInventory().isFull()) {
             player.getPacketSender().sendMessage("Your inventory is full.");

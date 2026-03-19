@@ -116,35 +116,36 @@ public class OSRSMiningFormula {
      */
     public static int getEmptyRockId(MiningRockType rockType) {
         if (rockType == null) {
-            return 11390; // Default empty rock
+            return 450;
         }
-        
-        // Based on user's data: empty rock IDs
+
         switch (rockType) {
             case CLAY:
             case COPPER:
             case TIN:
+                return 450;
             case IRON:
             case SILVER:
             case COAL:
             case GOLD:
-            case MITHRIL:
-            case GEM_ROCK:
+            case GRANITE_1:
+            case GRANITE_2:
+            case GRANITE_3:
             case SANDSTONE_1:
             case SANDSTONE_2:
             case SANDSTONE_3:
             case SANDSTONE_4:
             case SANDSTONE_5:
-            case GRANITE_1:
-            case GRANITE_2:
-            case GRANITE_3:
-                return 11390; // Common empty rock for most ores
+                return 451;
+            case MITHRIL:
+            case GEM_ROCK:
+                return 452;
             case ADAMANTITE:
             case RUNITE:
             case AMETHYST:
-                return 11391; // Higher-tier empty rock
+                return 453;
             default:
-                return 11390;
+                return 450;
         }
     }
     

@@ -142,8 +142,8 @@ public enum MiningRockType {
             return RUNITE;
         }
         
-        // If the name is just "Rock", use object ID to determine type
-        if (rockType == null && "Rock".equals(name)) {
+        // Generic rock names in this cache are often just "Rock", "Rocks", or "Pile of Rock".
+        if (rockType == null && ("rock".equals(name) || "rocks".equals(name) || "pile of rock".equals(name))) {
             rockType = determineRockTypeById(objectId);
         }
         

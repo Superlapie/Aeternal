@@ -100,9 +100,17 @@ public class MiningTask extends Task {
      */
     private boolean playerHasPickaxe() {
         PickaxeData currentPickaxe = PickaxeData.getBestByMiningLevel(player);
-        return currentPickaxe != null && 
-               (player.getInventory().contains(currentPickaxe.getItemId()) ||
-                player.getEquipment().getItems()[com.elvarg.game.model.container.impl.Equipment.WEAPON_SLOT].getId() == currentPickaxe.getItemId());
+        if (currentPickaxe == null) {
+            return false;
+        }
+
+        int equippedId = player.getEquipment().getItems()[com.elvarg.game.model.container.impl.Equipment.WEAPON_SLOT].getId();
+        for (int itemId : currentPickaxe.getItemIds()) {
+            if (player.getInventory().contains(itemId) || equippedId == itemId) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**

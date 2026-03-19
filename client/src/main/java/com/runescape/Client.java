@@ -1747,6 +1747,14 @@ public class Client extends GameApplet {
     private int npcIndicatorsMatchMode = 0; // 0=contains, 1=exact, 2=starts with
     private boolean npcIndicatorsCaseSensitive = false;
     private String npcIndicatorTargetsCsv = "";
+    private static final Color FISHING_SPOT_OVERLAY_COLOR = new Color(64, 170, 255, 190);
+    private static final Set<Integer> FISHING_SPOT_NPC_IDS = new HashSet<>(Arrays.asList(
+            1506, 1530, 1531,
+            1497, 1498, 1499, 1500,
+            1508, 1509,
+            1511, 1512, 2653, 2654, 2655,
+            3913, 3914, 3915, 4079, 4080, 4081, 4082
+    ));
     private Color npcIndicatorsColor = new Color(255, 255, 0, 190);
     private final List<String> npcIndicatorTargetTokens = new ArrayList<>();
     private boolean xpDropsPluginEnabled = true;
@@ -25465,19 +25473,32 @@ public class Client extends GameApplet {
     }
 
     private void drawNpcIndicatorsOverlay() {
-        if (!npcIndicatorsPluginEnabled || !npcIndicatorsHighlightTile || npcIndicatorTargetTokens.isEmpty()) {
+        final boolean drawFishingSpotOverlay = true;
+        final boolean drawNpcIndicatorOverlay = npcIndicatorsPluginEnabled
+                && npcIndicatorsHighlightTile
+                && !npcIndicatorTargetTokens.isEmpty();
+        if (!drawNpcIndicatorOverlay && !drawFishingSpotOverlay) {
             return;
         }
 
         for (int i = 0; i < npcCount; i++) {
             Npc npc = npcs[npcIndices[i]];
-            if (!isNpcIndicatorTarget(npc)) {
+            if (npc == null || npc.desc == null) {
                 continue;
             }
 
             int tileX = npc.x >> 7;
             int tileY = npc.y >> 7;
-            drawTileOverlay(tileX, tileY, withAlpha(npcIndicatorsColor, 210), withAlpha(npcIndicatorsColor, 35), 1);
+            if (drawFishingSpotOverlay && isFishingSpotNpc(npc)) {
+                drawTileOverlay(tileX, tileY, withAlpha(FISHING_SPOT_OVERLAY_COLOR, 210),
+                        withAlpha(FISHING_SPOT_OVERLAY_COLOR, 45), 2);
+                drawFishingSpotIcon(tileX, tileY);
+                continue;
+            }
+
+            if (drawNpcIndicatorOverlay && isNpcIndicatorTarget(npc)) {
+                drawTileOverlay(tileX, tileY, withAlpha(npcIndicatorsColor, 210), withAlpha(npcIndicatorsColor, 35), 1);
+            }
         }
     }
 
@@ -25746,6 +25767,111 @@ public class Client extends GameApplet {
             }
         }
         return false;
+    }
+
+    private boolean isFishingSpotNpc(Npc npc) {
+        if (npc == null || npc.desc == null) {
+            return false;
+        }
+        if (FISHING_SPOT_NPC_IDS.contains(npc.desc.id)) {
+            return true;
+        }
+        return npc.desc.name != null && npc.desc.name.equalsIgnoreCase("Fishing spot");
+    }
+
+    private void drawFishingSpotIcon(int tileX, int tileY) {
+        int centerWorldX = (tileX << 7) + 64;
+        int centerWorldY = (tileY << 7) + 64;
+        Point center = projectToCanvas(centerWorldX, centerWorldY,
+                getCenterHeight(plane, centerWorldY, centerWorldX) - 16);
+        if (center == null) {
+            return;
+        }
+
+        Sprite icon = ItemDefinition.getSprite(getFishingSpotIconItemId(tileX, tileY), 1, 0);
+        if (icon == null) {
+            return;
+        }
+
+        int drawX = center.x - (icon.myWidth / 2);
+        int drawY = center.y - icon.myHeight - 6;
+        icon.drawSprite(drawX, drawY);
+    }
+
+    private int getFishingSpotIconItemId(int tileX, int tileY) {
+        for (int i = 0; i < npcCount; i++) {
+            Npc npc = npcs[npcIndices[i]];
+            if (!isFishingSpotNpc(npc)) {
+                continue;
+            }
+
+            if ((npc.x >> 7) != tileX || (npc.y >> 7) != tileY) {
+                continue;
+            }
+
+            Integer donorZoneIcon = getDonorZoneFishingSpotIconItemId(npc.desc.id, tileX, tileY);
+            if (donorZoneIcon != null) {
+                return donorZoneIcon;
+            }
+
+            switch (npc.desc.id) {
+                case 1506:
+                case 1530:
+                case 1531:
+                    return 317; // shrimp / anchovies
+                case 1497:
+                case 1498:
+                case 1499:
+                case 1500:
+                    return 327; // bait spots
+                case 1508:
+                case 1509:
+                    return 331; // trout / salmon
+                case 1511:
+                case 1512:
+                case 2653:
+                case 2654:
+                case 2655:
+                case 3914:
+                    return 377; // lobster / swordfish style spot
+                case 3913:
+                    return 363; // bass / big-net style spot
+                case 3915:
+                case 4079:
+                case 4080:
+                case 4081:
+                case 4082:
+                    return 383; // shark / big-net style spot
+                default:
+                    break;
+            }
+        }
+        return 317;
+    }
+
+    private Integer getDonorZoneFishingSpotIconItemId(int npcId, int tileX, int tileY) {
+        if (tileY < 5886 || tileY > 5898 || tileX < 5821 || tileX > 5829) {
+            return null;
+        }
+        if (npcId == 1530 || (tileY == 5898 && (tileX == 5822 || tileX == 5828))) {
+            return 317; // shrimp / anchovies
+        }
+        if (npcId == 1497 || (tileY == 5895 && (tileX == 5821 || tileX == 5829))) {
+            return 327; // sardine / herring
+        }
+        if (npcId == 1508 || (tileY == 5893 && (tileX == 5823 || tileX == 5827))) {
+            return 331; // trout / salmon
+        }
+        if (npcId == 3915 || (tileY == 5890 && (tileX == 5822 || tileX == 5828))) {
+            return 383; // shark
+        }
+        if (npcId == 3913 || (tileY == 5888 && (tileX == 5824 || tileX == 5826))) {
+            return 363; // bass
+        }
+        if (npcId == 3914 || (tileY == 5886 && (tileX == 5822 || tileX == 5828))) {
+            return 377; // lobster / swordfish / tuna
+        }
+        return null;
     }
 
     private void parseInventoryTagItemIds() {

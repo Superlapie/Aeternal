@@ -73,19 +73,6 @@ public class Fishing extends DefaultSkillable {
     }
 
     private static FishingTool getToolForSpotOption(int npcId, int option) {
-        if (option == 1) {
-            if (BIG_NET_SPOTS.contains(npcId)) return FishingTool.BIG_NET;
-            if (CAGE_SPOTS.contains(npcId)) return FishingTool.LOBSTER_POT;
-            if (LURE_SPOTS.contains(npcId)) return FishingTool.FLY_FISHING_ROD;
-            if (BAIT_SPOTS.contains(npcId)) return FishingTool.FISHING_ROD;
-            if (NET_SPOTS.contains(npcId)) return FishingTool.NET;
-        } else if (option >= 2) {
-            if (CAGE_HARPOON_SPOTS.contains(npcId)) return FishingTool.HARPOON;
-            if (BIG_NET_HARPOON_SPOTS.contains(npcId)) return FishingTool.SHARK_HARPOON;
-            if (NET_HARPOON_SPOTS.contains(npcId)) return FishingTool.SHARK_HARPOON;
-            if (BAIT_SPOTS.contains(npcId)) return FishingTool.FISHING_ROD;
-        }
-
         switch (npcId) {
             // Shrimp / Anchovies
             case NpcIdentifiers.FISHING_SPOT_6: // 1506
@@ -94,7 +81,7 @@ public class Fishing extends DefaultSkillable {
                 if (option == 1) {
                     return FishingTool.NET;
                 }
-                break;
+                return null;
 
             // Sardine / Herring (bait) + Pike (bait)
             case NpcIdentifiers.FISHING_SPOT_2: // 1497
@@ -102,20 +89,20 @@ public class Fishing extends DefaultSkillable {
             case NpcIdentifiers.FISHING_SPOT_4: // 1499
             case NpcIdentifiers.FISHING_SPOT_5: // 1500
                 if (option == 1 || option == 2) {
-                    return FishingTool.FISHING_ROD;
+                    return FishingTool.BAIT_ROD;
                 }
-                break;
+                return null;
 
-            // Trout / Salmon (lure) + pike/bait at some spots
+            // Trout / Salmon
             case NpcIdentifiers.FISHING_SPOT_8: // 1508
             case NpcIdentifiers.FISHING_SPOT_9: // 1509
                 if (option == 1) {
                     return FishingTool.FLY_FISHING_ROD;
                 }
-                if (option == 2) {
-                    return FishingTool.FISHING_ROD;
+                if (option >= 2) {
+                    return FishingTool.BAIT_ROD;
                 }
-                break;
+                return null;
 
             // Lobster / Swordfish / Tuna
             case NpcIdentifiers.FISHING_SPOT_11: // 1511
@@ -123,17 +110,23 @@ public class Fishing extends DefaultSkillable {
             case NpcIdentifiers.FISHING_SPOT_40: // 2653
             case NpcIdentifiers.FISHING_SPOT_41: // 2654
             case NpcIdentifiers.FISHING_SPOT_42: // 2655
+            case NpcIdentifiers.FISHING_SPOT_49: // 3914
                 if (option == 1) {
                     return FishingTool.LOBSTER_POT;
                 }
-                if (option == 2) {
+                if (option >= 2) {
                     return FishingTool.HARPOON;
                 }
-                break;
+                return null;
 
-            // Big net / shark + harpoon variants (e.g. Catherby)
+            // Big net only
             case NpcIdentifiers.FISHING_SPOT_48: // 3913
-            case NpcIdentifiers.FISHING_SPOT_49: // 3914
+                if (option == 1) {
+                    return FishingTool.BIG_NET;
+                }
+                return null;
+
+            // Big net / shark
             case NpcIdentifiers.FISHING_SPOT_50: // 3915
             case NpcIdentifiers.FISHING_SPOT_51: // 4079
             case NpcIdentifiers.FISHING_SPOT_52: // 4080
@@ -142,11 +135,25 @@ public class Fishing extends DefaultSkillable {
                 if (option == 1) {
                     return FishingTool.BIG_NET;
                 }
-                if (option == 2) {
+                if (option >= 2) {
                     return FishingTool.SHARK_HARPOON;
                 }
-                break;
+                return null;
         }
+
+        if (option == 1) {
+            if (BIG_NET_SPOTS.contains(npcId)) return FishingTool.BIG_NET;
+            if (CAGE_SPOTS.contains(npcId)) return FishingTool.LOBSTER_POT;
+            if (LURE_SPOTS.contains(npcId)) return FishingTool.FLY_FISHING_ROD;
+            if (BAIT_SPOTS.contains(npcId)) return FishingTool.BAIT_ROD;
+            if (NET_SPOTS.contains(npcId)) return FishingTool.NET;
+        } else if (option >= 2) {
+            if (CAGE_HARPOON_SPOTS.contains(npcId)) return FishingTool.HARPOON;
+            if (BIG_NET_HARPOON_SPOTS.contains(npcId)) return FishingTool.SHARK_HARPOON;
+            if (NET_HARPOON_SPOTS.contains(npcId)) return FishingTool.SHARK_HARPOON;
+            if (BAIT_SPOTS.contains(npcId)) return FishingTool.BAIT_ROD;
+        }
+
         return null;
     }
 
@@ -327,7 +334,8 @@ public class Fishing extends DefaultSkillable {
     public enum FishingTool {
         NET(303, 1, -1, 3, 621, Fish.SHRIMP, Fish.ANCHOVY),
         BIG_NET(305, 16, -1, 3, 620, Fish.MACKEREL, Fish.OYSTER, Fish.COD, Fish.BASS, Fish.CASKET),
-        FISHING_ROD(307, 5, 313, 1, 622, Fish.SARDINE, Fish.HERRING, Fish.PIKE, Fish.SLIMY_EEL, Fish.CAVE_EEL, Fish.LAVA_EEL),
+        BAIT_ROD(307, 5, 313, 1, 622, Fish.SARDINE, Fish.HERRING, Fish.PIKE),
+        FISHING_ROD(307, 28, 313, 1, 622, Fish.SLIMY_EEL, Fish.CAVE_EEL, Fish.LAVA_EEL),
         FLY_FISHING_ROD(309, 20, 314, 1, 622, Fish.TROUT, Fish.SALMON),
         HARPOON(311, 35, -1, 4, 618, Fish.TUNA, Fish.SWORDFISH),
         SHARK_HARPOON(311, 76, -1, 6, 618, Fish.SHARK),

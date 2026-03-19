@@ -67,13 +67,13 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	        return;
 	    }
 
-        // Skills..
-        if (player.getSkillManager().startSkillable(object)) {
-            return;
-        }
-        
         // Check cache-driven mining system
         if (Mining.startMining(player, object)) {
+            return;
+        }
+
+        // Skills..
+        if (player.getSkillManager().startSkillable(object)) {
             return;
         }
 

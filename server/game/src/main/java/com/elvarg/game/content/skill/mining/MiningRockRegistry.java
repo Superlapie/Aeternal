@@ -90,15 +90,15 @@ public class MiningRockRegistry {
     private static void registerKnownMiningRocks() {
         System.out.println("MiningRockRegistry: Registering known mining rocks...");
         int[] clayRocks = {11362, 11363};
-        int[] copperRocks = {10943, 11161};
-        int[] tinRocks = {11360, 11361};
-        int[] ironRocks = {11364, 11365};
-        int[] silverRocks = {11368, 11369};
-        int[] coalRocks = {11366, 11367};
-        int[] goldRocks = {11370, 11371};
-        int[] mithrilRocks = {11372, 11373};
-        int[] adamantiteRocks = {11374, 11375};
-        int[] runiteRocks = {11376, 11377};
+        int[] copperRocks = {7453, 7454, 10943, 11161};
+        int[] tinRocks = {7486, 11360, 11361};
+        int[] ironRocks = {7455, 7488, 11364, 11365};
+        int[] silverRocks = {7457, 11368, 11369};
+        int[] coalRocks = {7456, 11366, 11367};
+        int[] goldRocks = {9720, 9721, 9722, 11951, 11183, 11184, 11185, 2099, 11370, 11371};
+        int[] mithrilRocks = {7459, 7492, 11372, 11373};
+        int[] adamantiteRocks = {7460, 11374, 11375};
+        int[] runiteRocks = {7461, 14859, 4860, 2106, 2107, 11376, 11377};
 
         int[] runeEssenceRocks = {14912, 14915};
         int[] gemRocks = {11380, 11381};
