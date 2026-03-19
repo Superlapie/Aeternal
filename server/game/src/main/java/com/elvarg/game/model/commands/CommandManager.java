@@ -42,6 +42,7 @@ public class CommandManager {
          */
         put(new Yell(), "yell");
         put(new Skull(), "skull", "redskull");
+        put(new DonatorZoneCommand(), "dzone", "donatorzone");
 
         /**
          * Moderators Commands

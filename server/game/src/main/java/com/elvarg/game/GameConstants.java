@@ -72,7 +72,7 @@ public class GameConstants {
 	 * The default position, where players will spawn upon logging in for the first
 	 * time.
 	 */
-	public static final Location DEFAULT_LOCATION = new Location(5856, 5920);
+	public static final Location DEFAULT_LOCATION = new Location(3222, 3218);
 
 	/**
 	 * Should the inventory be refreshed immediately on switching items or should it

@@ -36,6 +36,18 @@ public final class Configuration {
     public static boolean dumpMapRegions = false;
 
     /**
+     * Maximum time to keep the region loading overlay active while waiting on
+     * map archives and object-model prechecks during traversal.
+     */
+    public static long mapRegionLoadGraceMs = 2500L;
+
+    /**
+     * Maximum number of mandatory cache/model requests allowed in flight.
+     * Higher values reduce cold region-load stalls at the cost of more burst IO.
+     */
+    public static int maxConcurrentMandatoryCacheRequests = 50;
+
+    /**
      * Displays fps and memory
      */
     public static boolean displayFps = false;

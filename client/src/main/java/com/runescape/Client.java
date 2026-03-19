@@ -157,6 +157,15 @@ import java.util.zip.Deflater;
 
 public class Client extends GameApplet {
 
+    private static boolean isDonorZoneRegion(int regionId) {
+        int regionX = regionId >> 8;
+        int regionY = regionId & 0xff;
+        int minTileX = regionX * 64;
+        int minTileY = regionY * 64;
+        return minTileX >= DONOR_ZONE_MIN_X && minTileX <= DONOR_ZONE_MAX_X
+                && minTileY >= DONOR_ZONE_MIN_Y && minTileY <= DONOR_ZONE_MAX_Y;
+    }
+
 
 
     public static final int TOTAL_ARCHIVES = 9;
@@ -1074,6 +1083,11 @@ public class Client extends GameApplet {
     public short[] landscapeMapIDs;
 
     public short[] objectMapIDs;
+
+    private static final int DONOR_ZONE_MIN_X = 5760;
+    private static final int DONOR_ZONE_MAX_X = 6079;
+    private static final int DONOR_ZONE_MIN_Y = 5760;
+    private static final int DONOR_ZONE_MAX_Y = 6079;
 
     boolean searchingUSFailure = false;
 
@@ -10964,7 +10978,7 @@ public class Client extends GameApplet {
 
         long mapLoadElapsed = System.currentTimeMillis() - loadingStartTime;
 
-        final long forceLoadAfterMs = 15000L;
+        final long forceLoadAfterMs = Math.max(0L, Configuration.mapRegionLoadGraceMs);
 
 
 
@@ -10976,27 +10990,39 @@ public class Client extends GameApplet {
 
             if (terrainData[i] == null && terrainIndices[i] != -1) {
 
-                if (mapLoadElapsed < forceLoadAfterMs) {
+                if (resourceProvider.isMapArchiveKnownMissing(terrainIndices[i])) {
+
+                    terrainIndices[i] = -1;
+
+                } else if (mapLoadElapsed < forceLoadAfterMs) {
 
                     return -1;
 
+                } else {
+
+                    // Prevent infinite "Loading - please wait" loops on incomplete region sets.
+
+                    terrainIndices[i] = -1;
+
                 }
-
-                // Prevent infinite "Loading - please wait" loops on incomplete region sets.
-
-                terrainIndices[i] = -1;
 
             }
 
             if (objectData[i] == null && objectIndices[i] != -1) {
 
-                if (mapLoadElapsed < forceLoadAfterMs) {
+                if (resourceProvider.isMapArchiveKnownMissing(objectIndices[i])) {
+
+                    objectIndices[i] = -1;
+
+                } else if (mapLoadElapsed < forceLoadAfterMs) {
 
                     return -2;
 
-                }
+                } else {
 
-                objectIndices[i] = -1;
+                    objectIndices[i] = -1;
+
+                }
 
             }
 
@@ -31819,6 +31845,7 @@ public class Client extends GameApplet {
 
                             } else {
 
+                                int regionId = mapCoordinates[regionCount];
                                 int map = terrainIndices[regionCount] = resourceProvider.resolve(0, y, x);
 
                                 if (map != -1) {
@@ -31832,6 +31859,11 @@ public class Client extends GameApplet {
                                 int landscape = objectIndices[regionCount] = resourceProvider.resolve(1, y,
 
                                         x);
+
+                                if (isDonorZoneRegion(regionId)) {
+                                    System.out.println("Donor zone region resolved [region=" + regionId
+                                            + ", terrain=" + map + ", object=" + landscape + "]");
+                                }
 
                                 if (landscape != -1) {
 
@@ -34970,6 +35002,12 @@ public class Client extends GameApplet {
 
                                 terrainIndices[i] = -1;
 
+                            if (isDonorZoneRegion(mapCoordinates[i])) {
+                                System.out.println("Donor zone terrain payload [region=" + mapCoordinates[i]
+                                        + ", archive=" + resource.ID + ", bytes="
+                                        + (resource.buffer == null ? -1 : resource.buffer.length) + "]");
+                            }
+
                             break;
 
                         }
@@ -34983,6 +35021,12 @@ public class Client extends GameApplet {
                         if (resource.buffer == null)
 
                             objectIndices[i] = -1;
+
+                        if (isDonorZoneRegion(mapCoordinates[i])) {
+                            System.out.println("Donor zone object payload [region=" + mapCoordinates[i]
+                                    + ", archive=" + resource.ID + ", bytes="
+                                    + (resource.buffer == null ? -1 : resource.buffer.length) + "]");
+                        }
 
                         break;
 

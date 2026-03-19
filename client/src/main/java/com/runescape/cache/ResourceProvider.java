@@ -1,6 +1,7 @@
 package com.runescape.cache;
 
 import com.runescape.Client;
+import com.runescape.Configuration;
 import com.runescape.cache.bzip.BZip2Decompressor;
 import com.runescape.collection.Deque;
 import com.runescape.collection.Queue;
@@ -19,6 +20,10 @@ import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 public final class ResourceProvider implements Runnable {
+
+    private static boolean isDonorZoneArchive(int archiveId) {
+        return archiveId >= 3314 && archiveId <= 3341;
+    }
 
     private final Deque requested;
     private final byte[] payload;
@@ -331,6 +336,10 @@ public final class ResourceProvider implements Runnable {
         }
     }
 
+    public boolean isMapArchiveKnownMissing(int file) {
+        return file >= 0 && missingMapArchives.contains(file);
+    }
+
     public int getModelIndex(int i) {
         return 0;
     }
@@ -444,8 +453,17 @@ public final class ResourceProvider implements Runnable {
                 read += in;
             } while (true);
         } catch (IOException _ex) {
+            if (resource.dataType == 3 && isDonorZoneArchive(resource.ID)) {
+                System.out.println("Donor zone gzip decode failed [archive=" + resource.ID
+                        + ", compressedBytes=" + originalData.length + "]");
+            }
             byte[] unpacked = unpackJs5Container(originalData);
             if (unpacked != null) {
+                if (resource.dataType == 3 && isDonorZoneArchive(resource.ID)) {
+                    System.out.println("Donor zone JS5 fallback [archive=" + resource.ID
+                            + ", compressedBytes=" + originalData.length
+                            + ", unpackedBytes=" + unpacked.length + "]");
+                }
                 resource.buffer = unpacked;
                 return resource;
             }
@@ -465,6 +483,11 @@ public final class ResourceProvider implements Runnable {
         }
         resource.buffer = new byte[read];
         System.arraycopy(gzipInputBuffer, 0, resource.buffer, 0, read);
+        if (resource.dataType == 3 && isDonorZoneArchive(resource.ID)) {
+            System.out.println("Donor zone gzip decode ok [archive=" + resource.ID
+                    + ", compressedBytes=" + originalData.length
+                    + ", unpackedBytes=" + read + "]");
+        }
 
         return resource;
     }
@@ -582,7 +605,8 @@ public final class ResourceProvider implements Runnable {
             } else
                 completedCount++;
 
-        while (uncompletedCount < 10) { // 10
+        final int maxConcurrentRequests = Math.max(1, Configuration.maxConcurrentMandatoryCacheRequests);
+        while (uncompletedCount < maxConcurrentRequests) {
             Resource request = (Resource) unrequested.popHead();
             if (request == null) {
                 break;

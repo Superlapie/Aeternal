@@ -26,7 +26,7 @@ import java.util.zip.GZIPOutputStream;
  * Usage:
  * java com.runescape.tools.CustomBlankMapRegionTool
  *   <targetCacheDir> <serverMapIndexPath> <serverMapsDir> <startRegionX> <startRegionY> <widthRegions> <heightRegions>
- *   [baseUnderlayId] [pathUnderlayId] [graveUnderlayId] [marshUnderlayId] [ritualUnderlayId]
+ *   [baseUnderlayId] [pathUnderlayId]
  */
 public final class CustomBlankMapRegionTool {
 
@@ -35,7 +35,7 @@ public final class CustomBlankMapRegionTool {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 7) {
-            System.out.println("Usage: java com.runescape.tools.CustomBlankMapRegionTool <targetCacheDir> <serverMapIndexPath> <serverMapsDir> <startRegionX> <startRegionY> <widthRegions> <heightRegions> [baseUnderlayId] [pathUnderlayId] [graveUnderlayId] [marshUnderlayId] [ritualUnderlayId]");
+            System.out.println("Usage: java com.runescape.tools.CustomBlankMapRegionTool <targetCacheDir> <serverMapIndexPath> <serverMapsDir> <startRegionX> <startRegionY> <widthRegions> <heightRegions> [baseUnderlayId] [pathUnderlayId]");
             return;
         }
 
@@ -46,11 +46,8 @@ public final class CustomBlankMapRegionTool {
         int startRegionY = Integer.parseInt(args[4]);
         int width = Integer.parseInt(args[5]);
         int height = Integer.parseInt(args[6]);
-        int baseUnderlayId = args.length >= 8 ? Integer.parseInt(args[7]) : 1;
-        int pathUnderlayId = args.length >= 9 ? Integer.parseInt(args[8]) : -1;
-        int graveUnderlayId = args.length >= 10 ? Integer.parseInt(args[9]) : -1;
-        int marshUnderlayId = args.length >= 11 ? Integer.parseInt(args[10]) : -1;
-        int ritualUnderlayId = args.length >= 12 ? Integer.parseInt(args[11]) : -1;
+        int baseUnderlayId = args.length >= 8 ? Integer.parseInt(args[7]) : 48;
+        int pathUnderlayId = args.length >= 9 ? Integer.parseInt(args[8]) : 64;
 
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("width/height must be > 0");
@@ -127,7 +124,7 @@ public final class CustomBlankMapRegionTool {
             }
         }
 
-        byte[] terrainRaw = generateTerrainRaw(baseUnderlayId, pathUnderlayId, graveUnderlayId, marshUnderlayId, ritualUnderlayId);
+        byte[] terrainRaw = generateTerrainRaw(baseUnderlayId, pathUnderlayId);
         byte[] terrainGzip = gzip(terrainRaw);
         byte[] objectGzip = gzip(new byte[]{0}); // Empty delta object stream
 
@@ -161,12 +158,9 @@ public final class CustomBlankMapRegionTool {
         System.out.println("Wrote client external map_index: " + clientExternalMapIndex);
     }
 
-    private static byte[] generateTerrainRaw(int baseUnderlayId, int pathUnderlayId, int graveUnderlayId, int marshUnderlayId, int ritualUnderlayId) {
+    private static byte[] generateTerrainRaw(int baseUnderlayId, int pathUnderlayId) {
         int baseOpcode = toUnderlayOpcode(baseUnderlayId, "baseUnderlayId");
         int pathOpcode = pathUnderlayId > 0 ? toUnderlayOpcode(pathUnderlayId, "pathUnderlayId") : -1;
-        int graveOpcode = graveUnderlayId > 0 ? toUnderlayOpcode(graveUnderlayId, "graveUnderlayId") : -1;
-        int marshOpcode = marshUnderlayId > 0 ? toUnderlayOpcode(marshUnderlayId, "marshUnderlayId") : -1;
-        int ritualOpcode = ritualUnderlayId > 0 ? toUnderlayOpcode(ritualUnderlayId, "ritualUnderlayId") : -1;
 
         ByteArrayOutputStream out = new ByteArrayOutputStream(22000);
         for (int plane = 0; plane < 4; plane++) {
@@ -174,15 +168,6 @@ public final class CustomBlankMapRegionTool {
                 for (int y = 0; y < 64; y++) {
                     if (plane == 0) {
                         int opcode = baseOpcode;
-                        if (graveOpcode > 0 && isGraveTile(x, y)) {
-                            opcode = graveOpcode;
-                        }
-                        if (marshOpcode > 0 && isMarshTile(x, y)) {
-                            opcode = marshOpcode;
-                        }
-                        if (ritualOpcode > 0 && isRitualTile(x, y)) {
-                            opcode = ritualOpcode;
-                        }
                         if (pathOpcode > 0 && isPathTile(x, y)) {
                             opcode = pathOpcode;
                         }
@@ -207,38 +192,10 @@ public final class CustomBlankMapRegionTool {
     }
 
     private static boolean isPathTile(int x, int y) {
-        // Broad cross-road and ring so blank regions remain readable and navigable.
+        // Keep a simple cross-road so the generated area reads as intentional.
         boolean verticalRoad = (x >= 29 && x <= 34);
         boolean horizontalRoad = (y >= 29 && y <= 34);
-        boolean ring =
-                ((x >= 18 && x <= 45) && (y == 18 || y == 45))
-                        || ((y >= 18 && y <= 45) && (x == 18 || x == 45));
-        return verticalRoad || horizontalRoad || ring;
-    }
-
-    private static boolean isGraveTile(int x, int y) {
-        // North cemetery strips and scattered patches.
-        boolean northBand = y >= 48 && ((x >= 8 && x <= 22) || (x >= 42 && x <= 56));
-        boolean centerIsles = (x >= 24 && x <= 28 && y >= 50) || (x >= 36 && x <= 40 && y >= 50);
-        return northBand || centerIsles;
-    }
-
-    private static boolean isMarshTile(int x, int y) {
-        // Southern marsh with rough edge variation.
-        boolean southBand = y <= 15;
-        boolean fingers = (y <= 22) && ((x >= 6 && x <= 14) || (x >= 26 && x <= 31) || (x >= 49 && x <= 58));
-        boolean noisyPocket = ((x * 13 + y * 7) % 19 == 0) && y <= 24;
-        return southBand || fingers || noisyPocket;
-    }
-
-    private static boolean isRitualTile(int x, int y) {
-        // Mid-map ritual circle + diagonal scar.
-        int dx = x - 32;
-        int dy = y - 32;
-        int distSq = dx * dx + dy * dy;
-        boolean ring = distSq >= 144 && distSq <= 196;
-        boolean diagonal = Math.abs((x - y) - 2) <= 1 && y >= 22 && y <= 42;
-        return ring || diagonal;
+        return verticalRoad || horizontalRoad;
     }
 
     private static byte[] gzip(byte[] data) throws Exception {

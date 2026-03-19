@@ -17,6 +17,7 @@ public final class SignLink {
     public static final RandomAccessFile[] indices = new RandomAccessFile[5];
     public static RandomAccessFile cache_dat = null;
     public static Applet mainapp = null;
+    private static volatile String activeCacheDirectory = null;
     public static String os;
     public static String arch;
     public static EventQueue eventQueue;
@@ -92,6 +93,9 @@ public final class SignLink {
     }
 
     public static String findcachedir() {
+        if (activeCacheDirectory != null) {
+            return activeCacheDirectory;
+        }
         final File primary = new File(Configuration.CACHE_DIRECTORY);
         if (ensureWritableDirectory(primary)) {
             return withTrailingSeparator(primary);
@@ -108,10 +112,15 @@ public final class SignLink {
         final File primary = new File(Configuration.CACHE_DIRECTORY);
         final File fallback = new File(getFallbackCacheDir());
         if (ensureWritableDirectory(fallback)) {
-            copyCacheIfMissing(primary.toPath(), fallback.toPath(), "main_file_cache.dat");
+            syncCacheFile(primary.toPath(), fallback.toPath(), "main_file_cache.dat");
             for (int i = 0; i < 5; i++) {
-                copyCacheIfMissing(primary.toPath(), fallback.toPath(), "main_file_cache.idx" + i);
+                syncCacheFile(primary.toPath(), fallback.toPath(), "main_file_cache.idx" + i);
             }
+            syncCacheFile(primary.toPath(), fallback.toPath(), "map_index");
+            syncCacheFile(primary.toPath(), fallback.toPath(), "flo.dat");
+            syncCacheFile(primary.toPath(), fallback.toPath(), "loc.dat");
+            syncCacheFile(primary.toPath(), fallback.toPath(), "seq.dat");
+            syncCacheFile(primary.toPath(), fallback.toPath(), "spotanim.dat");
         }
         return withTrailingSeparator(fallback);
     }
@@ -121,6 +130,8 @@ public final class SignLink {
         for (int index = 0; index < 5; index++) {
             indices[index] = new RandomAccessFile(directory + "main_file_cache.idx" + index, "rw");
         }
+        activeCacheDirectory = directory;
+        System.out.println("Active cache directory: " + directory);
     }
 
     private static boolean ensureWritableDirectory(File directory) {
@@ -141,11 +152,11 @@ public final class SignLink {
         return false;
     }
 
-    private static void copyCacheIfMissing(Path sourceDir, Path targetDir, String fileName) {
+    private static void syncCacheFile(Path sourceDir, Path targetDir, String fileName) {
         try {
             Path source = sourceDir.resolve(fileName);
             Path target = targetDir.resolve(fileName);
-            if (Files.exists(source) && !Files.exists(target)) {
+            if (Files.exists(source)) {
                 Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (IOException ignored) {

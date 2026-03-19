@@ -396,6 +396,9 @@ public class RegionManager {
         }
 
         switch (objectId) {
+            case 29094:
+                objectId = -1;
+                break;
 
         }
 
