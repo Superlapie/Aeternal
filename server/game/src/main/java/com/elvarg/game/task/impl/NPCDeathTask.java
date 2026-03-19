@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.elvarg.game.World;
 import com.elvarg.game.content.combat.method.CombatMethod;
+import com.elvarg.game.content.npc.NpcSpawnService;
 import com.elvarg.game.content.skill.slayer.Slayer;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.npc.NPCDropGenerator;
@@ -118,6 +119,7 @@ public class NPCDeathTask extends Task {
 
         // Handle respawn..
         boolean skipRespawn = Boolean.TRUE.equals(npc.getAttribute(SKIP_RESPAWN_ATTRIBUTE));
+        NpcSpawnService.onManagedNpcDeath(npc, npc.getDefinition().getRespawn());
         if (npc.getDefinition().getRespawn() > 0 && !skipRespawn) {
             TaskManager.submit(new NPCRespawnTask(npc, npc.getDefinition().getRespawn()));
         }

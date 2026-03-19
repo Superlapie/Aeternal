@@ -12,17 +12,17 @@ import com.elvarg.game.model.Animation;
 public enum PickaxeData {
     
     // OSRS-accurate pickaxe data with correct mining speeds and animations
-    BRONZE(1265, 1, 1, new Animation(625), 5, 1.0),      // 5 ticks = 3.0s, 1.0x speed modifier
-    IRON(1267, 1, 1, new Animation(626), 4, 1.1),         // 4 ticks = 2.4s, 1.1x speed modifier
-    STEEL(1269, 6, 5, new Animation(627), 3, 1.2),         // 3 ticks = 1.8s, 1.2x speed modifier
-    BLACK(12297, 11, 10, new Animation(3873), 3, 1.25),    // 3 ticks = 1.8s, 1.25x speed modifier
-    MITHRIL(1273, 21, 20, new Animation(629), 2, 1.3),      // 2 ticks = 1.2s, 1.3x speed modifier
-    ADAMANT(1271, 31, 30, new Animation(628), 2, 1.35),     // 2 ticks = 1.2s, 1.35x speed modifier
-    RUNE(1275, 41, 40, new Animation(624), 1, 1.4),         // 1 tick = 0.6s, 1.4x speed modifier
-    DRAGON(11920, 61, 60, new Animation(7139), 1, 1.5),     // 1 tick = 0.6s, 1.5x speed modifier
-    THIRD_AGE(20014, 61, 60, new Animation(7139), 1, 1.7),  // 1 tick = 0.6s, 1.7x speed modifier
-    INFERNAL(13243, 61, 60, new Animation(7139), 1, 1.8),    // 1 tick = 0.6s, 1.8x speed modifier
-    CRYSTAL(23681, 71, 70, new Animation(7284), 1, 1.6);     // 1 tick = 0.6s, 1.6x speed modifier
+    BRONZE(1265, 1, 1, new Animation(625), 8, 1.0),       // OSRS Wiki: 8 ticks between rolls
+    IRON(1267, 1, 1, new Animation(626), 7, 1.1),         // OSRS Wiki: 7 ticks between rolls
+    STEEL(1269, 6, 5, new Animation(627), 6, 1.2),        // OSRS Wiki: 6 ticks between rolls
+    BLACK(12297, 11, 10, new Animation(3873), 5, 1.25),   // OSRS Wiki: 5 ticks between rolls
+    MITHRIL(1273, 21, 20, new Animation(629), 5, 1.3),    // OSRS Wiki: 5 ticks between rolls
+    ADAMANT(1271, 31, 30, new Animation(628), 4, 1.35),   // OSRS Wiki: 4 ticks between rolls
+    RUNE(1275, 41, 40, new Animation(624), 3, 1.4),       // OSRS Wiki: 3 ticks between rolls
+    DRAGON(11920, 61, 60, new Animation(7139), 3, 1.5),   // OSRS Wiki: 3 ticks by default
+    THIRD_AGE(20014, 61, 60, new Animation(7139), 3, 1.7),
+    INFERNAL(13243, 61, 60, new Animation(7139), 3, 1.8),
+    CRYSTAL(23681, 71, 70, new Animation(7284), 3, 1.6);
     
     private final int itemId;
     private final int miningLevel;

@@ -15,9 +15,12 @@ import com.elvarg.util.Chance;
 import com.elvarg.util.Misc;
 import com.elvarg.util.NpcIdentifiers;
 
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents the Fishing skill.
@@ -26,6 +29,39 @@ import java.util.List;
  * @author Lare96
  */
 public class Fishing extends DefaultSkillable {
+    private static final Set<Integer> NET_SPOTS = new HashSet<>(Arrays.asList(
+            1497, 1498, 1499, 1500, 1518, 1519, 1521, 1523, 1524, 1525, 1528, 1530, 1542, 3913, 3914, 3915, 4316,
+            4476, 4477, 4710, 4711, 4712, 5233, 5820, 5821, 6488, 7155, 7200, 7201, 7323, 7460, 7461, 7462, 7465,
+            7730, 7731, 7732, 7733, 7946, 7947
+    ));
+
+    private static final Set<Integer> BAIT_SPOTS = new HashSet<>(Arrays.asList(
+            1497, 1498, 1499, 1500, 1514, 1517, 1526, 1528, 1532, 1533, 1542, 7946, 7947
+    ));
+
+    private static final Set<Integer> LURE_SPOTS = new HashSet<>(Arrays.asList(
+            1506, 1507, 1508, 1509, 1515, 1526, 1527, 3417, 6825, 7463, 7464, 7468, 7676
+    ));
+
+    private static final Set<Integer> CAGE_SPOTS = new HashSet<>(Arrays.asList(
+            1510, 1511, 1519, 1520, 2653, 2654, 2655, 4713, 7466, 7467
+    ));
+
+    private static final Set<Integer> CAGE_HARPOON_SPOTS = new HashSet<>(Arrays.asList(
+            1510, 1519, 1522, 3657, 3914, 5820, 7199, 7460, 7465, 7470, 7946
+    ));
+
+    private static final Set<Integer> BIG_NET_HARPOON_SPOTS = new HashSet<>(Arrays.asList(
+            1520, 3419, 3915, 4476, 4477, 5233, 5234, 7200, 7461, 7466
+    ));
+
+    private static final Set<Integer> NET_HARPOON_SPOTS = new HashSet<>(Arrays.asList(
+            1511, 4316, 5821
+    ));
+
+    private static final Set<Integer> BIG_NET_SPOTS = new HashSet<>(Arrays.asList(
+            1511, 1512, 3913, 3914, 3915, 4079, 4080, 4081, 4082
+    ));
 
     public static boolean handleNpcInteraction(Player player, NPC npc, int option) {
         FishingTool tool = getToolForSpotOption(npc.getId(), option);
@@ -37,6 +73,19 @@ public class Fishing extends DefaultSkillable {
     }
 
     private static FishingTool getToolForSpotOption(int npcId, int option) {
+        if (option == 1) {
+            if (BIG_NET_SPOTS.contains(npcId)) return FishingTool.BIG_NET;
+            if (CAGE_SPOTS.contains(npcId)) return FishingTool.LOBSTER_POT;
+            if (LURE_SPOTS.contains(npcId)) return FishingTool.FLY_FISHING_ROD;
+            if (BAIT_SPOTS.contains(npcId)) return FishingTool.FISHING_ROD;
+            if (NET_SPOTS.contains(npcId)) return FishingTool.NET;
+        } else if (option >= 2) {
+            if (CAGE_HARPOON_SPOTS.contains(npcId)) return FishingTool.HARPOON;
+            if (BIG_NET_HARPOON_SPOTS.contains(npcId)) return FishingTool.SHARK_HARPOON;
+            if (NET_HARPOON_SPOTS.contains(npcId)) return FishingTool.SHARK_HARPOON;
+            if (BAIT_SPOTS.contains(npcId)) return FishingTool.FISHING_ROD;
+        }
+
         switch (npcId) {
             // Shrimp / Anchovies
             case NpcIdentifiers.FISHING_SPOT_6: // 1506
@@ -281,7 +330,7 @@ public class Fishing extends DefaultSkillable {
         FISHING_ROD(307, 5, 313, 1, 622, Fish.SARDINE, Fish.HERRING, Fish.PIKE, Fish.SLIMY_EEL, Fish.CAVE_EEL, Fish.LAVA_EEL),
         FLY_FISHING_ROD(309, 20, 314, 1, 622, Fish.TROUT, Fish.SALMON),
         HARPOON(311, 35, -1, 4, 618, Fish.TUNA, Fish.SWORDFISH),
-        SHARK_HARPOON(311, 35, -1, 6, 618, Fish.SHARK),
+        SHARK_HARPOON(311, 76, -1, 6, 618, Fish.SHARK),
         LOBSTER_POT(301, 40, -1, 4, 619, Fish.LOBSTER);
 
         /**

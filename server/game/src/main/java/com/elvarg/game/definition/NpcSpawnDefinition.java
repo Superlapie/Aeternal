@@ -30,6 +30,10 @@ public class NpcSpawnDefinition extends DefaultSpawnDefinition {
         return radius;
     }
 
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof NpcSpawnDefinition))

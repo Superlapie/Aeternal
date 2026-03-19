@@ -261,6 +261,7 @@ public final class ObjectDefinition extends ObjectIdentifiers {
             Buffer idxBuffer525 = new Buffer(idx);
 
             int totalObjects525 = idxBuffer525.readUnsignedWord();
+            totalObjects = totalObjects525;
             streamIndices = new int[totalObjects525];
             int i = 2;
             for (int j = 0; j < totalObjects525; j++) {

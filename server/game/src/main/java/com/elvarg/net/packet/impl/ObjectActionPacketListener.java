@@ -10,6 +10,7 @@ import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.minigames.impl.FightCaves;
 import com.elvarg.game.content.skill.SkillManager;
 import com.elvarg.game.content.skill.mining.Mining;
+import com.elvarg.game.content.skill.mining.MiningSpawnService;
 import com.elvarg.game.content.skill.impl.smithing.AnvilSmithing;
 import com.elvarg.game.content.skill.impl.smithing.Smelting;
 import com.elvarg.game.content.skill.skillable.impl.Thieving.StallThieving;
@@ -385,7 +386,10 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
     private static void objectInteract(Player player, int id, int x, int y, int clickType) {
         final Location location = new Location(x, y, player.getLocation().getZ());
 
-        final GameObject object = MapObjects.get(player, id, location);
+        GameObject object = MapObjects.get(player, id, location);
+        if (object == null && Mining.isMineableRock(id)) {
+            object = MiningSpawnService.findNearbyRock(id, location, 2);
+        }
 
         if (player.getRights() == PlayerRights.DEVELOPER) {
             String typeFace = object != null ? "[F: " + object.getFace() + " T:" +object.getType() + "]" : "";
@@ -396,6 +400,8 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             return;
         }
 
+        final GameObject resolvedObject = object;
+
         // Get object definition
         final ObjectDefinition def = ObjectDefinition.forId(id);
 
@@ -404,26 +410,45 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             return;
         }
 
-        WalkToTask.submit(player, object, () -> {
+        if (Mining.isMineableRock(id) && MiningSpawnService.isInjectedRock(resolvedObject)
+                && player.getLocation().getDistance(resolvedObject.getLocation()) <= 3) {
+            switch (clickType) {
+                case 1:
+                    firstClick(player, resolvedObject);
+                    break;
+                case 2:
+                    secondClick(player, resolvedObject);
+                    break;
+                case 3:
+                    thirdClick(player, resolvedObject);
+                    break;
+                case 4:
+                    fourthClick(player, resolvedObject);
+                    break;
+            }
+            return;
+        }
+
+        WalkToTask.submit(player, resolvedObject, () -> {
             // Areas
             if (player.getArea() != null) {
-                if (player.getArea().handleObjectClick(player, object, clickType)) {
+                if (player.getArea().handleObjectClick(player, resolvedObject, clickType)) {
                     return;
                 }
             }
 
             switch (clickType) {
                 case 1:
-                    firstClick(player, object);
+                    firstClick(player, resolvedObject);
                     break;
                 case 2:
-                    secondClick(player, object);
+                    secondClick(player, resolvedObject);
                     break;
                 case 3:
-                    thirdClick(player, object);
+                    thirdClick(player, resolvedObject);
                     break;
                 case 4:
-                    fourthClick(player, object);
+                    fourthClick(player, resolvedObject);
                     break;
             }
         });

@@ -334,6 +334,10 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 return;
             }
 
+            if (Fishing.handleNpcInteraction(player, npc, 3)) {
+                return;
+            }
+
 			if (NPCInteractionSystem.handleThirdOption(player, npc)) {
 				// Player is interacting with a defined NPC
 				return;

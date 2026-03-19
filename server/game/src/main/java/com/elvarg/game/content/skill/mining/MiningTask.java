@@ -80,7 +80,7 @@ public class MiningTask extends Task {
         }
         
         // Check if the rock still exists
-        if (!MapObjects.exists(rockObject)) {
+        if (MapObjects.get(rockObject.getId(), rockObject.getLocation(), rockObject.getPrivateArea()) == null) {
             player.getPacketSender().sendMessage("The rock has been depleted.");
             return false;
         }

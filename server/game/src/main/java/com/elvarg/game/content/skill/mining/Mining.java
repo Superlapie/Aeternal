@@ -3,6 +3,7 @@ package com.elvarg.game.content.skill.mining;
 import com.elvarg.game.entity.impl.object.GameObject;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Skill;
+import com.elvarg.game.definition.ObjectDefinition;
 
 /**
  * Main entry point for the Mining skill system.
@@ -20,11 +21,22 @@ public class Mining {
      * @return true if mining was started, false otherwise
      */
     public static boolean startMining(Player player, GameObject object) {
+        MiningRockRegistry.refreshIfNeeded();
+
         // Get the rock type from our cache-driven registry
         MiningRockType rockType = MiningRockRegistry.getRockType(object.getId());
         
         if (rockType == null) {
-            return false; // Not a mineable rock
+            // Fallback: resolve from object definition for rocks missing hard registration.
+            ObjectDefinition def = object.getDefinition();
+            if (def == null || def.getName() == null) {
+                return false;
+            }
+            rockType = MiningRockType.determineRockType(def.getName(), object.getId());
+            if (rockType == null) {
+                return false;
+            }
+            MiningRockRegistry.registerRock(object.getId(), rockType);
         }
         
         // Check if player meets the mining level requirement
@@ -63,6 +75,9 @@ public class Mining {
         
         // Stop any existing skill activity
         player.getSkillManager().stopSkillable();
+
+        // Start the mining animation immediately instead of waiting for the first task cycle.
+        player.performAnimation(pickaxe.getAnimation());
         
         // Start the mining task
         MiningTask miningTask = new MiningTask(player, object, rockType, pickaxe);
@@ -78,6 +93,7 @@ public class Mining {
      * @return true if prospecting was handled
      */
     public static boolean prospectRock(Player player, int objectId) {
+        MiningRockRegistry.refreshIfNeeded();
         return ProspectService.prospectRock(player, objectId);
     }
     

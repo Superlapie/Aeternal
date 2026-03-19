@@ -3,6 +3,7 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.minigames.impl.Barrows;
 import com.elvarg.game.content.sound.SoundManager;
+import com.elvarg.game.content.skill.mining.MiningSpawnService;
 import com.elvarg.game.entity.impl.grounditem.ItemOnGroundManager;
 import com.elvarg.game.entity.impl.npc.NpcAggression;
 import com.elvarg.game.entity.impl.object.ObjectManager;
@@ -20,6 +21,7 @@ public class RegionChangePacketListener implements PacketExecutor {
             SoundManager.onRegionChange(player);
             ItemOnGroundManager.onRegionChange(player);
             ObjectManager.onRegionChange(player);
+            MiningSpawnService.onRegionChange(player);
             Barrows.brotherDespawn(player);
             player.getAggressionTolerance().start(NpcAggression.NPC_TOLERANCE_SECONDS);
             player.setAllowRegionChangePacket(false);

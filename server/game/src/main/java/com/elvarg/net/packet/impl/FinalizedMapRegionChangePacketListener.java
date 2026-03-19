@@ -1,6 +1,8 @@
 package com.elvarg.net.packet.impl;
 
+import com.elvarg.game.entity.impl.object.ObjectManager;
 import com.elvarg.game.entity.impl.player.Player;
+import com.elvarg.game.content.skill.mining.MiningSpawnService;
 import com.elvarg.net.packet.Packet;
 import com.elvarg.net.packet.PacketExecutor;
 
@@ -14,6 +16,7 @@ public class FinalizedMapRegionChangePacketListener implements PacketExecutor {
 
     @Override
     public void execute(Player player, Packet packet) {
-
+        ObjectManager.onRegionChange(player);
+        MiningSpawnService.onRegionChange(player);
     }
 }
