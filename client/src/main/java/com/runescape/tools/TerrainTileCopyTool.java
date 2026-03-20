@@ -22,7 +22,12 @@ import java.util.zip.GZIPOutputStream;
  * Usage:
  * java com.runescape.tools.TerrainTileCopyTool
  *   <cacheDir> <serverMapIndexPath> <serverMapsDir>
- *   <srcX> <srcY> <width> <height> <dstX> <dstY>
+ *   <srcX> <srcY> <width> <height> <dstX> <dstY> [mode]
+ *
+ * mode:
+ *   normal   - direct copy (default)
+ *   mirrorX  - horizontal mirror (left-right)
+ *   mirrorY  - vertical mirror (top-bottom)
  */
 public final class TerrainTileCopyTool {
 
@@ -44,6 +49,7 @@ public final class TerrainTileCopyTool {
         int height = Integer.parseInt(args[6]);
         int dstX = Integer.parseInt(args[7]);
         int dstY = Integer.parseInt(args[8]);
+        String mode = args.length >= 10 ? args[9].trim().toLowerCase() : "normal";
 
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("width/height must be > 0");
@@ -72,6 +78,13 @@ public final class TerrainTileCopyTool {
                 for (int dy = 0; dy < height; dy++) {
                     int sx = srcX + dx;
                     int sy = srcY + dy;
+                    if ("mirrorx".equals(mode)) {
+                        sx = srcX + (width - 1 - dx);
+                    } else if ("mirrory".equals(mode)) {
+                        sy = srcY + (height - 1 - dy);
+                    } else if (!"normal".equals(mode)) {
+                        throw new IllegalArgumentException("Unsupported mode: " + mode);
+                    }
                     int tx = dstX + dx;
                     int ty = dstY + dy;
 
@@ -96,6 +109,7 @@ public final class TerrainTileCopyTool {
 
             System.out.println("Copied terrain rectangle " + width + "x" + height
                     + " from (" + srcX + "," + srcY + ") to (" + dstX + "," + dstY + ").");
+            System.out.println("Mode: " + mode);
             System.out.println("Modified terrain archives: " + written);
         }
     }
@@ -264,4 +278,3 @@ public final class TerrainTileCopyTool {
         }
     }
 }
-

@@ -323,6 +323,9 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 case SQUIRE_6:
                     ShopManager.open(player, ShopIdentifiers.VOID_RANGED_SHOP);
                     break;
+                case GHOST_SHOPKEEPER:
+                    ShopManager.open(player, ShopIdentifiers.GHOST_SKILLING_SUPPLIES);
+                    break;
 
             }
             return;

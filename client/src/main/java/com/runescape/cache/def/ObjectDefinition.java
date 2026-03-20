@@ -221,6 +221,7 @@ public final class ObjectDefinition {
             objectDef.interactions[0] = "Go Through";
             objectDef.name = "Passage";
         }
+
         switch (id) {
             case 10638:
                 objectDef.isInteractive = true;
@@ -228,8 +229,30 @@ public final class ObjectDefinition {
         }
 
         applyUniversalBankBoothInteractions(objectDef);
+        applyCustomTreeInteractions(objectDef);
 
         return objectDef;
+    }
+
+    private static void applyCustomTreeInteractions(ObjectDefinition objectDef) {
+        if (objectDef == null) {
+            return;
+        }
+
+        switch (objectDef.type) {
+            case 8409: // Magic
+            case 8513: // Yew
+            case 8444: // Maple
+            case 8488: // Willow
+            case 4533: // Oak
+            case 1279: // Normal
+                objectDef.isInteractive = true;
+                objectDef.interactions = new String[5];
+                objectDef.interactions[0] = "Chop down";
+                break;
+            default:
+                break;
+        }
     }
 
     private static void applyUniversalBankBoothInteractions(ObjectDefinition objectDef) {

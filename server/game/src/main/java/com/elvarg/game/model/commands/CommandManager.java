@@ -122,6 +122,7 @@ public class CommandManager {
         put(new GiveDonator(), "givedonator");
         put(new SetDropRateCommand(), "setdroprate");
         put(new IdCommand(), "id");
+        put(new ObidCommand(), "obid", "oid", "objectid");
         put(new TestMoonItems(), "testmoon");
         put(new DebugItemLoading(), "debugitems");
 
