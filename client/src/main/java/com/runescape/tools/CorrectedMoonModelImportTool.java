@@ -13,7 +13,9 @@ import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Corrected import tool for moon models that doesn't double-gzip the data
+ * Imports selected model ids from an OpenRS2 flat cache into a 317 idx1 store.
+ * This tool writes raw model payloads (no extra gzip) and verifies the idx entry
+ * after each write to avoid silent zero-length corruption.
  */
 public final class CorrectedMoonModelImportTool {
 
@@ -77,17 +79,23 @@ public final class CorrectedMoonModelImportTool {
                 }
 
                 byte[] raw = unpackJs5Container(rawContainer);
-                
-                // Check if the unpacked data is still compressed (starts with GZIP signature)
-                if (raw.length >= 2 && (raw[0] & 0xFF) == 0x1F && (raw[1] & 0xFF) == 0x8B) {
-                    // It's still compressed, decompress it
-                    raw = gunzip(raw);
+                if (raw == null || raw.length == 0) {
+                    System.out.println("FAIL " + id + " (decoded raw length=0)");
+                    failed++;
+                    continue;
                 }
-                
+
                 boolean ok = target.writeFile(raw.length, raw, id);
                 if (ok) {
-                    System.out.println("OK   " + id + " (" + raw.length + " raw bytes)");
-                    copied++;
+                    int[] idxEntry = readIdxEntry(targetIdxRaf, id);
+                    int writtenSize = idxEntry[0];
+                    if (writtenSize == raw.length) {
+                        System.out.println("OK   " + id + " (" + raw.length + " raw bytes, sector=" + idxEntry[1] + ")");
+                        copied++;
+                    } else {
+                        System.out.println("FAIL " + id + " (idx size mismatch raw=" + raw.length + ", idx=" + writtenSize + ")");
+                        failed++;
+                    }
                 } else {
                     System.out.println("FAIL " + id + " (write error)");
                     failed++;
@@ -150,6 +158,18 @@ public final class CorrectedMoonModelImportTool {
             return -1;
         }
         return ((data[offset] & 0xFF) << 24) | ((data[offset + 1] & 0xFF) << 16) | ((data[offset + 2] & 0xFF) << 8) | (data[offset + 3] & 0xFF);
+    }
+
+    private static int[] readIdxEntry(RandomAccessFile idx, int id) throws Exception {
+        byte[] entry = new byte[6];
+        idx.seek((long) id * 6L);
+        int read = idx.read(entry);
+        if (read != 6) {
+            return new int[] {-1, -1};
+        }
+        int size = ((entry[0] & 0xFF) << 16) | ((entry[1] & 0xFF) << 8) | (entry[2] & 0xFF);
+        int sector = ((entry[3] & 0xFF) << 16) | ((entry[4] & 0xFF) << 8) | (entry[5] & 0xFF);
+        return new int[] {size, sector};
     }
 
     private static List<Integer> parseIds(String csv) {

@@ -722,6 +722,16 @@ public class Model extends Renderable {
             class21_1.anInt375 = l2;
             l2 += j2;
         } catch (Exception _ex) {
+            // Newer imported models may not include the legacy 18-byte footer layout.
+            // Keep the raw payload so constructor decode fallbacks can still parse it.
+            try {
+                ModelHeader fallback = modelHeader[j] = new ModelHeader();
+                fallback.aByteArray368 = abyte0;
+                fallback.anInt369 = 0;
+                fallback.anInt370 = 0;
+                fallback.anInt371 = 0;
+            } catch (Throwable ignored) {
+            }
         }
     }
 

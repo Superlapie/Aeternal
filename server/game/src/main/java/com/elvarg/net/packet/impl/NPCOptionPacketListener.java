@@ -82,6 +82,10 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
         return npcId == 2148 || npcId == 2149 || npcId == 2150 || npcId == 2151 || npcId == 8745;
     }
 
+    private static boolean isGhostShopkeeper(int npcId) {
+        return npcId == 3000 || npcId == GHOST_SHOPKEEPER;
+    }
+
     @Override
     public void execute(Player player, Packet packet) {
         int index = packet.readLEShortA();
@@ -107,6 +111,15 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 || opcode == PacketConstants.THIRD_CLICK_NPC_OPCODE
                 || opcode == PacketConstants.FOURTH_CLICK_NPC_OPCODE)) {
             player.getGrandExchange().openMainInterface();
+            return;
+        }
+
+        if (isGhostShopkeeper(npc.getId())
+                && (opcode == PacketConstants.FIRST_CLICK_NPC_OPCODE
+                || opcode == PacketConstants.SECOND_CLICK_NPC_OPCODE
+                || opcode == PacketConstants.THIRD_CLICK_NPC_OPCODE
+                || opcode == PacketConstants.FOURTH_CLICK_NPC_OPCODE)) {
+            ShopManager.open(player, ShopIdentifiers.GHOST_SKILLING_SUPPLIES);
             return;
         }
 

@@ -5,6 +5,7 @@ import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Item;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -39,6 +40,7 @@ public class GrandExchangeManager {
 
     private static final Path SAVE_PATH = Path.of("../data/grand_exchange.json");
     private static final Path BUY_LIMITS_PATH = Path.of("../data/ge_buy_limits.json");
+    private static final Path GE_TRADEABLE_LIST_PATH = Path.of("../GETradeable.txt");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final GrandExchangeManager INSTANCE = new GrandExchangeManager();
 
@@ -47,6 +49,7 @@ public class GrandExchangeManager {
     private final Map<String, Map<Integer, BuyLimitWindow>> buyLimitWindows = new HashMap<>();
     private final Map<Integer, Integer> buyLimits = new HashMap<>();
     private final Set<Integer> taxExemptItemIds = new HashSet<>();
+    private final Set<String> geTradeableNames = new HashSet<>();
     private int nextOfferId = 1;
 
     private GrandExchangeManager() {
@@ -88,6 +91,7 @@ public class GrandExchangeManager {
             }
             loadBuyLimits();
             loadTaxExemptItems();
+            loadGeTradeableNames();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -549,7 +553,52 @@ public class GrandExchangeManager {
 
     private boolean isTradeableInGe(int itemId) {
         ItemDefinition def = ItemDefinition.forId(itemId);
-        return def != null && def != ItemDefinition.DEFAULT && def.isTradeable();
+        if (def == null || def == ItemDefinition.DEFAULT || !def.isTradeable()) {
+            return false;
+        }
+        if (geTradeableNames.isEmpty()) {
+            return true;
+        }
+        String name = def.getName() == null ? "" : def.getName().trim().toLowerCase();
+        return !name.isEmpty() && geTradeableNames.contains(name);
+    }
+
+    private void loadGeTradeableNames() {
+        geTradeableNames.clear();
+        try {
+            File file = GE_TRADEABLE_LIST_PATH.toFile();
+            if (!file.exists()) {
+                System.out.println("GrandExchange whitelist not found: " + GE_TRADEABLE_LIST_PATH.toAbsolutePath());
+                return;
+            }
+            String json = Files.readString(GE_TRADEABLE_LIST_PATH, StandardCharsets.UTF_8);
+            JsonElement root = GSON.fromJson(json, JsonElement.class);
+            if (root == null || !root.isJsonArray()) {
+                System.out.println("GrandExchange whitelist format invalid (expected JSON array).");
+                return;
+            }
+            JsonArray array = root.getAsJsonArray();
+            for (JsonElement element : array) {
+                if (element == null || !element.isJsonObject()) {
+                    continue;
+                }
+                JsonObject obj = element.getAsJsonObject();
+                if (!obj.has("name")) {
+                    continue;
+                }
+                String name = obj.get("name").getAsString();
+                if (name == null) {
+                    continue;
+                }
+                String normalized = name.trim().toLowerCase();
+                if (!normalized.isEmpty()) {
+                    geTradeableNames.add(normalized);
+                }
+            }
+            System.out.println("GrandExchange whitelist loaded: " + geTradeableNames.size() + " names.");
+        } catch (Exception e) {
+            System.out.println("Failed to load GrandExchange whitelist: " + e.getMessage());
+        }
     }
 
     private void loadTaxExemptItems() {

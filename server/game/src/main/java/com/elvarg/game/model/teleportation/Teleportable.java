@@ -45,7 +45,8 @@ public enum Teleportable {
 	SEERS_VILLAGE_CITY(TeleportButton.CITY, 4, 3, new Location(2725, 3492)),
 	ARDOUGNE(TeleportButton.CITY, 4, 4, new Location(2661, 3302)),
 	CAMELOT(TeleportButton.CITY, 4, 5, new Location(2757, 3479)),
-	YANILLE(TeleportButton.CITY, 4, 6, new Location(2606, 3093))
+	YANILLE(TeleportButton.CITY, 4, 6, new Location(2606, 3093)),
+	GRAND_EXCHANGE(TeleportButton.CITY, 4, 7, new Location(3163, 3479))
 	
 	;
 	

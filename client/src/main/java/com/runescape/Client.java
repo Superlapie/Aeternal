@@ -129,6 +129,9 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.text.NumberFormat;
 
@@ -1121,6 +1124,8 @@ public class Client extends GameApplet {
     private String geSearchSyntax = "";
     private final int[] geSearchResults = new int[100];
     private boolean fetchGeSearchResults;
+    private final Set<String> geTradeableNameWhitelist = new HashSet<>();
+    private boolean geTradeableWhitelistLoaded;
     private boolean searchingGe;
 
     private SpawnTabType spawnType = SpawnTabType.INVENTORY;
@@ -3683,6 +3688,7 @@ public class Client extends GameApplet {
     }
 
     public void processGeSearch() {
+        ensureGeTradeableWhitelistLoaded();
         if (fetchGeSearchResults) {
             for (int i = 0; i < geSearchResults.length; i++) {
                 geSearchResults[i] = -1;
@@ -3702,6 +3708,9 @@ public class Client extends GameApplet {
                     }
                     String lowerName = def.name.toLowerCase();
                     if (!lowerName.contains(syntax)) {
+                        continue;
+                    }
+                    if (!geTradeableNameWhitelist.isEmpty() && !geTradeableNameWhitelist.contains(lowerName)) {
                         continue;
                     }
                     if (!seenNames.add(lowerName)) {
@@ -3743,6 +3752,59 @@ public class Client extends GameApplet {
 
         String textInput = geSearchSyntax.length() > 0 ? StringUtils.formatText(geSearchSyntax) : "";
         Widget.interfaceCache[56605].defaultText = textInput.isEmpty() ? "Type to search..." : textInput;
+    }
+
+    private void ensureGeTradeableWhitelistLoaded() {
+        if (geTradeableWhitelistLoaded) {
+            return;
+        }
+        geTradeableWhitelistLoaded = true;
+        geTradeableNameWhitelist.clear();
+
+        String[] candidates = {"GETradeable.txt", "../GETradeable.txt", "../../GETradeable.txt"};
+        String json = null;
+        for (String candidate : candidates) {
+            try {
+                Path path = Path.of(candidate);
+                if (!Files.exists(path)) {
+                    continue;
+                }
+                json = new String(Files.readAllBytes(path), StandardCharsets.UTF_8);
+                break;
+            } catch (Exception ignored) {
+            }
+        }
+        if (json == null || json.isEmpty()) {
+            System.out.println("GE search whitelist not found; search will use cache tradeables.");
+            return;
+        }
+
+        String token = "\"name\"";
+        int index = 0;
+        while (true) {
+            index = json.indexOf(token, index);
+            if (index == -1) {
+                break;
+            }
+            int colon = json.indexOf(':', index + token.length());
+            if (colon == -1) {
+                break;
+            }
+            int openQuote = json.indexOf('"', colon + 1);
+            if (openQuote == -1) {
+                break;
+            }
+            int closeQuote = json.indexOf('"', openQuote + 1);
+            if (closeQuote == -1) {
+                break;
+            }
+            String name = json.substring(openQuote + 1, closeQuote).trim().toLowerCase(Locale.ROOT);
+            if (!name.isEmpty()) {
+                geTradeableNameWhitelist.add(name);
+            }
+            index = closeQuote + 1;
+        }
+        System.out.println("GE search whitelist loaded: " + geTradeableNameWhitelist.size() + " names.");
     }
 
 

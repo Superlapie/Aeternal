@@ -112,15 +112,17 @@ public final class SignLink {
         final File primary = new File(Configuration.CACHE_DIRECTORY);
         final File fallback = new File(getFallbackCacheDir());
         if (ensureWritableDirectory(fallback)) {
-            syncCacheFile(primary.toPath(), fallback.toPath(), "main_file_cache.dat");
+            // Copy core cache stores only when missing in fallback.
+            // Replacing them on each boot can wipe runtime/imported cache edits.
+            syncCacheFileIfMissing(primary.toPath(), fallback.toPath(), "main_file_cache.dat");
             for (int i = 0; i < 5; i++) {
-                syncCacheFile(primary.toPath(), fallback.toPath(), "main_file_cache.idx" + i);
+                syncCacheFileIfMissing(primary.toPath(), fallback.toPath(), "main_file_cache.idx" + i);
             }
-            syncCacheFile(primary.toPath(), fallback.toPath(), "map_index");
-            syncCacheFile(primary.toPath(), fallback.toPath(), "flo.dat");
-            syncCacheFile(primary.toPath(), fallback.toPath(), "loc.dat");
-            syncCacheFile(primary.toPath(), fallback.toPath(), "seq.dat");
-            syncCacheFile(primary.toPath(), fallback.toPath(), "spotanim.dat");
+            syncCacheFileIfMissing(primary.toPath(), fallback.toPath(), "map_index");
+            syncCacheFileIfMissing(primary.toPath(), fallback.toPath(), "flo.dat");
+            syncCacheFileIfMissing(primary.toPath(), fallback.toPath(), "loc.dat");
+            syncCacheFileIfMissing(primary.toPath(), fallback.toPath(), "seq.dat");
+            syncCacheFileIfMissing(primary.toPath(), fallback.toPath(), "spotanim.dat");
         }
         return withTrailingSeparator(fallback);
     }
@@ -158,6 +160,17 @@ public final class SignLink {
             Path target = targetDir.resolve(fileName);
             if (Files.exists(source)) {
                 Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    private static void syncCacheFileIfMissing(Path sourceDir, Path targetDir, String fileName) {
+        try {
+            Path source = sourceDir.resolve(fileName);
+            Path target = targetDir.resolve(fileName);
+            if (Files.exists(source) && !Files.exists(target)) {
+                Files.copy(source, target);
             }
         } catch (IOException ignored) {
         }

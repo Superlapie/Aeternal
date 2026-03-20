@@ -23834,7 +23834,7 @@
     "examine": "A nice sturdy bow.",
     "weaponInterface": "UNARMED",
     "equipmentType": "WEAPON",
-    "doubleHanded": true,
+    "doubleHanded": false,
     "stackable": false,
     "tradeable": true,
     "dropable": true,

@@ -121,6 +121,10 @@ public class ItemDefinition {
     }
 
     public boolean isDoubleHanded() {
+        // Explicit override: Voidwaker is one-handed.
+        if (id == 27690) {
+            return false;
+        }
         return doubleHanded;
     }
 

@@ -87,6 +87,9 @@ public final class FileStore {
     }
 
     public synchronized boolean writeFile(int length, byte[] data, int index) {
+        if (data == null || length <= 0 || data.length < length || index < 0) {
+            return false;
+        }
         return writeFile(data, index, length, true) || writeFile(data, index, length, false);
     }
 

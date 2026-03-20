@@ -36,6 +36,7 @@ public class CommandManager {
         put(new MaxHit(), "maxhit", "mh");
         put(new DropRateCommand(), "droprate");
         put(new SmeltCommand(), "smelt");
+        put(new GrandExchangeCommand(), "ge");
 
         /**
          * Donators Command
