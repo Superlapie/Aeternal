@@ -42,7 +42,8 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             return;
         }
 
-        if (containerId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+        if (containerId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID
+                || containerId == GrandExchangePlayer.INVENTORY_INTERFACE_ID) {
             if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 1)) {
                 return;
             }
@@ -152,7 +153,8 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             return;
         }
 
-        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID
+                || interfaceId == GrandExchangePlayer.INVENTORY_INTERFACE_ID) {
             if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 2)) {
                 return;
             }
@@ -222,7 +224,8 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             return;
         }
 
-        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID
+                || interfaceId == GrandExchangePlayer.INVENTORY_INTERFACE_ID) {
             if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 3)) {
                 return;
             }
@@ -293,7 +296,8 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             return;
         }
 
-        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID
+                || interfaceId == GrandExchangePlayer.INVENTORY_INTERFACE_ID) {
             if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 4)) {
                 return;
             }
@@ -363,7 +367,8 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             return;
         }
 
-        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID
+                || interfaceId == GrandExchangePlayer.INVENTORY_INTERFACE_ID) {
             if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 5)) {
                 return;
             }

@@ -9,6 +9,7 @@ public class GrandExchangeOffer {
     private int amount;
     private int processedAmount;
     private int price;
+    private int taxRatePercent;
     private GrandExchangeOfferType type;
     private boolean active;
 
@@ -24,6 +25,11 @@ public class GrandExchangeOffer {
         this.price = price;
         this.type = type;
         this.active = true;
+    }
+
+    public GrandExchangeOffer(int id, String owner, int slot, int itemId, int amount, int price, int taxRatePercent, GrandExchangeOfferType type) {
+        this(id, owner, slot, itemId, amount, price, type);
+        this.taxRatePercent = Math.max(0, taxRatePercent);
     }
 
     public int getRemainingAmount() {
@@ -64,6 +70,14 @@ public class GrandExchangeOffer {
 
     public int getPrice() {
         return price;
+    }
+
+    public int getTaxRatePercent() {
+        return taxRatePercent;
+    }
+
+    public void setTaxRatePercent(int taxRatePercent) {
+        this.taxRatePercent = Math.max(0, taxRatePercent);
     }
 
     public GrandExchangeOfferType getType() {

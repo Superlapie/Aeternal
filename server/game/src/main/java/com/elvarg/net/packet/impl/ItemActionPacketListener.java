@@ -4,6 +4,7 @@ import com.elvarg.game.GameConstants;
 import com.elvarg.game.content.Food;
 import com.elvarg.game.content.Gambling;
 import com.elvarg.game.content.PotionConsumable;
+import com.elvarg.game.content.grandexchange.GrandExchangePlayer;
 import com.elvarg.game.content.combat.BlowpipeData;
 import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.combat.ScytheData;
@@ -33,7 +34,6 @@ import static com.elvarg.game.content.skill.skillable.impl.woodcutting.BirdNest.
 public class ItemActionPacketListener implements PacketExecutor {
 
 	private static void firstAction(final Player player, Packet packet) {
-		@SuppressWarnings("unused")
 		int interfaceId = packet.readUnsignedShort();
 		int itemId = packet.readShort();
 		int slot = packet.readShort();
@@ -42,6 +42,16 @@ public class ItemActionPacketListener implements PacketExecutor {
 			return;
 		if (player.getInventory().getItems()[slot].getId() != itemId)
 			return;
+		if (player.getGrandExchange().isSellSelectionMode()) {
+			int slotItemId = player.getInventory().getItems()[slot].getId();
+			if (slotItemId > 0) {
+				player.getGrandExchange().handleInventoryOverlayItem(slotItemId, slot, 1);
+			}
+			return;
+		}
+		if (player.getGrandExchange().handleInventoryOverlayItem(itemId, slot, 1)) {
+			return;
+		}
 
 		if (player.isTeleporting() || player.getHitpoints() <= 0)
 			return;
@@ -224,7 +234,6 @@ public class ItemActionPacketListener implements PacketExecutor {
 	}
 
 	public static void secondAction(Player player, Packet packet) {
-		@SuppressWarnings("unused")
 		int interfaceId = packet.readLEShortA();
 		int slot = packet.readLEShort();
 		int itemId = packet.readShortA();
@@ -232,6 +241,16 @@ public class ItemActionPacketListener implements PacketExecutor {
 			return;
 		if (player.getInventory().getItems()[slot].getId() != itemId)
 			return;
+		if (player.getGrandExchange().isSellSelectionMode()) {
+			int slotItemId = player.getInventory().getItems()[slot].getId();
+			if (slotItemId > 0) {
+				player.getGrandExchange().handleInventoryOverlayItem(slotItemId, slot, 2);
+			}
+			return;
+		}
+		if (player.getGrandExchange().handleInventoryOverlayItem(itemId, slot, 2)) {
+			return;
+		}
 
 		if (Runecrafting.handleTalisman(player, itemId)) {
 			return;
@@ -271,12 +290,21 @@ public class ItemActionPacketListener implements PacketExecutor {
 	public void thirdClickAction(Player player, Packet packet) {
 		int itemId = packet.readShortA();
 		int slot = packet.readLEShortA();
-		@SuppressWarnings("unused")
 		int interfaceId = packet.readLEShortA();
 		if (slot < 0 || slot >= player.getInventory().capacity())
 			return;
 		if (player.getInventory().getItems()[slot].getId() != itemId)
 			return;
+		if (player.getGrandExchange().isSellSelectionMode()) {
+			int slotItemId = player.getInventory().getItems()[slot].getId();
+			if (slotItemId > 0) {
+				player.getGrandExchange().handleInventoryOverlayItem(slotItemId, slot, 3);
+			}
+			return;
+		}
+		if (player.getGrandExchange().handleInventoryOverlayItem(itemId, slot, 3)) {
+			return;
+		}
 
 		if (BarrowsSet.pack(player, itemId)) {
 			return;

@@ -1118,6 +1118,10 @@ public class Client extends GameApplet {
     private boolean fetchSearchResults;
 
     private boolean searchingSpawnTab;
+    private String geSearchSyntax = "";
+    private final int[] geSearchResults = new int[100];
+    private boolean fetchGeSearchResults;
+    private boolean searchingGe;
 
     private SpawnTabType spawnType = SpawnTabType.INVENTORY;
 
@@ -3678,6 +3682,69 @@ public class Client extends GameApplet {
 
     }
 
+    public void processGeSearch() {
+        if (fetchGeSearchResults) {
+            for (int i = 0; i < geSearchResults.length; i++) {
+                geSearchResults[i] = -1;
+            }
+
+            int totalResults = 0;
+            String syntax = geSearchSyntax == null ? "" : geSearchSyntax.toLowerCase();
+            if (syntax.length() >= 1) {
+                HashSet<String> seenNames = new HashSet<>();
+                for (int itemId = 0; itemId < ItemDefinition.totalItems; itemId++) {
+                    final ItemDefinition def = ItemDefinition.lookup(itemId);
+                    if (def == null || def.name == null || def.name.trim().isEmpty()) {
+                        continue;
+                    }
+                    if (def.noted_item_id != -1) {
+                        continue;
+                    }
+                    String lowerName = def.name.toLowerCase();
+                    if (!lowerName.contains(syntax)) {
+                        continue;
+                    }
+                    if (!seenNames.add(lowerName)) {
+                        continue;
+                    }
+                    geSearchResults[totalResults++] = def.id;
+                    if (totalResults >= geSearchResults.length) {
+                        break;
+                    }
+                }
+            }
+
+            for (int i = 56621; i <= 56720; i++) {
+                Widget w = Widget.interfaceCache[i];
+                w.hidden = true;
+            }
+
+            int interfaceId = 56621;
+            for (int def : geSearchResults) {
+                if (def == -1) {
+                    continue;
+                }
+                Widget w = Widget.interfaceCache[interfaceId];
+                w.hidden = false;
+                String itemName = ItemDefinition.lookup(def).name;
+                if (itemName.length() > 46) {
+                    itemName = itemName.substring(0, 46) + "..";
+                }
+                w.defaultText = itemName;
+                interfaceId++;
+                if (interfaceId > 56720) {
+                    break;
+                }
+            }
+
+            Widget.interfaceCache[56620].scrollMax = Math.max(102, (interfaceId - 56621) * 16);
+            fetchGeSearchResults = false;
+        }
+
+        String textInput = geSearchSyntax.length() > 0 ? StringUtils.formatText(geSearchSyntax) : "";
+        Widget.interfaceCache[56605].defaultText = textInput.isEmpty() ? "Type to search..." : textInput;
+    }
+
 
 
     private void addToXPCounter(int skill, int xp) {
@@ -4280,7 +4347,11 @@ public class Client extends GameApplet {
 
             try {
 
-                drawInterface(0, 20, Widget.interfaceCache[backDialogueId], 20 + yOffset);
+                if (backDialogueId == 56600) {
+                    drawInterface(0, 10, Widget.interfaceCache[backDialogueId], 10 + yOffset);
+                } else {
+                    drawInterface(0, 20, Widget.interfaceCache[backDialogueId], 20 + yOffset);
+                }
 
             } catch (Exception ex) {
 
@@ -6309,6 +6380,18 @@ public class Client extends GameApplet {
                                     boolean hasDestroyOption = false;
 
                                     ItemDefinition itemDef = ItemDefinition.lookup(childInterface.inventoryItemId[k2] - 1);
+                                    boolean geSellSelectMode = openInterfaceId == 51000
+                                            && overlayInterfaceId == 3213
+                                            && childInterface.id == 3214;
+                                    if (geSellSelectMode) {
+                                        menuActionText[menuActionRow] = "Select @lre@" + itemDef.name;
+                                        menuActionTypes[menuActionRow] = 74;
+                                        selectedMenuActions[menuActionRow] = itemDef.id;
+                                        firstMenuAction[menuActionRow] = k2;
+                                        secondMenuAction[menuActionRow] = childInterface.id;
+                                        menuActionRow++;
+                                        continue;
+                                    }
 
                                     if (itemSelected == 1 && childInterface.hasActions) {
 
@@ -12631,6 +12714,22 @@ public class Client extends GameApplet {
 
         }
 
+        if (backDialogueId == 56600 && button >= 56621 && button <= 56720) {
+            int index = button - 56621;
+            if (index >= 0 && index < geSearchResults.length) {
+                int item = geSearchResults[index];
+                if (item > 0) {
+                    ItemDefinition def = ItemDefinition.lookup(item);
+                    if (def != null && def.name != null && !def.name.isEmpty()) {
+                        packetSender.sendEnteredSyntax("__geitemname__:" + def.name);
+                    } else {
+                        packetSender.sendEnteredSyntax("__geitem__:" + item);
+                    }
+                }
+            }
+            return;
+        }
+
 
 
         // Clear history
@@ -13419,6 +13518,29 @@ public class Client extends GameApplet {
 
                 return;
 
+            }
+
+            // GE search rows
+            if (button >= 56621 && button <= 56720) {
+                int index = button - 56621;
+                if (index >= 0 && index < geSearchResults.length) {
+                    int item = geSearchResults[index];
+                    if (item > 0) {
+                        ItemDefinition def = ItemDefinition.lookup(item);
+                        if (def != null && def.name != null && !def.name.isEmpty()) {
+                            packetSender.sendEnteredSyntax("__geitemname__:" + def.name);
+                        } else {
+                            packetSender.sendEnteredSyntax("__geitem__:" + item);
+                        }
+                    }
+                }
+                return;
+            }
+
+            if (button == 56608) {
+                searchingGe = false;
+                geSearchSyntax = "";
+                fetchGeSearchResults = false;
             }
 
 
@@ -15890,6 +16012,17 @@ public class Client extends GameApplet {
 
                 return;
 
+            }
+
+            if (searchingGe && backDialogueId == 56600) {
+                if (key == 8 && geSearchSyntax.length() > 0) {
+                    geSearchSyntax = geSearchSyntax.substring(0, geSearchSyntax.length() - 1);
+                }
+                if (key >= 32 && key <= 122 && geSearchSyntax.length() < 40) {
+                    geSearchSyntax += (char) key;
+                }
+                fetchGeSearchResults = true;
+                return;
             }
 
 
@@ -21994,7 +22127,17 @@ public class Client extends GameApplet {
 
 
 
-        Rasterizer2D.setDrawingArea(y + rsInterface.height, x, x + rsInterface.width, y);
+        int clipLeftBound = x;
+        int clipTopBound = y;
+        int clipRightBound = x + rsInterface.width;
+        int clipBottomBound = y + rsInterface.height;
+        if (rsInterface.id == 56600) {
+            // GE search uses negative child offsets to fill the full chatbox region.
+            // Expand clip only on top/left so those pixels are not cut off.
+            clipLeftBound -= 64;
+            clipTopBound -= 64;
+        }
+        Rasterizer2D.setDrawingArea(clipBottomBound, clipLeftBound, clipRightBound, clipTopBound);
 
         int childCount = rsInterface.children.length;
 
@@ -22004,6 +22147,10 @@ public class Client extends GameApplet {
 
             processSpawnTab();
 
+        }
+
+        if (rsInterface.id == 56600) {
+            processGeSearch();
         }
 
 
@@ -22119,6 +22266,9 @@ public class Client extends GameApplet {
                     boolean drawnBank = false;
 
                     int item = 0;
+                    final boolean geSellSelectMode = openInterfaceId == 51000 && overlayInterfaceId == 3213
+                            && childInterface.id == 3214;
+                    final int geAuraOpacity = (tickDelta % 30 < 15) ? 64 : 34;
 
                     for (int row = 0; row < childInterface.height; row++) {
 
@@ -22141,6 +22291,11 @@ public class Client extends GameApplet {
 
 
                             if (item < childInterface.inventoryItemId.length && childInterface.inventoryItemId[item] > 0) {
+
+                                if (geSellSelectMode) {
+                                    Rasterizer2D.drawTransparentBox(tileX, tileY, 32, 32, 0xFFD400, geAuraOpacity);
+                                    Rasterizer2D.drawBoxOutline(tileX, tileY, 32, 32, 0xA07A00);
+                                }
 
                                 int dragOffsetX = 0;
 
@@ -31036,6 +31191,9 @@ public class Client extends GameApplet {
         if (backDialogueId != -1) {
 
             backDialogueId = -1;
+            searchingGe = false;
+            geSearchSyntax = "";
+            fetchGeSearchResults = false;
 
             updateChatbox = true;
 
@@ -33227,7 +33385,10 @@ public class Client extends GameApplet {
 
                 int id = incoming.readInt();
 
+                // Some interface paths check `hidden`, others check `invisible`.
+                // Keep both in sync so server-side visibility toggles are deterministic.
                 Widget.interfaceCache[id].invisible = hide;
+                Widget.interfaceCache[id].hidden = hide;
 
                 opcode = -1;
 
@@ -33968,6 +34129,11 @@ public class Client extends GameApplet {
                 }
 
                 backDialogueId = id;
+                searchingGe = id == 56600;
+                if (searchingGe) {
+                    geSearchSyntax = "";
+                    fetchGeSearchResults = true;
+                }
 
                 updateChatbox = true;
 

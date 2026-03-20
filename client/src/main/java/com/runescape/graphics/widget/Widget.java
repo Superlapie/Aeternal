@@ -577,7 +577,7 @@ public class Widget {
 
 	private static void grandExchangeInterfaces() {
 		Widget main = addInterface(56500);
-		main.totalChildren(97);
+		main.totalChildren(289);
 
 		// Main GE shell (left-shifted to match classic OSRS placement)
 		addSprite(56503, 600);
@@ -625,6 +625,10 @@ public class Widget {
 			int offerBarRed = slotBox + 4;
 			int offerBarGreen = slotBox + 5;
 			int priceText = slotBox + 6;
+			int progressText = 51550 + slot;
+			int itemBox = 51400 + (slot * 10);
+			int itemBoxInner = itemBox + 1;
+			int itemSprite = itemBox + 2;
 			int buyText = buttonBase;
 			int sellText = buttonBase + 1;
 			int abortText = buttonBase + 2;
@@ -635,7 +639,31 @@ public class Widget {
 			addPixels(offerBarGreen, 0x0f7a14, slotWidth - 12, 10, 0, true);
 			addPixels(offerBarRed, 0x8b1f1f, slotWidth - 12, 10, 0, true);
 			addPixels(offerBarGray, 0x666666, slotWidth - 12, 10, 0, true);
-			addText(statusText, "Empty", fonts, 1, 0xff981f, true, true);
+			for (int seg = 0; seg < 20; seg++) {
+				int segId = 52000 + (slot * 20) + seg;
+				addPixels(segId, 0xc49017, 5, 10, 0, true);
+			}
+			addPixels(itemBox, 0x3d3428, 50, 50, 0, true);
+			addPixels(itemBoxInner, 0x5A5245, 48, 48, 0, false);
+			Widget icon = addInterface(itemSprite);
+			icon.actions = null;
+			icon.spritesX = new int[1];
+			icon.spritesY = new int[1];
+			icon.inventoryItemId = new int[1];
+			icon.inventoryAmounts = new int[1];
+			icon.centerText = false;
+			icon.filled = false;
+			icon.replaceItems = false;
+			icon.usableItems = false;
+			icon.allowSwapItems = false;
+			icon.spritePaddingX = 0;
+			icon.spritePaddingY = 0;
+			icon.height = 1;
+			icon.width = 1;
+			icon.parent = 56500;
+			icon.type = TYPE_INVENTORY;
+			addText(statusText, "Empty", fonts, 1, 0xff981f, false, true);
+			addText(progressText, "", fonts, 0, 0xffcc66, false, true);
 			addText(priceText, "0 coins", fonts, 0, 0xffe28a, true, true);
 
 			addHoverText(buyText, "Buy", "Buy", fonts, 0, 0xffe28a, true, true, 24, 0xffffff);
@@ -644,11 +672,19 @@ public class Widget {
 
 			main.child(child++, slotBox, x, y);
 			main.child(child++, slotInner, x, y);
-			main.child(child++, statusText, x + (slotWidth / 2), y + 10);
+			main.child(child++, itemBox, x + 6, y + 12);
+			main.child(child++, itemBoxInner, x + 7, y + 13);
+			main.child(child++, itemSprite, x + 15, y + 21);
+			main.child(child++, statusText, x + 30, y + 0);
+			main.child(child++, progressText, x + 30, y + 42);
 			main.child(child++, offerBarTrack, x + 6, y + 62);
 			main.child(child++, offerBarGreen, x + 6, y + 62);
 			main.child(child++, offerBarRed, x + 6, y + 62);
 			main.child(child++, offerBarGray, x + 6, y + 62);
+			for (int seg = 0; seg < 20; seg++) {
+				int segId = 52000 + (slot * 20) + seg;
+				main.child(child++, segId, x + 6 + (seg * 5), y + 62);
+			}
 			main.child(child++, priceText, x + (slotWidth / 2), y + 78);
 
 			main.child(child++, buyText, x + 22, y + 90);
@@ -657,7 +693,7 @@ public class Widget {
 		}
 
 		Widget offer = addInterface(51000);
-		offer.totalChildren(57);
+		offer.totalChildren(58);
 
 		addSprite(51005, 600);
 		addPixels(51006, 0x2b241b, 476, 292, 0, true);
@@ -683,8 +719,25 @@ public class Widget {
 		addPixels(51027, 0x5A5245, 170, 20, 0, false);
 		addPixels(51028, 0x3d3428, 170, 20, 0, true);
 		addPixels(51029, 0x5A5245, 170, 20, 0, false);
-		addPixels(51053, 0x3d3428, 82, 52, 0, true);
-		addPixels(51054, 0x5A5245, 82, 52, 0, false);
+		addPixels(51053, 0x3d3428, 50, 50, 0, true);
+		addPixels(51054, 0x5A5245, 48, 48, 0, false);
+		Widget offerItemIcon = addInterface(51056);
+		offerItemIcon.actions = null;
+		offerItemIcon.spritesX = new int[1];
+		offerItemIcon.spritesY = new int[1];
+		offerItemIcon.inventoryItemId = new int[1];
+		offerItemIcon.inventoryAmounts = new int[1];
+		offerItemIcon.centerText = false;
+		offerItemIcon.filled = false;
+		offerItemIcon.replaceItems = false;
+		offerItemIcon.usableItems = false;
+		offerItemIcon.allowSwapItems = false;
+		offerItemIcon.spritePaddingX = 0;
+		offerItemIcon.spritePaddingY = 0;
+		offerItemIcon.height = 1;
+		offerItemIcon.width = 1;
+		offerItemIcon.parent = 51000;
+		offerItemIcon.type = TYPE_INVENTORY;
 		addPixels(51040, 0x3d3428, 448, 16, 0, true);
 		addPixels(51041, 0x5A5245, 448, 16, 0, false);
 		addPixels(51070, 0x3d3428, 14, 14, 0, true);
@@ -734,7 +787,8 @@ public class Widget {
 		offer.child(offerChild++, 51032, 132, 52);
 		offer.child(offerChild++, 51033, 132, 70);
 		offer.child(offerChild++, 51053, 34, 68);
-		offer.child(offerChild++, 51054, 34, 68);
+		offer.child(offerChild++, 51054, 35, 69);
+		offer.child(offerChild++, 51056, 43, 77);
 		offer.child(offerChild++, 51055, 75, 128);
 
 		offer.child(offerChild++, 51034, 128, 157);
@@ -812,6 +866,34 @@ public class Widget {
 		collection.child(colChild++, 51114, 246, 84);
 		collection.child(colChild++, 51110, 186, 180);
 		collection.child(colChild++, 51111, 246, 185);
+
+		Widget search = addInterface(56600);
+		search.totalChildren(7);
+		addPixels(56601, 0x2b241b, 505, 130, 0, true);
+		addPixels(56602, 0x5A5245, 503, 128, 0, false);
+		addText(56603, "Grand Exchange Item Search", fonts, 2, 0xff981f, true, true);
+		addText(56604, "Filter:", fonts, 1, 0xffcc66, false, true);
+		addText(56605, "Type to search...", fonts, 1, 0xffe28a, false, true);
+		addHoverText(56608, "Back", "Back", fonts, 1, 0xffe28a, true, true, 48, 0xffffff);
+
+		search.child(0, 56601, -3, -4);
+		search.child(1, 56602, -2, -3);
+		search.child(2, 56603, 246, 6);
+		search.child(3, 56604, 10, 24);
+		search.child(4, 56605, 60, 24);
+		search.child(5, 56608, 452, 14);
+		search.child(6, 56620, 8, 42);
+
+		Widget results = addInterface(56620);
+		results.totalChildren(100);
+		int resultChild = 0;
+		for (int id = 56621, y = 0; id <= 56720; id++, y += 16) {
+			addHoverText(id, "", "Select", fonts, 0, 0xffcc66, false, true, 458, 0xffffff);
+			results.child(resultChild++, id, 4, y);
+		}
+		results.width = 470;
+		results.height = 75;
+		results.scrollMax = 1600;
 	}
 
 	private static void addStaffSpecialBar() {

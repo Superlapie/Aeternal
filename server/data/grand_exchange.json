@@ -1,0 +1,19 @@
+{
+  "nextOfferId": 14,
+  "activeOffers": [
+    {
+      "id": 10,
+      "owner": "Lapiee",
+      "slot": 3,
+      "itemId": 385,
+      "amount": 5,
+      "processedAmount": 3,
+      "price": 984,
+      "taxRatePercent": 2,
+      "type": "SELL",
+      "active": true
+    }
+  ],
+  "collectionBox": {},
+  "buyLimitWindows": {}
+}

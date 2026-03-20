@@ -13,8 +13,14 @@ public class GrandExchangePlayer {
     public static final int MAIN_INTERFACE_ID = 56500;
     public static final int OFFER_INTERFACE_ID = 51000;
     public static final int INVENTORY_OVERLAY_INTERFACE_ID = 46800;
+    public static final int INVENTORY_TAB_INTERFACE_ID = 3213;
+    public static final int INVENTORY_INTERFACE_ID = 3214;
     public static final int COLLECTION_INTERFACE_ID = 51100;
-    public static final int SEARCH_INTERFACE_ID = 51020;
+    public static final int SEARCH_CHATBOX_INTERFACE_ID = 56600;
+    public static final int SEARCH_FILTER_TEXT_ID = 56605;
+    public static final int SEARCH_CANCEL_BUTTON = 56608;
+    public static final int SEARCH_RESULT_START = 56621;
+    public static final int SEARCH_RESULT_END = 56720;
 
     // These child/button ids can differ between client revisions.
     public static final int[] SLOT_BUY_BUTTONS = {51200, 51210, 51220, 51230, 51240, 51250, 51260, 51270};
@@ -39,17 +45,24 @@ public class GrandExchangePlayer {
     public static final int OPEN_COLLECTION_BUTTON = 56506;
     public static final int COLLECT_BUTTON = 51110;
     public static final int SLOT_WIDGET_BASE = 51300;
+    public static final int SLOT_PROGRESS_TEXT_BASE = 51550;
+    public static final int SLOT_ITEM_WIDGET_BASE = 51400;
+    public static final int SLOT_PROGRESS_SEGMENT_BASE = 52000;
+    public static final int SLOT_PROGRESS_SEGMENT_COUNT = 20;
+    public static final int OFFER_ITEM_WIDGET = 51056;
 
     private final Player player;
     private final GrandExchangeManager manager = GrandExchangeManager.getInstance();
 
     private final Map<Integer, PendingOfferState> pendingOffers = new HashMap<>();
+    private boolean sellSelectionMode;
 
     public GrandExchangePlayer(Player player) {
         this.player = player;
     }
 
     public void openMainInterface() {
+        sellSelectionMode = false;
         if (player.busy()) {
             player.getPacketSender().sendInterfaceRemoval();
         }
@@ -59,6 +72,7 @@ public class GrandExchangePlayer {
     }
 
     public void openCollectionBox() {
+        sellSelectionMode = false;
         player.setStatus(PlayerStatus.GRAND_EXCHANGE);
         player.getPacketSender().sendInterface(COLLECTION_INTERFACE_ID);
         List<GrandExchangeCollectionEntry> entries = manager.getCollection(player.getUsername());
@@ -88,6 +102,17 @@ public class GrandExchangePlayer {
         }
         if (button == SEARCH_ITEM_BUTTON) {
             promptSearch();
+            return true;
+        }
+        if (button == SEARCH_CANCEL_BUTTON) {
+            player.setEnteredSyntaxAction(null);
+            PendingOfferState state = getCurrentPendingState();
+            if (state != null) {
+                player.getPacketSender().sendChatboxInterface(0);
+                openOfferScreen(state);
+            } else {
+                player.getPacketSender().sendChatboxInterface(0);
+            }
             return true;
         }
         if (handleOfferAdjustmentButton(button)) {
@@ -204,7 +229,7 @@ public class GrandExchangePlayer {
     }
 
     public boolean handleInventoryOverlayItem(int itemId, int slot, int actionIndex) {
-        if (player.getStatus() != PlayerStatus.GRAND_EXCHANGE) {
+        if (!sellSelectionMode) {
             return false;
         }
         PendingOfferState state = getCurrentPendingState();
@@ -212,12 +237,19 @@ public class GrandExchangePlayer {
             return false;
         }
         state.itemId = itemId;
+        if (state.price <= 0) {
+            state.price = getDefaultPrice(itemId);
+        }
         if (actionIndex == 1) {
             int available = player.getInventory().getAmount(itemId);
             state.amount = Math.max(1, available);
         }
         openOfferScreen(state);
         return true;
+    }
+
+    public boolean isSellSelectionMode() {
+        return sellSelectionMode;
     }
 
     private PendingOfferState getCurrentPendingState() {
@@ -232,45 +264,49 @@ public class GrandExchangePlayer {
         PendingOfferState state = new PendingOfferState(slot, type);
         pendingOffers.clear();
         pendingOffers.put(slot, state);
+        sellSelectionMode = type == GrandExchangeOfferType.SELL;
         openOfferScreen(state);
-        beginOfferWizard(state);
+        if (type == GrandExchangeOfferType.BUY) {
+            promptSearch();
+        } else {
+            player.getPacketSender().sendMessage("Select an item from your inventory.");
+        }
     }
 
     private void openOfferScreen(PendingOfferState state) {
-        player.getPacketSender().sendInterface(OFFER_INTERFACE_ID);
+        if (state.type == GrandExchangeOfferType.SELL) {
+            // Use the real inventory sidebar so sell item selection always has clickable items.
+            player.getPacketSender().sendInterfaceSet(OFFER_INTERFACE_ID, INVENTORY_TAB_INTERFACE_ID);
+        } else {
+            player.getPacketSender().sendInterface(OFFER_INTERFACE_ID);
+        }
         String itemName = state.itemId > 0 ? ItemDefinition.forId(state.itemId).getName() : "Item not selected";
+        int amount = Math.max(1, state.amount);
+        int price = Math.max(0, state.price);
+        long gross = (long) amount * price;
+        int effectiveTaxRate = state.type == GrandExchangeOfferType.SELL && state.itemId > 0
+                ? manager.getEffectiveTaxRatePercent(state.itemId)
+                : 0;
+        int net = (state.type == GrandExchangeOfferType.SELL && state.itemId > 0)
+                ? manager.getSellNetTotal(state.itemId, amount, price)
+                : (int) Math.min(Integer.MAX_VALUE, gross);
+
         player.getPacketSender().sendString(51031, state.type == GrandExchangeOfferType.BUY ? "Buy offer" : "Sell offer");
         player.getPacketSender().sendString(51032, itemName);
         player.getPacketSender().sendString(51033, "Choose item, amount and price.");
-        player.getPacketSender().sendString(51055, Math.max(0, state.price) + " coins");
-        player.getPacketSender().sendString(51003, Integer.toString(Math.max(1, state.amount)));
-        player.getPacketSender().sendString(51004, Math.max(0, state.price) + " coins");
-        player.getPacketSender().sendString(51023, ((long) Math.max(1, state.amount) * Math.max(0, state.price)) + " coins");
-    }
-
-    private void beginOfferWizard(PendingOfferState state) {
-        player.setEnteredSyntaxAction(input -> {
-            List<Integer> ids = manager.findItemByName(input, 10);
-            if (ids.isEmpty()) {
-                player.getPacketSender().sendMessage("No matching items found.");
-                return;
-            }
-            int first = ids.get(0);
-            state.itemId = first;
-            player.getPacketSender().sendMessage("Selected " + ItemDefinition.forId(first).getName() + ".");
-            player.setEnteredAmountAction(amount -> {
-                state.amount = amount;
-                player.setEnteredAmountAction(price -> {
-                    state.price = price;
-                    confirmOffer();
-                });
-                player.getPacketSender().sendEnterAmountPrompt("Enter price per item.");
-            });
-            player.getPacketSender().sendEnterAmountPrompt("Enter amount.");
-        });
-        player.getPacketSender().sendEnterInputPrompt(state.type == GrandExchangeOfferType.SELL
-                ? "Enter item name to sell."
-                : "Enter item name to buy.");
+        player.getPacketSender().sendString(51055, price + " coins");
+        player.getPacketSender().sendString(51003, Integer.toString(amount));
+        player.getPacketSender().sendString(51004, price + " coins");
+        if (state.type == GrandExchangeOfferType.SELL && state.itemId > 0) {
+            player.getPacketSender().sendString(51023, net + " coins (" + Math.min(Integer.MAX_VALUE, gross) + " - " + effectiveTaxRate + "%)");
+        } else {
+            player.getPacketSender().sendString(51023, Math.min(Integer.MAX_VALUE, gross) + " coins");
+        }
+        if (state.itemId > 0) {
+            player.getPacketSender().sendItemOnInterface(OFFER_ITEM_WIDGET, state.itemId, 0, 1);
+        } else {
+            player.getPacketSender().clearItemOnInterface(OFFER_ITEM_WIDGET);
+        }
     }
 
     private void promptSearch() {
@@ -280,19 +316,72 @@ public class GrandExchangePlayer {
             return;
         }
         player.setEnteredSyntaxAction(input -> {
-            List<Integer> ids = manager.findItemByName(input, 10);
-            if (ids.isEmpty()) {
-                player.getPacketSender().sendMessage("No matching items found.");
+            PendingOfferState current = getCurrentPendingState();
+            if (current == null) {
                 return;
             }
-            int first = ids.get(0);
-            state.itemId = first;
-            player.getPacketSender().sendMessage("Selected " + ItemDefinition.forId(first).getName() + ".");
-            openOfferScreen(state);
+            if (input == null) {
+                return;
+            }
+            String value = input.trim();
+            if (value.startsWith("__geitem__:")) {
+                try {
+                    int itemId = Integer.parseInt(value.substring("__geitem__:".length()));
+                    if (itemId > 0) {
+                        current.itemId = itemId;
+                        if (current.price <= 0) {
+                            current.price = getDefaultPrice(itemId);
+                        }
+                        player.getPacketSender().sendChatboxInterface(0);
+                        player.getPacketSender().sendMessage("Selected " + ItemDefinition.forId(itemId).getName() + ".");
+                        openOfferScreen(current);
+                        return;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+            if (value.startsWith("__geitemname__:")) {
+                String itemName = value.substring("__geitemname__:".length()).trim();
+                Integer itemId = manager.findItemByExactName(itemName);
+                if (itemId == null || itemId <= 0) {
+                    List<Integer> fallback = manager.findItemByName(itemName, 1);
+                    if (!fallback.isEmpty()) {
+                        itemId = fallback.get(0);
+                    }
+                }
+                if (itemId != null && itemId > 0) {
+                    current.itemId = itemId;
+                    if (current.price <= 0) {
+                        current.price = getDefaultPrice(itemId);
+                    }
+                    player.getPacketSender().sendChatboxInterface(0);
+                    player.getPacketSender().sendMessage("Selected " + ItemDefinition.forId(itemId).getName() + ".");
+                    openOfferScreen(current);
+                    return;
+                }
+            }
+
+            List<Integer> ids = manager.findItemByName(value, 1);
+            if (!ids.isEmpty()) {
+                int itemId = ids.get(0);
+                current.itemId = itemId;
+                if (current.price <= 0) {
+                    current.price = getDefaultPrice(itemId);
+                }
+                player.getPacketSender().sendChatboxInterface(0);
+                player.getPacketSender().sendMessage("Selected " + ItemDefinition.forId(itemId).getName() + ".");
+                openOfferScreen(current);
+            }
         });
-        player.getPacketSender().sendEnterInputPrompt(state.type == GrandExchangeOfferType.SELL
-                ? "Enter item name to sell."
-                : "Enter item name to search.");
+        openSearchInterface(state);
+    }
+
+    private void openSearchInterface(PendingOfferState state) {
+        if (state == null) {
+            return;
+        }
+        player.getPacketSender().sendChatboxInterface(SEARCH_CHATBOX_INTERFACE_ID);
+        player.getPacketSender().sendString(SEARCH_FILTER_TEXT_ID, "Type to search...");
     }
 
     private void confirmOffer() {
@@ -305,23 +394,10 @@ public class GrandExchangePlayer {
             player.getPacketSender().sendMessage("Select an item first.");
             return;
         }
-        if (state.amount <= 0 || state.price <= 0) {
-            player.setEnteredAmountAction(amount -> {
-                if (state.amount <= 0) {
-                    state.amount = amount;
-                    player.setEnteredAmountAction(price -> {
-                        state.price = price;
-                        confirmOffer();
-                    });
-                    player.getPacketSender().sendEnterAmountPrompt("Enter price per item.");
-                } else {
-                    state.price = amount;
-                    confirmOffer();
-                }
-            });
-            player.getPacketSender().sendEnterAmountPrompt(state.amount <= 0 ? "Enter amount." : "Enter price per item.");
-            return;
-        }
+        player.setEnteredAmountAction(null);
+        player.setEnteredSyntaxAction(null);
+        state.amount = Math.max(1, state.amount);
+        state.price = Math.max(1, state.price > 0 ? state.price : getDefaultPrice(state.itemId));
 
         boolean placed = state.type == GrandExchangeOfferType.BUY
                 ? manager.placeBuyOffer(player, state.slot, state.itemId, state.amount, state.price)
@@ -330,6 +406,7 @@ public class GrandExchangePlayer {
             player.getPacketSender().sendMessage("Unable to place offer. Check funds/items/slot.");
             return;
         }
+        sellSelectionMode = false;
         pendingOffers.clear();
         player.getPacketSender().sendMessage("Offer placed.");
         openMainInterface();
@@ -346,40 +423,74 @@ public class GrandExchangePlayer {
             int redBar = slotBase + 4;
             int greenBar = slotBase + 5;
             int priceText = slotBase + 6;
+            int progressText = SLOT_PROGRESS_TEXT_BASE + slot;
+            int itemWidget = SLOT_ITEM_WIDGET_BASE + (slot * 10) + 2;
 
             if (offer == null) {
                 player.getPacketSender().sendString(56590 + slot, "Empty");
+                player.getPacketSender().sendString(progressText, "");
                 player.getPacketSender().sendString(priceText, "0 coins");
+                player.getPacketSender().clearItemOnInterface(itemWidget);
                 player.getPacketSender().sendInterfaceDisplayState(grayBar, false);
                 player.getPacketSender().sendInterfaceDisplayState(redBar, true);
                 player.getPacketSender().sendInterfaceDisplayState(greenBar, true);
+                for (int seg = 0; seg < SLOT_PROGRESS_SEGMENT_COUNT; seg++) {
+                    player.getPacketSender().sendInterfaceDisplayState(SLOT_PROGRESS_SEGMENT_BASE + (slot * SLOT_PROGRESS_SEGMENT_COUNT) + seg, true);
+                }
                 continue;
             }
             String itemName = ItemDefinition.forId(offer.getItemId()).getName();
             player.getPacketSender().sendString(priceText, offer.getPrice() + " coins");
-            player.getPacketSender().sendString(56590 + slot, itemName + " " + offer.getProcessedAmount() + "/" + offer.getAmount());
+            player.getPacketSender().sendString(56590 + slot, itemName);
+            player.getPacketSender().sendString(progressText, offer.getProcessedAmount() + "/" + offer.getAmount());
+            player.getPacketSender().sendItemOnInterface(itemWidget, offer.getItemId(), 0, 1);
 
             if (!offer.isActive() && offer.isComplete() && hasPendingCollection) {
                 player.getPacketSender().sendInterfaceDisplayState(grayBar, true);
                 player.getPacketSender().sendInterfaceDisplayState(redBar, true);
                 player.getPacketSender().sendInterfaceDisplayState(greenBar, false);
-            } else if (!offer.isActive() && !offer.isComplete()) {
+                for (int seg = 0; seg < SLOT_PROGRESS_SEGMENT_COUNT; seg++) {
+                    player.getPacketSender().sendInterfaceDisplayState(SLOT_PROGRESS_SEGMENT_BASE + (slot * SLOT_PROGRESS_SEGMENT_COUNT) + seg, true);
+                }
+            } else if (!offer.isActive()) {
+                // Any inactive non-collect-complete offer is treated as canceled/aborted and shown red.
                 player.getPacketSender().sendInterfaceDisplayState(grayBar, true);
                 player.getPacketSender().sendInterfaceDisplayState(redBar, false);
                 player.getPacketSender().sendInterfaceDisplayState(greenBar, true);
+                for (int seg = 0; seg < SLOT_PROGRESS_SEGMENT_COUNT; seg++) {
+                    player.getPacketSender().sendInterfaceDisplayState(SLOT_PROGRESS_SEGMENT_BASE + (slot * SLOT_PROGRESS_SEGMENT_COUNT) + seg, true);
+                }
+            } else if (offer.getProcessedAmount() > 0 && offer.getProcessedAmount() < offer.getAmount()) {
+                player.getPacketSender().sendInterfaceDisplayState(grayBar, true);
+                player.getPacketSender().sendInterfaceDisplayState(redBar, true);
+                player.getPacketSender().sendInterfaceDisplayState(greenBar, true);
+                int visibleSegments = (int) Math.ceil((offer.getProcessedAmount() / (double) offer.getAmount()) * SLOT_PROGRESS_SEGMENT_COUNT);
+                visibleSegments = Math.max(1, Math.min(SLOT_PROGRESS_SEGMENT_COUNT, visibleSegments));
+                for (int seg = 0; seg < SLOT_PROGRESS_SEGMENT_COUNT; seg++) {
+                    boolean hide = seg >= visibleSegments;
+                    player.getPacketSender().sendInterfaceDisplayState(SLOT_PROGRESS_SEGMENT_BASE + (slot * SLOT_PROGRESS_SEGMENT_COUNT) + seg, hide);
+                }
             } else {
                 player.getPacketSender().sendInterfaceDisplayState(grayBar, false);
                 player.getPacketSender().sendInterfaceDisplayState(redBar, true);
                 player.getPacketSender().sendInterfaceDisplayState(greenBar, true);
+                for (int seg = 0; seg < SLOT_PROGRESS_SEGMENT_COUNT; seg++) {
+                    player.getPacketSender().sendInterfaceDisplayState(SLOT_PROGRESS_SEGMENT_BASE + (slot * SLOT_PROGRESS_SEGMENT_COUNT) + seg, true);
+                }
             }
         }
+    }
+
+    private int getDefaultPrice(int itemId) {
+        int value = ItemDefinition.forId(itemId).getValue();
+        return Math.max(1, value);
     }
 
     private static class PendingOfferState {
         int slot;
         GrandExchangeOfferType type;
         int itemId = -1;
-        int amount = 0;
+        int amount = 1;
         int price = 0;
 
         PendingOfferState(int slot, GrandExchangeOfferType type) {

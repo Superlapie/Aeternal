@@ -412,6 +412,31 @@ public class GameApplet extends Applet implements Runnable, MouseListener, Mouse
                 }
             }
         }
+        if (Client.instance != null && Client.instance.backDialogueId != -1) {
+            Widget rsi = Widget.interfaceCache[Client.instance.backDialogueId];
+            if (rsi != null) {
+                offsetX = 20;
+                offsetY = fixed ? 20 : Client.frameHeight - 162;
+                childID = -1;
+                for (int index = 0; index < rsi.children.length; index++) {
+                    if (Widget.interfaceCache[rsi.children[index]].scrollMax > 0) {
+                        childID = index;
+                        positionX = rsi.childX[index];
+                        positionY = rsi.childY[index];
+                        width = Widget.interfaceCache[rsi.children[index]].width;
+                        height = Widget.interfaceCache[rsi.children[index]].height;
+                        break;
+                    }
+                }
+                if (childID != -1 && mouseX > offsetX + positionX && mouseY > offsetY + positionY
+                        && mouseX < offsetX + positionX + width && mouseY < offsetY + positionY + height) {
+                    canZoom = false;
+                    Widget.interfaceCache[rsi.children[childID]].scrollPosition += rotation * 30;
+                } else {
+                    canZoom = true;
+                }
+            }
+        }
     }
 
     public final void mousePressed(MouseEvent e) {
