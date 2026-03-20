@@ -150,6 +150,9 @@ public class ButtonClickPacketListener implements PacketExecutor {
 			player.getPacketSender().sendMessage("Button clicked: " + Integer.toString(button) + ".");
 		}
 
+		if (player.getGrandExchange().handleButton(button)) {
+			return;
+		}
 
 		if (handlers(player, button)) {
 			return;

@@ -7,5 +7,6 @@ public enum PlayerStatus {
     TRADING,
     DUELING,
     BANKING,
-    PRICE_CHECKING;
+    PRICE_CHECKING,
+    GRAND_EXCHANGE;
 }

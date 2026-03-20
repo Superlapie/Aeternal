@@ -16,6 +16,7 @@ import com.elvarg.game.content.cannon.DwarfCannon;
 import com.elvarg.game.content.sound.Sound;
 import com.elvarg.game.World;
 import com.elvarg.game.content.*;
+import com.elvarg.game.content.grandexchange.GrandExchangePlayer;
 import com.elvarg.game.content.PrayerHandler.PrayerData;
 import com.elvarg.game.content.clan.ClanChat;
 import com.elvarg.game.content.clan.ClanChatManager;
@@ -126,6 +127,7 @@ public class Player extends Mobile {
 	// Trading
 	private final Trading trading = new Trading(this);
 	private final Dueling dueling = new Dueling(this);
+	private final GrandExchangePlayer grandExchange = new GrandExchangePlayer(this);
 	private final DialogueManager dialogueManager = new DialogueManager(this);
 	// Presets
 	private Presetable currentPreset;
@@ -1407,6 +1409,10 @@ public class Player extends Mobile {
 
 	public Dueling getDueling() {
 		return dueling;
+	}
+
+	public GrandExchangePlayer getGrandExchange() {
+		return grandExchange;
 	}
 
 	public int getBlowpipeScales() {

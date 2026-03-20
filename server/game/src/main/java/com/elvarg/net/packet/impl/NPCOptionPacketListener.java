@@ -78,6 +78,10 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
         };
     }
 
+    private static boolean isGrandExchangeClerk(int npcId) {
+        return npcId == 2148 || npcId == 2149 || npcId == 2150 || npcId == 2151 || npcId == 8745;
+    }
+
     @Override
     public void execute(Player player, Packet packet) {
         int index = packet.readLEShortA();
@@ -96,11 +100,24 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
             return;
         }
 
+        int opcode = packet.getOpcode();
+        if (isGrandExchangeClerk(npc.getId())
+                && (opcode == PacketConstants.FIRST_CLICK_NPC_OPCODE
+                || opcode == PacketConstants.SECOND_CLICK_NPC_OPCODE
+                || opcode == PacketConstants.THIRD_CLICK_NPC_OPCODE
+                || opcode == PacketConstants.FOURTH_CLICK_NPC_OPCODE)) {
+            player.getGrandExchange().openMainInterface();
+            return;
+        }
+
         boolean nightmareNpc = isNightmareNpc(npc);
 
         if (player.busy()) {
             if (nightmareNpc) {
                 // Do not block Nightmare attack interactions on stale player state.
+                player.getPacketSender().sendInterfaceRemoval();
+            } else if (isGrandExchangeClerk(npc.getId())) {
+                // GE interaction should still work from a stale interface state.
                 player.getPacketSender().sendInterfaceRemoval();
             } else {
             // Nightmare can be entered via the teleport UI path. If that interface was not
@@ -200,6 +217,13 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 
         npc.setPositionToFace(player.getLocation());
 
+        // Run GE clerk handling before generic interaction systems so "Exchange"
+        // clicks are not swallowed by NPC scripts.
+        if (isGrandExchangeClerk(npc.getId())) {
+            player.getGrandExchange().openMainInterface();
+            return;
+        }
+
 		if (opcode == PacketConstants.FIRST_CLICK_NPC_OPCODE) {
             if (PetHandler.interact(player, npc)) {
 				// Player was interacting with their pet
@@ -267,6 +291,13 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                 case NIEVE:
                     player.getDialogueManager().start(new NieveDialogue());
                     break;
+                case 2148:
+                case 2149:
+                case 2150:
+                case 2151:
+                case 8745:
+                    player.getGrandExchange().openMainInterface();
+                    break;
             }
             return;
         }
@@ -325,6 +356,13 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
                     break;
                 case GHOST_SHOPKEEPER:
                     ShopManager.open(player, ShopIdentifiers.GHOST_SKILLING_SUPPLIES);
+                    break;
+                case 2148:
+                case 2149:
+                case 2150:
+                case 2151:
+                case 8745:
+                    player.getGrandExchange().openMainInterface();
                     break;
 
             }

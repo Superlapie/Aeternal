@@ -20,6 +20,10 @@ public class InterfaceActionClickOpcode implements PacketExecutor {
 			return;
 		}
 
+		if (player.getGrandExchange().handleInterfaceAction(interfaceId, action)) {
+			return;
+		}
+
 		if (Bank.handleButton(player, interfaceId, action)) {
 			return;
 		}

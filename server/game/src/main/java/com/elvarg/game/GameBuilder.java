@@ -5,6 +5,7 @@ import java.util.Queue;
 
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.clan.ClanChatManager;
+import com.elvarg.game.content.grandexchange.GrandExchangeManager;
 import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.skill.cache.CacheSkillObjectLoader;
 import com.elvarg.game.content.skill.mining.MiningSpawnService;
@@ -80,6 +81,7 @@ public class GameBuilder {
         // Initialize cache-driven skill objects (must be after object definitions are loaded)
         tasks.add(CacheSkillObjectLoader::initialize);
         tasks.add(MiningSpawnService::initialize);
+        tasks.add(() -> GrandExchangeManager.getInstance().load());
     //    tasks.add(new NPCSpawnDumper());        
         return tasks;
     }

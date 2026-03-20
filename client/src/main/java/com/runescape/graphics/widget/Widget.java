@@ -435,6 +435,7 @@ public class Widget {
 		godwarsDungeon();
 		nightmareOverlays();
 		OSRSCreationMenu.build();
+		grandExchangeInterfaces();
 		spriteCache = null;
 		
 		/*int lastNull = -1;
@@ -572,6 +573,245 @@ public class Widget {
 		}
 		modernSpellbook();
 		addStaffSpecialBar();
+	}
+
+	private static void grandExchangeInterfaces() {
+		Widget main = addInterface(56500);
+		main.totalChildren(97);
+
+		// Main GE shell (left-shifted to match classic OSRS placement)
+		addSprite(56503, 600);
+		addPixels(56504, 0x2b241b, 476, 292, 0, true);
+		addPixels(56507, 0x5A5245, 474, 290, 0, false);
+		addPixels(56508, 0x5A5245, 474, 20, 0, false);
+		closeButton(56509, 24, 25);
+
+		addText(56501, "Grand Exchange", fonts, 2, 0xff981f, true, true);
+		addText(56502, "Select an offer slot to set up or view an offer.", fonts, 0, 0xffcc66, true, true);
+		addHoverText(56506, "Collect", "Collect", fonts, 1, 0xffe28a, true, true, 72, 0xffffff);
+		addText(56540, "History", fonts, 0, 0xff981f, true, true);
+
+		int child = 0;
+		main.child(child++, 56503, 5, 6);
+		main.child(child++, 56504, 8, 10);
+		main.child(child++, 56507, 9, 11);
+		main.child(child++, 56508, 9, 11);
+		main.child(child++, 56509, 457, 10);
+		main.child(child++, 56501, 246, 14);
+		main.child(child++, 56502, 246, 32);
+		main.child(child++, 56506, 422, 33);
+		main.child(child++, 56540, 30, 14);
+
+		// 8 slot cards in a 4x2 grid.
+		final int slotWidth = 112;
+		final int slotHeight = 108;
+		final int startX = 14;
+		final int startY = 54;
+		final int gapX = 4;
+		final int gapY = 6;
+
+		for (int slot = 0; slot < 8; slot++) {
+			int row = slot / 4;
+			int col = slot % 4;
+			int x = startX + (col * (slotWidth + gapX));
+			int y = startY + (row * (slotHeight + gapY));
+
+			int buttonBase = 51200 + (slot * 10);
+			int statusText = 56590 + slot;
+			int slotBox = 51300 + (slot * 10);
+			int slotInner = slotBox + 1;
+			int offerBarTrack = slotBox + 2;
+			int offerBarGray = slotBox + 3;
+			int offerBarRed = slotBox + 4;
+			int offerBarGreen = slotBox + 5;
+			int priceText = slotBox + 6;
+			int buyText = buttonBase;
+			int sellText = buttonBase + 1;
+			int abortText = buttonBase + 2;
+
+			addPixels(slotBox, 0x3d3428, slotWidth, slotHeight, 0, true);
+			addPixels(slotInner, 0x5A5245, slotWidth, slotHeight, 0, false);
+			addPixels(offerBarTrack, 0x2f2f2f, slotWidth - 12, 10, 0, true);
+			addPixels(offerBarGreen, 0x0f7a14, slotWidth - 12, 10, 0, true);
+			addPixels(offerBarRed, 0x8b1f1f, slotWidth - 12, 10, 0, true);
+			addPixels(offerBarGray, 0x666666, slotWidth - 12, 10, 0, true);
+			addText(statusText, "Empty", fonts, 1, 0xff981f, true, true);
+			addText(priceText, "0 coins", fonts, 0, 0xffe28a, true, true);
+
+			addHoverText(buyText, "Buy", "Buy", fonts, 0, 0xffe28a, true, true, 24, 0xffffff);
+			addHoverText(sellText, "Sell", "Sell", fonts, 0, 0xffe28a, true, true, 24, 0xffffff);
+			addHoverText(abortText, "X", "Abort", fonts, 0, 0xff981f, true, true, 16, 0xffffff);
+
+			main.child(child++, slotBox, x, y);
+			main.child(child++, slotInner, x, y);
+			main.child(child++, statusText, x + (slotWidth / 2), y + 10);
+			main.child(child++, offerBarTrack, x + 6, y + 62);
+			main.child(child++, offerBarGreen, x + 6, y + 62);
+			main.child(child++, offerBarRed, x + 6, y + 62);
+			main.child(child++, offerBarGray, x + 6, y + 62);
+			main.child(child++, priceText, x + (slotWidth / 2), y + 78);
+
+			main.child(child++, buyText, x + 22, y + 90);
+			main.child(child++, sellText, x + 56, y + 90);
+			main.child(child++, abortText, x + 90, y + 90);
+		}
+
+		Widget offer = addInterface(51000);
+		offer.totalChildren(57);
+
+		addSprite(51005, 600);
+		addPixels(51006, 0x2b241b, 476, 292, 0, true);
+		addPixels(51007, 0x5A5245, 474, 290, 0, false);
+		addPixels(51008, 0x5A5245, 474, 20, 0, false);
+		closeButton(51009, 24, 25);
+
+		addText(51001, "Grand Exchange: Set up offer", fonts, 2, 0xff981f, true, true);
+		addText(51030, "History", fonts, 0, 0xff981f, true, true);
+		addText(51031, "Buy offer", fonts, 2, 0xffcc66, false, true);
+		addText(51032, "Item not selected", fonts, 2, 0xffe28a, false, true);
+		addText(51033, "Choose item, amount and price.", fonts, 0, 0xffcc66, false, true);
+		addText(51034, "Quantity:", fonts, 2, 0xffcc66, true, true);
+		addText(51035, "Price per item:", fonts, 2, 0xffcc66, true, true);
+		addText(51055, "0 coins", fonts, 1, 0xff981f, true, true);
+		addText(51003, "1", fonts, 1, 0xffe28a, true, true);
+		addText(51004, "0 coins", fonts, 1, 0xffe28a, true, true);
+		addText(51023, "0 coins", fonts, 2, 0xffffff, true, true);
+
+		addPixels(51024, 0x3d3428, 448, 86, 0, true);
+		addPixels(51025, 0x5A5245, 448, 86, 0, false);
+		addPixels(51026, 0x3d3428, 170, 20, 0, true);
+		addPixels(51027, 0x5A5245, 170, 20, 0, false);
+		addPixels(51028, 0x3d3428, 170, 20, 0, true);
+		addPixels(51029, 0x5A5245, 170, 20, 0, false);
+		addPixels(51053, 0x3d3428, 82, 52, 0, true);
+		addPixels(51054, 0x5A5245, 82, 52, 0, false);
+		addPixels(51040, 0x3d3428, 448, 16, 0, true);
+		addPixels(51041, 0x5A5245, 448, 16, 0, false);
+		addPixels(51070, 0x3d3428, 14, 14, 0, true);
+		addPixels(51071, 0x3d3428, 14, 14, 0, true);
+		addPixels(51072, 0x3d3428, 14, 14, 0, true);
+		addPixels(51073, 0x3d3428, 14, 14, 0, true);
+		addHoverText(51074, "-", "Decrease quantity", fonts, 1, 0xffcc66, true, true, 14, 0xffffff);
+		addHoverText(51075, "+", "Increase quantity", fonts, 1, 0xffcc66, true, true, 14, 0xffffff);
+		addHoverText(51076, "-", "Decrease price", fonts, 1, 0xffcc66, true, true, 14, 0xffffff);
+		addHoverText(51077, "+", "Increase price", fonts, 1, 0xffcc66, true, true, 14, 0xffffff);
+		addPixels(51060, 0x3d3428, 28, 18, 0, true);
+		addPixels(51061, 0x3d3428, 28, 18, 0, true);
+		addPixels(51062, 0x3d3428, 32, 18, 0, true);
+		addPixels(51063, 0x3d3428, 28, 18, 0, true);
+		addPixels(51064, 0x3d3428, 24, 18, 0, true);
+		addPixels(51065, 0x3d3428, 28, 18, 0, true);
+		addPixels(51066, 0x3d3428, 32, 18, 0, true);
+		addPixels(51067, 0x3d3428, 24, 18, 0, true);
+		addPixels(51068, 0x3d3428, 28, 18, 0, true);
+		addPixels(51069, 0x3d3428, 32, 18, 0, true);
+		addHoverText(51042, "<", "Back", fonts, 2, 0xffe28a, true, true, 16, 0xffffff);
+		addHoverText(51043, "+1", "+1", fonts, 0, 0xffcc66, true, true, 24, 0xffffff);
+		addHoverText(51044, "+10", "+10", fonts, 0, 0xffcc66, true, true, 24, 0xffffff);
+		addHoverText(51045, "+100", "+100", fonts, 0, 0xffcc66, true, true, 30, 0xffffff);
+		addHoverText(51046, "+1K", "+1K", fonts, 0, 0xffcc66, true, true, 24, 0xffffff);
+		addHoverText(51047, "...", "Set quantity", fonts, 0, 0xffcc66, true, true, 22, 0xffffff);
+		addHoverText(51048, "-5%", "-5%", fonts, 0, 0xffcc66, true, true, 24, 0xffffff);
+		addHoverText(51049, "Guide", "Search Item", fonts, 0, 0xffcc66, true, true, 28, 0xffffff);
+		addHoverText(51050, "...", "Set price", fonts, 0, 0xffcc66, true, true, 22, 0xffffff);
+		addHoverText(51051, "+5%", "+5%", fonts, 0, 0xffcc66, true, true, 24, 0xffffff);
+		addHoverText(51052, "+10%", "+10%", fonts, 0, 0xffcc66, true, true, 28, 0xffffff);
+		addButton(51010, 51000, 146, 30, 576, 577, -1, "Confirm Offer");
+		addText(51011, "Confirm", fonts, 2, 0xffffff, true, true);
+
+		int offerChild = 0;
+		offer.child(offerChild++, 51005, 5, 6);
+		offer.child(offerChild++, 51006, 8, 10);
+		offer.child(offerChild++, 51007, 9, 11);
+		offer.child(offerChild++, 51008, 9, 11);
+		offer.child(offerChild++, 51009, 457, 10);
+		offer.child(offerChild++, 51001, 246, 14);
+		offer.child(offerChild++, 51030, 28, 14);
+
+		offer.child(offerChild++, 51024, 22, 44);
+		offer.child(offerChild++, 51025, 22, 44);
+		offer.child(offerChild++, 51031, 32, 52);
+		offer.child(offerChild++, 51032, 132, 52);
+		offer.child(offerChild++, 51033, 132, 70);
+		offer.child(offerChild++, 51053, 34, 68);
+		offer.child(offerChild++, 51054, 34, 68);
+		offer.child(offerChild++, 51055, 75, 128);
+
+		offer.child(offerChild++, 51034, 128, 157);
+		offer.child(offerChild++, 51035, 358, 157);
+		offer.child(offerChild++, 51070, 22, 184);
+		offer.child(offerChild++, 51071, 216, 184);
+		offer.child(offerChild++, 51072, 240, 184);
+		offer.child(offerChild++, 51073, 434, 184);
+		offer.child(offerChild++, 51074, 24, 186);
+		offer.child(offerChild++, 51075, 218, 186);
+		offer.child(offerChild++, 51076, 242, 186);
+		offer.child(offerChild++, 51077, 436, 186);
+		offer.child(offerChild++, 51026, 44, 181);
+		offer.child(offerChild++, 51027, 44, 181);
+		offer.child(offerChild++, 51003, 129, 182);
+		offer.child(offerChild++, 51028, 262, 181);
+		offer.child(offerChild++, 51029, 262, 181);
+		offer.child(offerChild++, 51004, 347, 182);
+
+		offer.child(offerChild++, 51060, 40, 209);
+		offer.child(offerChild++, 51061, 72, 209);
+		offer.child(offerChild++, 51062, 104, 209);
+		offer.child(offerChild++, 51063, 142, 209);
+		offer.child(offerChild++, 51064, 176, 209);
+		offer.child(offerChild++, 51065, 266, 209);
+		offer.child(offerChild++, 51066, 300, 209);
+		offer.child(offerChild++, 51067, 338, 209);
+		offer.child(offerChild++, 51068, 370, 209);
+		offer.child(offerChild++, 51069, 404, 209);
+		offer.child(offerChild++, 51043, 42, 213);
+		offer.child(offerChild++, 51044, 74, 213);
+		offer.child(offerChild++, 51045, 107, 213);
+		offer.child(offerChild++, 51046, 143, 213);
+		offer.child(offerChild++, 51047, 176, 213);
+		offer.child(offerChild++, 51048, 268, 213);
+		offer.child(offerChild++, 51049, 303, 213);
+		offer.child(offerChild++, 51050, 336, 213);
+		offer.child(offerChild++, 51051, 372, 213);
+		offer.child(offerChild++, 51052, 408, 213);
+
+		offer.child(offerChild++, 51040, 22, 252);
+		offer.child(offerChild++, 51041, 22, 252);
+		offer.child(offerChild++, 51023, 246, 252);
+		offer.child(offerChild++, 51042, 30, 270);
+		offer.child(offerChild++, 51010, 173, 266);
+		offer.child(offerChild++, 51011, 246, 275);
+
+		Widget collection = addInterface(51100);
+		collection.totalChildren(12);
+
+		addSprite(51103, 600);
+		addPixels(51104, 0x2b241b, 476, 292, 0, true);
+		addPixels(51105, 0x5A5245, 474, 290, 0, false);
+		addPixels(51106, 0x5A5245, 474, 20, 0, false);
+		closeButton(51109, 24, 25);
+		addText(51101, "Grand Exchange Collection", fonts, 2, 0xff981f, true, true);
+		addText(51102, "Collect completed offers, item refunds and coin refunds.", fonts, 0, 0xffcc66, true, true);
+
+		addPixels(51112, 0x3d3428, 448, 150, 0, true);
+		addPixels(51113, 0x5A5245, 448, 150, 0, false);
+		addText(51114, "Collection contents are listed in chat for now.", fonts, 0, 0xffffff, true, true);
+		addButton(51110, 51100, 120, 24, 576, 577, -1, "Collect");
+		addText(51111, "Collect", fonts, 1, 0xffe28a, true, true);
+
+		int colChild = 0;
+		collection.child(colChild++, 51103, 5, 6);
+		collection.child(colChild++, 51104, 8, 10);
+		collection.child(colChild++, 51105, 9, 11);
+		collection.child(colChild++, 51106, 9, 11);
+		collection.child(colChild++, 51109, 457, 10);
+		collection.child(colChild++, 51101, 246, 14);
+		collection.child(colChild++, 51102, 246, 36);
+		collection.child(colChild++, 51112, 22, 58);
+		collection.child(colChild++, 51113, 22, 58);
+		collection.child(colChild++, 51114, 246, 84);
+		collection.child(colChild++, 51110, 186, 180);
+		collection.child(colChild++, 51111, 246, 185);
 	}
 
 	private static void addStaffSpecialBar() {

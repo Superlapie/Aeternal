@@ -3,6 +3,7 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.game.content.DepositBox;
 import com.elvarg.game.content.Dueling;
 import com.elvarg.game.content.Trading;
+import com.elvarg.game.content.grandexchange.GrandExchangePlayer;
 import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.combat.WeaponInterfaces;
 import com.elvarg.game.content.combat.magic.Autocasting;
@@ -39,6 +40,12 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         if (containerId == 7423) {
             DepositBox.deposit(player, slot, id, 1);
             return;
+        }
+
+        if (containerId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+            if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 1)) {
+                return;
+            }
         }
 
         switch (containerId) {
@@ -145,6 +152,12 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             return;
         }
 
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+            if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 2)) {
+                return;
+            }
+        }
+
         switch (interfaceId) {
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_1:
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_2:
@@ -207,6 +220,12 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         if (interfaceId == 7423) {
             DepositBox.deposit(player, slot, id, 10);
             return;
+        }
+
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+            if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 3)) {
+                return;
+            }
         }
 
         switch (interfaceId) {
@@ -274,6 +293,12 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             return;
         }
 
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+            if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 4)) {
+                return;
+            }
+        }
+
         switch (interfaceId) {
             case Shop.INVENTORY_INTERFACE_ID:
                 if (player.getStatus() == PlayerStatus.SHOPPING) {
@@ -336,6 +361,12 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
             player.setEnteredAmountAction((amount) -> DepositBox.deposit(player, slot, id, amount));
             player.getPacketSender().sendEnterAmountPrompt("How many would you like to deposit?");
             return;
+        }
+
+        if (interfaceId == GrandExchangePlayer.INVENTORY_OVERLAY_INTERFACE_ID) {
+            if (player.getGrandExchange().handleInventoryOverlayItem(id, slot, 5)) {
+                return;
+            }
         }
 
         switch (interfaceId) {
