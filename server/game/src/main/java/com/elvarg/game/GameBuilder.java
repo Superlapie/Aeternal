@@ -8,6 +8,7 @@ import com.elvarg.game.content.clan.ClanChatManager;
 import com.elvarg.game.content.grandexchange.GrandExchangeManager;
 import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.skill.cache.CacheSkillObjectLoader;
+import com.elvarg.game.content.skill.impl.hunter.Birdhouses;
 import com.elvarg.game.content.skill.mining.MiningSpawnService;
 import com.elvarg.game.definition.loader.impl.*;
 import com.elvarg.game.task.impl.CombatPoisonEffect.CombatPoisonData;
@@ -81,6 +82,7 @@ public class GameBuilder {
         // Initialize cache-driven skill objects (must be after object definitions are loaded)
         tasks.add(CacheSkillObjectLoader::initialize);
         tasks.add(MiningSpawnService::initialize);
+        tasks.add(Birdhouses::initialize);
         tasks.add(() -> GrandExchangeManager.getInstance().load());
     //    tasks.add(new NPCSpawnDumper());        
         return tasks;

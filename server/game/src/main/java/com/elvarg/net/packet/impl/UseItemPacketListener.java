@@ -9,6 +9,7 @@ import com.elvarg.game.content.minigames.impl.CastleWars;
 import com.elvarg.game.content.skill.impl.smithing.AnvilSmithing;
 import com.elvarg.game.content.skill.impl.smithing.Smelting;
 import com.elvarg.game.content.skill.impl.smithing.SmeltingData;
+import com.elvarg.game.content.skill.impl.hunter.Birdhouses;
 import com.elvarg.game.content.skill.skillable.impl.Cooking;
 import com.elvarg.game.content.skill.skillable.impl.Firemaking;
 import com.elvarg.game.content.skill.skillable.impl.Fletching;
@@ -54,6 +55,10 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
 
         player.getPacketSender().sendInterfaceRemoval();
         player.getSkillManager().stopSkillable();
+
+        if (Birdhouses.handleItemOnItem(player, used.getId(), usedWith.getId())) {
+            return;
+        }
 
         //Herblore
         if (Herblore.makeUnfinishedPotion(player, used.getId(), usedWith.getId())
@@ -191,6 +196,9 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
         player.setPositionToFace(position);
 
         WalkToTask.submit(player, object, () -> {
+            if (Birdhouses.handleItemOnObject(player, item, object)) {
+                return;
+            }
             switch (object.getId()) {
                 case 6: {
                     if (DwarfCannon.isObject(object)) {

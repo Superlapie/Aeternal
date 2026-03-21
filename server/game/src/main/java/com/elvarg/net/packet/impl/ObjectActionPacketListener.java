@@ -9,6 +9,7 @@ import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.minigames.MinigameHandler;
 import com.elvarg.game.content.minigames.impl.FightCaves;
 import com.elvarg.game.content.skill.SkillManager;
+import com.elvarg.game.content.skill.impl.hunter.Birdhouses;
 import com.elvarg.game.content.skill.mining.Mining;
 import com.elvarg.game.content.skill.mining.MiningSpawnService;
 import com.elvarg.game.content.skill.impl.smithing.AnvilSmithing;
@@ -56,6 +57,10 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	 *            The packet containing the object's information.
 	 */
     private static void firstClick(Player player, GameObject object) {
+        if (Birdhouses.handleObjectClick(player, object)) {
+            return;
+        }
+
         if (isPortalNexusId(object.getId())) {
             player.setPortalNexusInterfaceOpen(true);
             player.getPacketSender().sendMessage("You attune the Portal Nexus.");

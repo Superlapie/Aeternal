@@ -47,6 +47,8 @@ public final class ItemDefinition {
     public int equipped_model_female_1;
     public int[] stack_variant_size;
     public int team;
+    public short[] original_model_textures;
+    public short[] modified_model_textures;
     public int rotation_z;
     private byte equipped_model_female_translation_y;
     private int equipped_model_female_3;
@@ -414,6 +416,52 @@ public final class ItemDefinition {
             case 29795: // Noxious pommel (placeholder)
                 itemDef.copy(lookup(19555)); // Placeholder-style base behavior
                 itemDef.name = "Noxious pommel";
+                break;
+            // Birdhouse id compatibility remap for this 2446 cache variant.
+            case 21507: // Regular bird house
+                itemDef.copy(lookup(21512));
+                itemDef.name = "Bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 21509: // Oak bird house
+                itemDef.copy(lookup(21515));
+                itemDef.name = "Oak bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 21511: // Willow bird house
+                itemDef.copy(lookup(21518));
+                itemDef.name = "Willow bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 21513: // Teak bird house
+                itemDef.copy(lookup(21521));
+                itemDef.name = "Teak bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 21515: // Maple bird house
+                itemDef.copy(lookup(22192));
+                itemDef.name = "Maple bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 21517: // Mahogany bird house
+                itemDef.copy(lookup(22195));
+                itemDef.name = "Mahogany bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 21519: // Yew bird house
+                itemDef.copy(lookup(22198));
+                itemDef.name = "Yew bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 21521: // Magic bird house
+                itemDef.copy(lookup(22201));
+                itemDef.name = "Magic bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
+                break;
+            case 22192: // Redwood bird house
+                itemDef.copy(lookup(22204));
+                itemDef.name = "Redwood bird house";
+                itemDef.actions = new String[] {null, null, "Empty", null, "Destroy"};
                 break;
         }
         return itemDef;
@@ -793,56 +841,61 @@ public final class ItemDefinition {
     public void readValues(Buffer buffer) {
         do {
             int opCode = buffer.readUnsignedByte();
-            if (opCode == 0)
+            if (opCode == 0) {
                 return;
-            if (opCode == 1)
+            } else if (opCode == 1) {
                 inventory_model = buffer.readUShort();
-            else if (opCode == 2)
-                name = buffer.readString();
-            else if (opCode == 3)
-                /*description = */buffer.readString();
-            else if (opCode == 4)
+            } else if (opCode == 2) {
+                name = readItemString(buffer);
+            } else if (opCode == 3) {
+                readItemString(buffer); // examine
+            } else if (opCode == 4) {
                 modelZoom = buffer.readUShort();
-            else if (opCode == 5)
+            } else if (opCode == 5) {
                 rotation_y = buffer.readUShort();
-            else if (opCode == 6)
+            } else if (opCode == 6) {
                 rotation_x = buffer.readUShort();
-            else if (opCode == 7) {
+            } else if (opCode == 7) {
                 translate_x = buffer.readUShort();
-                if (translate_x > 32767)
+                if (translate_x > 32767) {
                     translate_x -= 0x10000;
+                }
             } else if (opCode == 8) {
                 translate_yz = buffer.readUShort();
-                if (translate_yz > 32767)
+                if (translate_yz > 32767) {
                     translate_yz -= 0x10000;
-            } else if (opCode == 10)
+                }
+            } else if (opCode == 10) {
                 buffer.readUShort();
-            else if (opCode == 11)
+            } else if (opCode == 11) {
                 stackable = true;
-            else if (opCode == 12) {
+            } else if (opCode == 12) {
                 value = buffer.readInt();
-            } else if (opCode == 16)
+            } else if (opCode == 16) {
                 is_members_only = true;
-            else if (opCode == 23) {
+            } else if (opCode == 23) {
                 equipped_model_male_1 = buffer.readUShort();
                 equipped_model_male_translation_y = buffer.readSignedByte();
-            } else if (opCode == 24)
+            } else if (opCode == 24) {
                 equipped_model_male_2 = buffer.readUShort();
-            else if (opCode == 25) {
+            } else if (opCode == 25) {
                 equipped_model_female_1 = buffer.readUShort();
                 equipped_model_female_translation_y = buffer.readSignedByte();
-            } else if (opCode == 26)
+            } else if (opCode == 26) {
                 equipped_model_female_2 = buffer.readUShort();
-            else if (opCode >= 30 && opCode < 35) {
-                if (groundActions == null)
+            } else if (opCode >= 30 && opCode < 35) {
+                if (groundActions == null) {
                     groundActions = new String[5];
-                groundActions[opCode - 30] = buffer.readString();
-                if (groundActions[opCode - 30].equalsIgnoreCase("hidden"))
+                }
+                groundActions[opCode - 30] = readItemString(buffer);
+                if (groundActions[opCode - 30].equalsIgnoreCase("hidden")) {
                     groundActions[opCode - 30] = null;
+                }
             } else if (opCode >= 35 && opCode < 40) {
-                if (actions == null)
+                if (actions == null) {
                     actions = new String[5];
-                actions[opCode - 35] = buffer.readString();
+                }
+                actions[opCode - 35] = readItemString(buffer);
             } else if (opCode == 40) {
                 int j = buffer.readUnsignedByte();
                 modified_model_colors = new int[j];
@@ -851,44 +904,86 @@ public final class ItemDefinition {
                     original_model_colors[k] = buffer.readUShort();
                     modified_model_colors[k] = buffer.readUShort();
                 }
-            } else if (opCode == 78)
+            } else if (opCode == 41) {
+                int count = buffer.readUnsignedByte();
+                original_model_textures = new short[count];
+                modified_model_textures = new short[count];
+                for (int i = 0; i < count; i++) {
+                    original_model_textures[i] = (short) buffer.readUShort();
+                    modified_model_textures[i] = (short) buffer.readUShort();
+                }
+            } else if (opCode == 42) {
+                buffer.readSignedByte(); // shift-click index
+            } else if (opCode == 65) {
+                // tradeable flag
+            } else if (opCode == 75) {
+                buffer.readShort(); // weight
+            } else if (opCode == 78) {
                 equipped_model_male_3 = buffer.readUShort();
-            else if (opCode == 79)
+            } else if (opCode == 79) {
                 equipped_model_female_3 = buffer.readUShort();
-            else if (opCode == 90)
+            } else if (opCode == 90) {
                 equipped_model_male_dialogue_1 = buffer.readUShort();
-            else if (opCode == 91)
+            } else if (opCode == 91) {
                 equipped_model_female_dialogue_1 = buffer.readUShort();
-            else if (opCode == 92)
+            } else if (opCode == 92) {
                 equipped_model_male_dialogue_2 = buffer.readUShort();
-            else if (opCode == 93)
+            } else if (opCode == 93) {
                 equipped_model_female_dialogue_2 = buffer.readUShort();
-            else if (opCode == 95)
+            } else if (opCode == 94) {
+                buffer.readUShort(); // category
+            } else if (opCode == 95) {
                 rotation_z = buffer.readUShort();
-            else if (opCode == 97)
+            } else if (opCode == 97) {
                 unnoted_item_id = buffer.readUShort();
-            else if (opCode == 98)
+            } else if (opCode == 98) {
                 noted_item_id = buffer.readUShort();
-            else if (opCode >= 100 && opCode < 110) {
-
+            } else if (opCode >= 100 && opCode < 110) {
                 if (stack_variant_id == null) {
                     stack_variant_id = new int[10];
                     stack_variant_size = new int[10];
                 }
                 stack_variant_id[opCode - 100] = buffer.readUShort();
                 stack_variant_size[opCode - 100] = buffer.readUShort();
-            } else if (opCode == 110)
+            } else if (opCode == 110) {
                 model_scale_x = buffer.readUShort();
-            else if (opCode == 111)
+            } else if (opCode == 111) {
                 model_scale_y = buffer.readUShort();
-            else if (opCode == 112)
+            } else if (opCode == 112) {
                 model_scale_z = buffer.readUShort();
-            else if (opCode == 113)
+            } else if (opCode == 113) {
                 light_intensity = buffer.readSignedByte();
-            else if (opCode == 114)
+            } else if (opCode == 114) {
                 light_mag = buffer.readSignedByte() * 5;
-            else if (opCode == 115)
+            } else if (opCode == 115) {
                 team = buffer.readUnsignedByte();
+            } else if (opCode == 139 || opCode == 140 || opCode == 148 || opCode == 149) {
+                buffer.readUShort();
+            } else if (opCode == 249) {
+                int count = buffer.readUnsignedByte();
+                for (int i = 0; i < count; i++) {
+                    boolean isString = buffer.readUnsignedByte() == 1;
+                    buffer.read24Int();
+                    if (isString) {
+                        readItemString(buffer);
+                    } else {
+                        buffer.readInt();
+                    }
+                }
+            } else {
+                return;
+            }
         } while (true);
+    }
+
+    private String readItemString(Buffer buffer) {
+        int start = buffer.currentPosition;
+        while (buffer.currentPosition < buffer.payload.length) {
+            int b = buffer.payload[buffer.currentPosition++] & 0xFF;
+            if (b == 0 || b == 10) {
+                break;
+            }
+        }
+        return new String(buffer.payload, start, buffer.currentPosition - start - 1);
     }
 }
