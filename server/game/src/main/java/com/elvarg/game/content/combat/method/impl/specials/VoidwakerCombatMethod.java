@@ -16,7 +16,7 @@ import com.elvarg.util.Misc;
  */
 public class VoidwakerCombatMethod extends MeleeCombatMethod {
 
-    // 2446 Voidwaker IDs from animations export.
+    // IDs backed by this client's 2446 override pipeline.
     private static final Animation ANIMATION = new Animation(11275, Priority.HIGH);
     private static final Graphic SPEC_CAST_GFX = new Graphic(3030, Priority.HIGH);
     private static final Graphic SPEC_IMPACT_GFX = new Graphic(3017, Priority.HIGH);

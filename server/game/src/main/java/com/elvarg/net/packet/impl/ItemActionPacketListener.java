@@ -3,6 +3,7 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.game.GameConstants;
 import com.elvarg.game.content.Food;
 import com.elvarg.game.content.Gambling;
+import com.elvarg.game.content.ImbuedHeart;
 import com.elvarg.game.content.PotionConsumable;
 import com.elvarg.game.content.grandexchange.GrandExchangePlayer;
 import com.elvarg.game.content.combat.BlowpipeData;
@@ -103,6 +104,10 @@ public class ItemActionPacketListener implements PacketExecutor {
 		}
 
 		switch (itemId) {
+			case ItemIdentifiers.IMBUED_HEART:
+			case ItemIdentifiers.IMBUED_HEART_2:
+				ImbuedHeart.invigorate(player);
+				break;
 			case ItemIdentifiers.BIRD_NEST:
 			case ItemIdentifiers.BIRD_NEST_2:
 			case ItemIdentifiers.BIRD_NEST_3:

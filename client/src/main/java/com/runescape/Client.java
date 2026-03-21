@@ -30132,7 +30132,7 @@ public class Client extends GameApplet {
 
                     && localPlayer.pathY[0] <= j6 + i14 && aBoolean848 && !lowMemory
 
-                    && soundCount < 50) {
+                    && soundCount < 50 && soundId >= 0 && soundId < SoundEffects.delays.length) {
 
                 sounds[soundCount] = soundId;
 
@@ -32601,15 +32601,13 @@ public class Client extends GameApplet {
 
                 int volume = incoming.readUShort();
 
-                sounds[soundCount] = soundId;
-
-                soundLoops[soundCount] = type;
-
-                soundDelay[soundCount] = delay + SoundEffects.delays[soundId];
-
-                soundVolume[soundCount] = volume;
-
-                soundCount++;
+                if (soundId >= 0 && soundId < SoundEffects.delays.length && soundCount < sounds.length) {
+                    sounds[soundCount] = soundId;
+                    soundLoops[soundCount] = type;
+                    soundDelay[soundCount] = delay + SoundEffects.delays[soundId];
+                    soundVolume[soundCount] = volume;
+                    soundCount++;
+                }
 
                 opcode = -1;
 

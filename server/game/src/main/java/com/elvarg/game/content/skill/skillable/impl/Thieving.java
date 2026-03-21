@@ -71,7 +71,18 @@ public class Thieving extends ItemIdentifiers {
 		public static boolean init(Player player, NPC npc) {
 			Optional<Pickpocketable> pickpocket = Pickpocketable.get(npc.getId());
 			if (pickpocket.isPresent()) {
+				if (player.getTimers().has(TimerKey.STUN)) {
+					player.getPacketSender().sendMessage("You are stunned and cannot pickpocket right now.");
+					return true;
+				}
+				if (player.getTimers().has(TimerKey.PICKPOCKET)) {
+					return true;
+				}
+
 				if (hasRequirements(player, npc, pickpocket.get())) {
+					// Throttle per-attempt, independent of global click delay usage.
+					player.getTimers().register(TimerKey.PICKPOCKET, 3);
+
 					// Stop movement..
 					player.getMovementQueue().reset();
 
@@ -104,19 +115,13 @@ public class Thieving extends ItemIdentifiers {
 								Item loot = pickpocket.get().getRewards()[Misc
 										.getRandom(pickpocket.get().getRewards().length - 1)].clone();
 
-								// If we're pickpocketing the Master farmer and the required chance
-								// isn't hit, make sure to reward the default item.
-								// This is to make sure the other seeds remain semi-rare.
+								// Master Farmer rewards are weighted seed rolls, not stack-size rolls.
 								if (pickpocket.get() == Pickpocketable.MASTER_FARMER) {
-									if (Misc.getRandom(100) > 18) {
-										loot = pickpocket.get().getRewards()[0];
-									}
-
-									// Mix up loot amounts aswell for seeds..
-									if (loot.getAmount() > 1) {
-										loot.setAmount(1 + Misc.getRandom(loot.getAmount()));
-									}
+									loot = rollMasterFarmerLoot(pickpocket.get().getRewards());
 								}
+
+								// High-end pickpockets can also roll clue scrolls or other tertiary rewards.
+								loot = applyBonusRewards(player, npc, pickpocket.get(), loot);
 
 								// Reward loot
 								if (!player.getInventory().isFull()) {
@@ -169,14 +174,14 @@ public class Thieving extends ItemIdentifiers {
 		 * @return
 		 */
 		private static boolean hasRequirements(Player player, NPC npc, Pickpocketable p) {
-			// Make sure they aren't spam clicking..
-			if (!player.getClickDelay().elapsed(1500)) {
+			if (player.getTimers().has(TimerKey.PICKPOCKET)) {
 				return false;
 			}
 
 			// Check thieving level..
 			if (player.getSkillManager().getCurrentLevel(Skill.THIEVING) < p.getLevel()) {
-			//	DialogueManager.sendStatement(player, "You need a Thieving level of at least " + Integer.toString(p.getLevel()) + " to do this.");
+				player.getPacketSender().sendMessage(
+						"You need a Thieving level of at least " + p.getLevel() + " to pickpocket this NPC.");
 				return false;
 			}
 
@@ -223,6 +228,37 @@ public class Thieving extends ItemIdentifiers {
 			return factor > fluke;
 		}
 
+		private static Item applyBonusRewards(Player player, NPC npc, Pickpocketable pickpocket, Item loot) {
+			if (pickpocket == Pickpocketable.GNOME && Misc.getRandom(149) == 0) {
+				player.getInventory().add(new Item(CLUE_SCROLL_MEDIUM_));
+			} else if (pickpocket == Pickpocketable.PALADIN && Misc.getRandom(999) == 0) {
+				player.getInventory().add(new Item(CLUE_SCROLL_HARD_));
+			} else if (pickpocket == Pickpocketable.HERO && Misc.getRandom(1399) == 0) {
+				player.getInventory().add(new Item(CLUE_SCROLL_ELITE_));
+			} else if (pickpocket == Pickpocketable.WEALTHY_CITIZEN && Misc.getRandom(84) == 0) {
+				player.getInventory().add(new Item(CLUE_SCROLL_EASY_));
+			}
+
+			return loot;
+		}
+
+		private static Item rollMasterFarmerLoot(Item[] rewards) {
+			int totalWeight = 0;
+			for (Item reward : rewards) {
+				totalWeight += Math.max(1, reward.getAmount());
+			}
+
+			int roll = Misc.getRandom(totalWeight - 1);
+			for (Item reward : rewards) {
+				roll -= Math.max(1, reward.getAmount());
+				if (roll < 0) {
+					return new Item(reward.getId(), 1);
+				}
+			}
+
+			return new Item(rewards[0].getId(), 1);
+		}
+
 		/**
 		 * Represents an npc which can be pickpocketed ingame.
 		 *
@@ -230,10 +266,13 @@ public class Thieving extends ItemIdentifiers {
 		 */
 		// TODO: Add the npc ids for the ones that are commented out.
 		public enum Pickpocketable {
-			MAN_WOMAN(1, 8, 5, 1, new Item[] { new Item(COINS, 3) }, 3014, 3015, 3078, 3079, 3080, 3081, 3082, 3083,
-					3084, 3085, 3267, 3268, 3260, 3264, 3265, 3266, 3267, 3268), FARMER(10, 15, 5, 1,
-							new Item[] { new Item(COINS, 9), new Item(POTATO_SEED) }, 3086, 3087, 3088, 3089, 3090,
-							3091), FEMALE_HAM_MEMBER(15, 19, 4, 3, new Item[] { new Item(BUTTONS),
+			MAN_WOMAN(1, 8, 5, 1, new Item[] { new Item(COINS, 3) }, 385, 1118, 1119, 1138, 1130, 1131, 1139, 1140,
+					1141, 1142, 3014, 3015, 3078, 3079, 3080, 3081, 3082, 3083, 3084, 3085, 3106, 3107, 3108, 3109,
+					3110, 3111, 3112, 3113, 3260, 3261, 3264, 3265, 3266, 3267, 3268, 3298, 3299, 3652, 6818, 6987,
+					6988, 6989, 6990, 6991, 6992, 10728, 11053, 11054, 11057, 11058),
+			FARMER(10, 15, 5, 1, new Item[] { new Item(COINS, 9), new Item(POTATO_SEED) }, 3086, 3087, 3088, 3089,
+					3090, 3091, 3114, 3243, 3244, 3672, 6947, 6948, 6949, 6950, 6951),
+			FEMALE_HAM_MEMBER(15, 19, 4, 3, new Item[] { new Item(BUTTONS),
 									new Item(RUSTY_SWORD), new Item(DAMAGED_ARMOUR), new Item(FEATHER, 5),
 									new Item(BRONZE_ARROW), new Item(BRONZE_AXE), new Item(BRONZE_DAGGER),
 									new Item(BRONZE_PICKAXE), new Item(COWHIDE), new Item(IRON_AXE),
@@ -262,12 +301,12 @@ public class Thieving extends ItemIdentifiers {
 											new Item(HAM_SHIRT), new Item(HAM_ROBE), new Item(HAM_LOGO),
 											new Item(HAM_HOOD), new Item(GRIMY_GUAM_LEAF), new Item(GRIMY_MARRENTILL),
 											new Item(GRIMY_TARROMIN), new Item(GRIMY_HARRALANDER) }), AL_KHARID_WARRIOR(
-													25, 26, 5, 2, new Item[] { new Item(COINS, 18) }, 3100), ROGUE(32,
+													25, 26, 5, 2, new Item[] { new Item(COINS, 18) }, 3100, 3292), ROGUE(32,
 															36, 5, 2,
 															new Item[] { new Item(COINS, 34), new Item(
 																	LOCKPICK), new Item(IRON_DAGGER_P_),
 																	new Item(JUG_OF_WINE), new Item(AIR_RUNE, 8) },
-															2884), CAVE_GOBLIN(36, 40, 5, 1, new Item[] {
+															2884, 526), CAVE_GOBLIN(36, 40, 5, 1, new Item[] {
 																	new Item(COINS, 10), new Item(IRON_ORE),
 																	new Item(TINDERBOX), new Item(SWAMP_TAR),
 																	new Item(OIL_LANTERN), new Item(TORCH),
@@ -321,12 +360,15 @@ public class Thieving extends ItemIdentifiers {
 																					new Item(LANTADYME_SEED, 1),
 																					new Item(DWARF_WEED_SEED, 1),
 																					new Item(TORSTOL_SEED, 1), },
-																			3257, 3258, 5832), GUARD(40, 47, 5, 2,
+																			3257, 3258, 5730, 5731, 5832), GUARD(40, 47, 5, 2,
 																					new Item[] { new Item(COINS, 30) },
-																					1546, 1547, 1548, 1549, 1550, 3010,
-																					3011, 3094, 3245, 3267, 3268, 3269,
-																					3270, 3271, 3272, 3273, 3274,
-																					3283), FREMENNIK_CITIZEN(45, 65, 5,
+																					397, 398, 399, 400, 1546, 1547, 1548,
+																					1549, 1550, 3010, 3011, 3094, 3245,
+																					3254, 3267, 3268, 3269, 3270, 3271,
+																					3272, 3273, 3274, 3283, 4522, 4523,
+																					4524, 4525, 4526, 5418, 11092, 11094,
+																					11096, 11098, 11100, 11102, 11104,
+																					11106), FREMENNIK_CITIZEN(45, 65, 5,
 																							2,
 																							new Item[] { new Item(COINS,
 																									40) },
@@ -341,19 +383,35 @@ public class Thieving extends ItemIdentifiers {
 			// Item(ANTIPOISON_4_), new Item(LOCKPICK)}),
 			// KNIGHT(55, 84, 5, 3, new Item[]{new Item(COINS, 50)}),
 			// POLLNIVIAN_BANDIT(55, 84, 5, 5, new Item[]{new Item(COINS, 50)}),
-			YANILLE_WATCHMAN(65, 137, 5, 3, new Item[] { new Item(COINS, 60), new Item(BREAD) }, 3251), MENAPHITE_THUG(
-					65, 137, 5, 5, new Item[] { new Item(COINS, 60) }, 3549, 3550), PALADIN(70, 152, 5, 3,
-							new Item[] { new Item(COINS, 80), new Item(CHAOS_RUNE, 2) }, 3104, 3105), GNOME(75, 199, 5,
+			KNIGHT_OF_ARDOUGNE(55, 84, 6, 3, new Item[] { new Item(COINS, 50) }, 3108, 3111, 3297),
+			BANDIT(53, 79, 5, 3, new Item[] { new Item(COINS, 30), new Item(ANTIPOISON_4_), new Item(LOCKPICK) }, 690,
+					691, 692, 693, 694, 695, 734, 735, 2892, 6605),
+			PALADIN(70, 131, 5, 3,
+					new Item[] { new Item(COINS, 80), new Item(COINS, 80), new Item(COINS, 80), new Item(COINS, 80),
+							new Item(COINS, 80), new Item(CHAOS_RUNE, 2) }, 1144, 3104, 3105, 3293, 3294),
+			WEALTHY_CITIZEN(50, 96, 4, 3, new Item[] { new Item(COINS, 85), new Item(COINS, 85), new Item(COINS, 85),
+					new Item(COINS, 85), new Item(COINS, 85), new Item(COINS, 85), new Item(COINS, 85),
+					new Item(COINS, 85), new Item(COINS, 85), new Item(COINS, 85) }, 13302),
+			YANILLE_WATCHMAN(65, 137, 5, 3, new Item[] { new Item(COINS, 60), new Item(COINS, 60), new Item(BREAD) }, 3251, 5420), MENAPHITE_THUG(
+					65, 137, 5, 5, new Item[] { new Item(COINS, 60) }, 3549, 3550), GNOME(75, 133, 5,
 									1,
-									new Item[] { new Item(COINS, 300), new Item(EARTH_RUNE), new Item(GOLD_ORE),
-											new Item(FIRE_ORB), new Item(SWAMP_TOAD), new Item(KING_WORM) },
+									new Item[] { new Item(COINS, 300), new Item(COINS, 300), new Item(COINS, 300),
+											new Item(COINS, 300), new Item(COINS, 300), new Item(COINS, 300),
+											new Item(COINS, 300), new Item(EARTH_RUNE), new Item(EARTH_RUNE),
+											new Item(EARTH_RUNE), new Item(EARTH_RUNE), new Item(EARTH_RUNE),
+											new Item(GOLD_ORE), new Item(GOLD_ORE), new Item(FIRE_ORB),
+											new Item(FIRE_ORB), new Item(SWAMP_TOAD), new Item(SWAMP_TOAD),
+											new Item(KING_WORM) },
 									6086, 6087, 6094, 6095, 6096),
-			// HERO(80, 275, 6, 4, new Item[]{new Item(COINS, 280), new Item(BLOOD_RUNE),
-			// new Item(DIAMOND), new Item(JUG_OF_WINE), new Item(DEATH_RUNE, 2), new
-			// Item(FIRE_ORB), new Item(GOLD_ORE)}),
-			// ELF(85, 353, 6, 5, new Item[]{new Item(COINS, 325), new Item(NATURE_RUNE, 3),
-			// new Item(DIAMOND), new Item(JUG_OF_WINE), new Item(DEATH_RUNE, 2), new
-			// Item(FIRE_ORB), new Item(GOLD_ORE)}),
+			HERO(80, 163, 6, 3, new Item[] { new Item(COINS, 280), new Item(COINS, 280), new Item(COINS, 280),
+					new Item(COINS, 280), new Item(BLOOD_RUNE), new Item(DIAMOND), new Item(DIAMOND),
+					new Item(JUG_OF_WINE), new Item(JUG_OF_WINE), new Item(DEATH_RUNE, 2), new Item(FIRE_ORB),
+					new Item(GOLD_ORE) }, 3106, 3295),
+			ELF(85, 353, 6, 5, new Item[] { new Item(COINS, 325), new Item(NATURE_RUNE, 3),
+					new Item(DIAMOND), new Item(JUG_OF_WINE), new Item(DEATH_RUNE, 2),
+					new Item(FIRE_ORB), new Item(GOLD_ORE) }, 3428, 3429, 3431, 5293, 5294, 5295, 5296),
+			TZHAAR_HUR(90, 253, 6, 6, new Item[] { new Item(COINS, 100), new Item(TOKKUL, 1) }, 2161, 2162, 2163, 2164,
+					2165, 2166, 7682, 7683, 7684, 7685, 7686, 7687),
 
 			;
 			static Map<Integer, Pickpocketable> pickpockets = new HashMap<Integer, Pickpocketable>();

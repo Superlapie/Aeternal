@@ -252,6 +252,15 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 				return;
 			}
 
+            // Some client/menu configs route Master Farmer "Pickpocket" as first-click.
+            // Fallback it to pickpocket handling so this NPC remains thievable.
+            if (npc.getId() == MASTER_FARMER || npc.getId() == 3258 || npc.getId() == 5730
+                    || npc.getId() == 5731 || npc.getId() == 5832) {
+                if (Pickpocketing.init(player, npc)) {
+                    return;
+                }
+            }
+
 			if (NPCInteractionSystem.handleFirstOption(player, npc)) {
 				// Player is interacting with a defined NPC
 				return;
@@ -383,6 +392,11 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
         }
 
         if (opcode == PacketConstants.THIRD_CLICK_NPC_OPCODE) {
+            if (Pickpocketing.init(player, npc)) {
+                // Player is trying to thieve from an NPC
+                return;
+            }
+
             if (PetHandler.morph(player, npc)) {
 				// Player is morphing their pet
                 return;
