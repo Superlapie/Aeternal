@@ -25,7 +25,7 @@ public class GameConstants {
 	/**
 	 * The name of the game.
 	 */
-	public static final String NAME = "RspsApp";
+	public static final String NAME = "Aeternal";
 
 	/**
 	 * The secure game UID /Unique Identifier/

@@ -1,12 +1,12 @@
 [
   {
-    "x": 5837,
+    "x": 5835,
     "y": 5938,
     "z": 0,
     "owner": "Lapie",
-    "tier": "OAK",
+    "tier": "MAGIC",
     "state": "SEEDED",
-    "seededAtMs": 1774069458452,
+    "seededAtMs": 1774073356329,
     "face": 0,
     "type": 10
   }

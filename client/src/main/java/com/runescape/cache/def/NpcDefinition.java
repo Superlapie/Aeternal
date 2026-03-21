@@ -101,6 +101,28 @@ public final class NpcDefinition {
 			definition.scaleXZ = 45;
 			definition.size = 2;
 			break;
+		case 1635:
+		case 1636:
+		case 1637:
+		case 1638:
+		case 1639:
+		case 1640:
+		case 1641:
+		case 1642:
+		case 1643:
+		case 1644:
+		case 1645:
+		case 1646:
+		case 1647:
+		case 1648:
+		case 1649:
+		case 1650:
+		case 1651:
+		case 1652:
+		case 1653:
+		case 1654:
+			definition.actions = new String[] { "Catch", null, null, null, null, null, null };
+			break;
 		case 6609: // Callisto
 			definition.size = 4;
 			break;
@@ -188,6 +210,15 @@ public final class NpcDefinition {
 			definition.actions = new String[] { "Talk-to", null, "Trade", "Sell Emblems", "Request Skull", null, null };
 			break;
 
+		}
+
+		if (definition.name != null && definition.name.toLowerCase().contains("impling")) {
+			if (definition.actions == null) {
+				definition.actions = new String[] { "Catch", null, null, null, null, null, null };
+			} else if (definition.actions.length > 0 && definition.actions[0] == null) {
+				definition.actions[0] = "Catch";
+			}
+			definition.clickable = true;
 		}
 		return definition;
 	}

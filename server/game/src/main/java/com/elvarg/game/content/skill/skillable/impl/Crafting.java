@@ -44,6 +44,30 @@ public class Crafting extends ItemIdentifiers {
     }
 
     /**
+     * Handles spinning flax into bow string at a spinning wheel.
+     * OSRS values: level 10 Crafting, 15 xp per flax.
+     */
+    public static boolean spinFlax(Player player) {
+        if (!player.getInventory().contains(FLAX)) {
+            player.getPacketSender().sendMessage("You need some flax to spin.");
+            return false;
+        }
+
+        player.getPacketSender().sendCreationMenu(new CreationMenu("How many would you like to spin?", Arrays.asList(BOW_STRING), (itemId, amount) -> {
+            player.getSkillManager().startSkillable(new ItemCreationSkillable(
+                    Arrays.asList(new RequiredItem(new Item(FLAX), true)),
+                    new Item(BOW_STRING),
+                    amount,
+                    Optional.of(new AnimationLoop(new Animation(894), 3)),
+                    10,
+                    15,
+                    Skill.CRAFTING
+            ));
+        }));
+        return true;
+    }
+
+    /**
      * Handles Gem crafting.
      *
      * @author Professor Oak

@@ -14,6 +14,7 @@ import com.elvarg.game.content.skill.mining.Mining;
 import com.elvarg.game.content.skill.mining.MiningSpawnService;
 import com.elvarg.game.content.skill.impl.smithing.AnvilSmithing;
 import com.elvarg.game.content.skill.impl.smithing.Smelting;
+import com.elvarg.game.content.skill.skillable.impl.Crafting;
 import com.elvarg.game.content.skill.skillable.impl.Thieving.StallThieving;
 import com.elvarg.game.definition.ObjectDefinition;
 import com.elvarg.game.entity.impl.object.GameObject;
@@ -32,10 +33,13 @@ import com.elvarg.game.model.teleportation.TeleportType;
 import com.elvarg.game.task.Task;
 import com.elvarg.game.task.TaskManager;
 import com.elvarg.game.task.impl.ForceMovementTask;
+import com.elvarg.game.task.impl.TimedObjectReplacementTask;
 import com.elvarg.game.task.impl.WalkToTask;
 import com.elvarg.net.packet.Packet;
 import com.elvarg.net.packet.PacketConstants;
 import com.elvarg.net.packet.PacketExecutor;
+import com.elvarg.util.ItemIdentifiers;
+import com.elvarg.util.Misc;
 import com.elvarg.util.ObjectIdentifiers;
 import com.elvarg.game.entity.impl.object.ObjectManager;
 import java.util.Objects;
@@ -48,6 +52,7 @@ import java.util.Locale;
  */
 
 public class ObjectActionPacketListener extends ObjectIdentifiers implements PacketExecutor {
+    private static final long FLAX_PICK_DELAY_MS = 1200L;
 	/**
 	 * Handles the first click option on an object.
 	 *
@@ -58,6 +63,18 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	 */
     private static void firstClick(Player player, GameObject object) {
         if (Birdhouses.handleObjectClick(player, object)) {
+            return;
+        }
+
+        final ObjectDefinition defs = object.getDefinition();
+
+        if (isFlaxObject(object, defs)) {
+            handleFlaxPick(player, object);
+            return;
+        }
+
+        if (isSpinningWheelObject(object, defs)) {
+            Crafting.spinFlax(player);
             return;
         }
 
@@ -87,7 +104,6 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             return;
         }
 
-        final ObjectDefinition defs = object.getDefinition();
         if (defs != null) {
             if (handleVorkathEntrance(player, object, defs)) {
                 return;
@@ -110,6 +126,23 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
         }
 
         switch (object.getId()) {
+            case SPINNING_WHEEL:
+            case SPINNING_WHEEL_2:
+            case SPINNING_WHEEL_3:
+            case SPINNING_WHEEL_4:
+            case SPINNING_WHEEL_5:
+            case SPINNING_WHEEL_6:
+            case SPINNING_WHEEL_7:
+            case SPINNING_MACHINE:
+                Crafting.spinFlax(player);
+                break;
+            case FLAX:
+            case FLAX_2:
+            case FLAX_3:
+            case FLAX_4:
+            case FLAX_5:
+                handleFlaxPick(player, object);
+                break;
             case WEB:
                 if (!WebHandler.wieldingSharpItem(player)) {
                     player.getPacketSender().sendMessage("Only a sharp blade can cut through this sticky web.");
@@ -237,6 +270,15 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
      *            The packet containing the object's information.
      */
     private static void secondClick(Player player, GameObject object) {
+        if (isFlaxObject(object, object.getDefinition())) {
+            handleFlaxPick(player, object);
+            return;
+        }
+        if (isSpinningWheelObject(object, object.getDefinition())) {
+            Crafting.spinFlax(player);
+            return;
+        }
+
         if (isPortalNexusId(object.getId())) {
             player.setPortalNexusInterfaceOpen(true);
             player.getPacketSender().sendTeleportInterface(TeleportButton.MINIGAME.menu);
@@ -329,6 +371,15 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	 *            The packet containing the object's information.
 	 */
 	private static void thirdClick(Player player, GameObject object) {
+        if (isFlaxObject(object, object.getDefinition())) {
+            handleFlaxPick(player, object);
+            return;
+        }
+        if (isSpinningWheelObject(object, object.getDefinition())) {
+            Crafting.spinFlax(player);
+            return;
+        }
+
         if (isPortalNexusId(object.getId())) {
             Location previous = player.getPreviousPortalNexusTeleport();
             if (previous == null) {
@@ -373,6 +424,15 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	 *            The packet containing the object's information.
 	 */
 	private static void fourthClick(Player player, GameObject object) {
+        if (isFlaxObject(object, object.getDefinition())) {
+            handleFlaxPick(player, object);
+            return;
+        }
+        if (isSpinningWheelObject(object, object.getDefinition())) {
+            Crafting.spinFlax(player);
+            return;
+        }
+
         if (openBankIfBankObject(player, object.getDefinition())) {
             return;
         }
@@ -396,6 +456,13 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             object = MiningSpawnService.findNearbyRock(id, location, 2);
         }
 
+        if (object == null) {
+            ObjectDefinition clickedDef = ObjectDefinition.forId(id);
+            if (isFlaxDefinition(clickedDef) || isSpinningWheelDefinition(clickedDef)) {
+                object = new GameObject(id, location, 10, 0, player.getPrivateArea());
+            }
+        }
+
         if (player.getRights() == PlayerRights.DEVELOPER) {
             String typeFace = object != null ? "[F: " + object.getFace() + " T:" +object.getType() + "]" : "";
             player.getPacketSender().sendMessage(clickType + "-click object: " + id + ". " + location + " " + typeFace);
@@ -417,6 +484,26 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 
         if (Mining.isMineableRock(id) && MiningSpawnService.isInjectedRock(resolvedObject)
                 && player.getLocation().getDistance(resolvedObject.getLocation()) <= 3) {
+            switch (clickType) {
+                case 1:
+                    firstClick(player, resolvedObject);
+                    break;
+                case 2:
+                    secondClick(player, resolvedObject);
+                    break;
+                case 3:
+                    thirdClick(player, resolvedObject);
+                    break;
+                case 4:
+                    fourthClick(player, resolvedObject);
+                    break;
+            }
+            return;
+        }
+
+        // For simple interactables like flax/spinning wheel, avoid path-task edge cases.
+        if ((isFlaxObject(resolvedObject, def) || isSpinningWheelObject(resolvedObject, def))
+                && player.getLocation().getDistance(resolvedObject.getLocation()) <= 2) {
             switch (clickType) {
                 case 1:
                     firstClick(player, resolvedObject);
@@ -530,6 +617,29 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 	return false;
     }
 
+    private static void handleFlaxPick(Player player, GameObject object) {
+        if (!player.getClickDelay().elapsed(FLAX_PICK_DELAY_MS)) {
+            return;
+        }
+
+        if (player.getInventory().isFull()) {
+            player.getInventory().full();
+            return;
+        }
+
+        player.getClickDelay().reset();
+        player.performAnimation(new Animation(827));
+        player.getInventory().add(ItemIdentifiers.FLAX, 1);
+        player.getPacketSender().sendMessage("You pick some flax.");
+
+        // OSRS behavior: flax has a 3/16 chance to deplete and reappear after ~10 ticks.
+        if (Misc.getRandom(15) < 3) {
+            final int flaxRespawnTicks = 10;
+            GameObject depleted = new GameObject(-1, object.getLocation(), object.getType(), object.getFace(), object.getPrivateArea());
+            TaskManager.submit(new TimedObjectReplacementTask(object, depleted, flaxRespawnTicks));
+        }
+    }
+
     private static void boardSacrificialBoat(Player player) {
         ZulrahEncounter.enter(player);
     }
@@ -601,6 +711,38 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
 
     private static boolean isPortalNexusId(int objectId) {
         return objectId == 11357;
+    }
+
+    private static boolean isFlaxDefinition(ObjectDefinition defs) {
+        if (defs == null || defs.getName() == null) {
+            return false;
+        }
+        return "flax".equalsIgnoreCase(defs.getName().trim());
+    }
+
+    private static boolean isSpinningWheelDefinition(ObjectDefinition defs) {
+        if (defs == null || defs.getName() == null) {
+            return false;
+        }
+        return defs.getName().toLowerCase(Locale.ROOT).contains("spinning wheel");
+    }
+
+    private static boolean isFlaxObject(GameObject object, ObjectDefinition defs) {
+        if (object.getId() == FLAX || object.getId() == FLAX_2 || object.getId() == FLAX_3
+                || object.getId() == FLAX_4 || object.getId() == FLAX_5) {
+            return true;
+        }
+        return isFlaxDefinition(defs);
+    }
+
+    private static boolean isSpinningWheelObject(GameObject object, ObjectDefinition defs) {
+        if (object.getId() == SPINNING_WHEEL || object.getId() == SPINNING_WHEEL_2 || object.getId() == SPINNING_WHEEL_3
+                || object.getId() == SPINNING_WHEEL_4 || object.getId() == SPINNING_WHEEL_5
+                || object.getId() == SPINNING_WHEEL_6 || object.getId() == SPINNING_WHEEL_7
+                || object.getId() == SPINNING_MACHINE) {
+            return true;
+        }
+        return isSpinningWheelDefinition(defs);
     }
 
     private static boolean openBankIfBankObject(Player player, ObjectDefinition defs) {

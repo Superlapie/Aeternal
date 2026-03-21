@@ -32,6 +32,7 @@ import com.elvarg.game.model.Location;
 import com.elvarg.game.model.container.impl.Bank;
 import com.elvarg.game.model.equipment.BonusManager;
 import com.elvarg.game.model.menu.CreationMenu;
+import com.elvarg.game.definition.ObjectDefinition;
 import com.elvarg.game.task.impl.WalkToTask;
 import com.elvarg.net.packet.Packet;
 import com.elvarg.net.packet.PacketConstants;
@@ -186,23 +187,31 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
 
         final Location position = new Location(objectX, objectY, player.getLocation().getZ());
 
-        final GameObject object = MapObjects.get(player, objectId, position);
+        GameObject object = MapObjects.get(player, objectId, position);
+        if (object == null) {
+            ObjectDefinition clickedDef = ObjectDefinition.forId(objectId);
+            if (isSpinningWheelObjectId(objectId) || isSpinningWheelDefinition(clickedDef)) {
+                object = new GameObject(objectId, position, 10, 0, player.getPrivateArea());
+            }
+        }
 
         // Make sure the object actually exists in the region...
         if (object == null) {
             return;
         }
 
+        final GameObject resolvedObject = object;
+
         player.setPositionToFace(position);
 
-        WalkToTask.submit(player, object, () -> {
-            if (Birdhouses.handleItemOnObject(player, item, object)) {
+        WalkToTask.submit(player, resolvedObject, () -> {
+            if (Birdhouses.handleItemOnObject(player, item, resolvedObject)) {
                 return;
             }
-            switch (object.getId()) {
+            switch (resolvedObject.getId()) {
                 case 6: {
-                    if (DwarfCannon.isObject(object)) {
-                        player.getDwarfCannon().handleCannonBallOnCannon(object, item);
+                    if (DwarfCannon.isObject(resolvedObject)) {
+                        player.getDwarfCannon().handleCannonBallOnCannon(resolvedObject, item);
                         return;
                     }
                 }
@@ -213,16 +222,16 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
                     Optional<Cookable> cookable = Cookable.getForItem(item.getId());
                     if (cookable.isPresent()) {
                         player.getPacketSender().sendCreationMenu(new CreationMenu("How many would you like to cook?", Arrays.asList(cookable.get().getCookedItem()), (productId, amount) -> {
-                            player.getSkillManager().startSkillable(new Cooking(object, cookable.get(), amount));
+                            player.getSkillManager().startSkillable(new Cooking(resolvedObject, cookable.get(), amount));
                         }));
                         return;
                     }
                     //Handle bonfires..
-                    if (object.getId() == ObjectIdentifiers.FIRE_5) {
+                    if (resolvedObject.getId() == ObjectIdentifiers.FIRE_5) {
                         Optional<LightableLog> log = LightableLog.getForItem(item.getId());
                         if (log.isPresent()) {
                             player.getPacketSender().sendCreationMenu(new CreationMenu("How many would you like to burn?", Arrays.asList(log.get().getLogId()), (productId, amount) -> {
-                                player.getSkillManager().startSkillable(new Firemaking(log.get(), object, amount));
+                                player.getSkillManager().startSkillable(new Firemaking(log.get(), resolvedObject, amount));
                             }));
                             return;
                         }
@@ -233,13 +242,13 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
                         player.sendMessage("Only a sharp blade can cut through this sticky web.");
                         return;
                     }
-                    WebHandler.handleSlashWeb(player, object, true);
+                    WebHandler.handleSlashWeb(player, resolvedObject, true);
                     break;
                 case 409: //Bone on Altar
                     Optional<BuriableBone> b = BuriableBone.forId(item.getId());
                     if (b.isPresent()) {
                         player.getPacketSender().sendCreationMenu(new CreationMenu("How many would you like to offer?", Arrays.asList(itemId), (productId, amount) -> {
-                            player.getSkillManager().startSkillable(new AltarOffering(b.get(), object, amount));
+                            player.getSkillManager().startSkillable(new AltarOffering(b.get(), resolvedObject, amount));
                         }));
                     }
                     break;
@@ -247,15 +256,15 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
                     player.getPacketSender().sendMessage("Nothing interesting happens.");
                     break;
             }
-            if (Bank.useItemOnDepositBox(player, item, itemSlot, object)) {
+            if (Bank.useItemOnDepositBox(player, item, itemSlot, resolvedObject)) {
                 return;
             }
 
-            if (CastleWars.handleItemOnObject(player, item, object)) {
+            if (CastleWars.handleItemOnObject(player, item, resolvedObject)) {
                 return;
             }
             
-            if (isFurnaceObject(object.getId()) && item.getId() == ItemIdentifiers.STEEL_BAR && player.getInventory().contains(ItemIdentifiers.AMMO_MOULD)) {
+            if (isFurnaceObject(resolvedObject.getId()) && item.getId() == ItemIdentifiers.STEEL_BAR && player.getInventory().contains(ItemIdentifiers.AMMO_MOULD)) {
                 player.getPacketSender().sendCreationMenu(new CreationMenu("How many would you like to make?", Arrays.asList(ItemIdentifiers.CANNONBALL), (productId, amount) -> {
                     Smelting.startSmelting(player, SmeltingData.CANNONBALL, amount);
                 }));
@@ -263,14 +272,39 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
             }
 
             // Handle bar on anvil for smithing
-            if (isAnvilObject(object.getId())) {
+            if (isAnvilObject(resolvedObject.getId())) {
                 SmeltingData barData = SmeltingData.forBarId(item.getId());
                 if (barData != null) {
                     AnvilSmithing.openSmithingInterface(player);
                 }
                 return;
             }
+
+            // Explicit support: flax on spinning wheel -> bow string creation menu.
+            if (item.getId() == ItemIdentifiers.FLAX
+                    && (isSpinningWheelObjectId(resolvedObject.getId()) || isSpinningWheelDefinition(resolvedObject.getDefinition()))) {
+                Crafting.spinFlax(player);
+                return;
+            }
         });
+    }
+
+    private static boolean isSpinningWheelObjectId(int objectId) {
+        return objectId == ObjectIdentifiers.SPINNING_WHEEL
+                || objectId == ObjectIdentifiers.SPINNING_WHEEL_2
+                || objectId == ObjectIdentifiers.SPINNING_WHEEL_3
+                || objectId == ObjectIdentifiers.SPINNING_WHEEL_4
+                || objectId == ObjectIdentifiers.SPINNING_WHEEL_5
+                || objectId == ObjectIdentifiers.SPINNING_WHEEL_6
+                || objectId == ObjectIdentifiers.SPINNING_WHEEL_7
+                || objectId == ObjectIdentifiers.SPINNING_MACHINE;
+    }
+
+    private static boolean isSpinningWheelDefinition(ObjectDefinition defs) {
+        if (defs == null || defs.getName() == null) {
+            return false;
+        }
+        return defs.getName().toLowerCase().contains("spinning wheel");
     }
 
     private static boolean isAnvilObject(int objectId) {

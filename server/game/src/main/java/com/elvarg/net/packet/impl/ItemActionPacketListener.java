@@ -3,7 +3,9 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.game.GameConstants;
 import com.elvarg.game.content.Food;
 import com.elvarg.game.content.Gambling;
+import com.elvarg.game.content.DragonstoneJewellery;
 import com.elvarg.game.content.ImbuedHeart;
+import com.elvarg.game.content.ImplingJars;
 import com.elvarg.game.content.PotionConsumable;
 import com.elvarg.game.content.grandexchange.GrandExchangePlayer;
 import com.elvarg.game.content.combat.BlowpipeData;
@@ -100,6 +102,14 @@ public class ItemActionPacketListener implements PacketExecutor {
 
 		// Teleport tablets..
 		if (TeleportTablets.init(player, itemId)) {
+			return;
+		}
+
+		if (ImplingJars.open(player, itemId, slot)) {
+			return;
+		}
+
+		if (DragonstoneJewellery.rubFromInventory(player, itemId, slot)) {
 			return;
 		}
 
@@ -260,6 +270,12 @@ public class ItemActionPacketListener implements PacketExecutor {
 		if (Runecrafting.handleTalisman(player, itemId)) {
 			return;
 		}
+		if (ImplingJars.open(player, itemId, slot)) {
+			return;
+		}
+		if (DragonstoneJewellery.rubFromInventory(player, itemId, slot)) {
+			return;
+		}
 		if (Runecrafting.handlePouch(player, itemId, 2)) {
 			return;
 		}
@@ -312,6 +328,12 @@ public class ItemActionPacketListener implements PacketExecutor {
 		}
 
 		if (BarrowsSet.pack(player, itemId)) {
+			return;
+		}
+		if (ImplingJars.open(player, itemId, slot)) {
+			return;
+		}
+		if (DragonstoneJewellery.rubFromInventory(player, itemId, slot)) {
 			return;
 		}
 		if (Runecrafting.handlePouch(player, itemId, 3)) {

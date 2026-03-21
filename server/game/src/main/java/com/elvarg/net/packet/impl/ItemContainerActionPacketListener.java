@@ -1,6 +1,7 @@
 package com.elvarg.net.packet.impl;
 
 import com.elvarg.game.content.DepositBox;
+import com.elvarg.game.content.DragonstoneJewellery;
 import com.elvarg.game.content.Dueling;
 import com.elvarg.game.content.Trading;
 import com.elvarg.game.content.grandexchange.GrandExchangePlayer;
@@ -161,6 +162,11 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         }
 
         switch (interfaceId) {
+            case Equipment.INVENTORY_INTERFACE_ID:
+                if (DragonstoneJewellery.rubFromEquipment(player, id, slot)) {
+                    return;
+                }
+                break;
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_1:
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_2:
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_3:
@@ -232,6 +238,11 @@ public class ItemContainerActionPacketListener implements PacketExecutor {
         }
 
         switch (interfaceId) {
+            case Equipment.INVENTORY_INTERFACE_ID:
+                if (DragonstoneJewellery.rubFromEquipment(player, id, slot)) {
+                    return;
+                }
+                break;
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_1:
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_2:
             case AnvilSmithing.EQUIPMENT_CREATION_COLUMN_3:
