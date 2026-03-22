@@ -1,5 +1,5 @@
 {
-  "nextOfferId": 16,
+  "nextOfferId": 19,
   "activeOffers": [
     {
       "id": 10,
@@ -7,13 +7,32 @@
       "slot": 3,
       "itemId": 385,
       "amount": 5,
-      "processedAmount": 3,
+      "processedAmount": 5,
       "price": 984,
       "taxRatePercent": 2,
       "type": "SELL",
-      "active": true
+      "active": false
+    },
+    {
+      "id": 16,
+      "owner": "Lapiee",
+      "slot": 7,
+      "itemId": 6685,
+      "amount": 1,
+      "processedAmount": 1,
+      "price": 6231,
+      "taxRatePercent": 2,
+      "type": "SELL",
+      "active": false
     }
   ],
-  "collectionBox": {},
+  "collectionBox": {
+    "lapiee": [
+      {
+        "itemId": 995,
+        "amount": 8037
+      }
+    ]
+  },
   "buyLimitWindows": {}
 }

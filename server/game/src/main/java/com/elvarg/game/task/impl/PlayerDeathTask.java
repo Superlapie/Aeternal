@@ -5,6 +5,7 @@ import com.elvarg.game.content.ItemsKeptOnDeath;
 import com.elvarg.game.content.PrayerHandler;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.bountyhunter.Emblem;
+import com.elvarg.game.content.combat.magic.ArceuusSpells;
 import com.elvarg.game.content.presets.Presetables;
 import com.elvarg.game.definition.ItemDefinition;
 import com.elvarg.game.entity.impl.grounditem.ItemOnGroundManager;
@@ -205,6 +206,8 @@ public class PlayerDeathTask extends Task {
 					if (player instanceof PlayerBot) {
 						((PlayerBot) player).getCombatInteraction().handleDying(this.killer);
 					}
+
+					ArceuusSpells.cleanupThrall(player);
 
 					// Reset combat..
 					player.getCombat().reset();

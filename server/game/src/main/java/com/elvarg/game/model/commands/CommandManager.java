@@ -37,6 +37,7 @@ public class CommandManager {
         put(new DropRateCommand(), "droprate");
         put(new SmeltCommand(), "smelt");
         put(new GrandExchangeCommand(), "ge");
+        put(new BossTeleportCommand(), "home", "zulrah", "dks", "vork", "vorkath", "bandos", "sara", "zammy", "zamorak", "arma", "armadyl");
 
         /**
          * Donators Command

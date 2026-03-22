@@ -5,6 +5,7 @@ import com.elvarg.game.content.ItemsKeptOnDeath;
 import com.elvarg.game.content.PrayerHandler;
 import com.elvarg.game.content.clan.ClanChatManager;
 import com.elvarg.game.content.combat.WeaponInterfaces;
+import com.elvarg.game.content.combat.magic.ArceuusSpells;
 import com.elvarg.game.content.combat.magic.Autocasting;
 import com.elvarg.game.content.combat.magic.EffectSpells;
 import com.elvarg.game.content.minigames.MinigameHandler;
@@ -97,6 +98,9 @@ public class ButtonClickPacketListener implements PacketExecutor {
 			return true;
 		}
 		if (EffectSpells.handleSpell(player, button)) {
+			return true;
+		}
+		if (ArceuusSpells.handleButton(player, button)) {
 			return true;
 		}
 		if (Bank.handleButton(player, button, 0)) {

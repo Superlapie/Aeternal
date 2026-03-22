@@ -2,7 +2,6 @@ package com.elvarg.game.content;
 
 import com.elvarg.game.definition.ItemDefinition;
 import com.elvarg.game.entity.impl.player.Player;
-import com.elvarg.game.model.Item;
 import com.elvarg.util.ItemIdentifiers;
 import com.elvarg.util.Misc;
 
@@ -151,13 +150,13 @@ public final class ImplingJars {
         player.getInventory().delete(jarItemId, 1);
         int rewardAmount = reward.rollAmount();
         if (reward.itemId > 0 && rewardAmount > 0) {
-            player.getInventory().add(reward.itemId, rewardAmount);
+            Looting.addOrDrop(player, reward.itemId, rewardAmount);
             player.getPacketSender().sendMessage("You open the jar and find: " + reward.displayName + ".");
         } else {
             player.getPacketSender().sendMessage("You open the jar and find nothing.");
         }
         if (Misc.getRandom(99) >= JAR_BREAK_CHANCE) {
-            player.getInventory().add(EMPTY_IMPLING_JAR, 1);
+            Looting.addOrDrop(player, EMPTY_IMPLING_JAR, 1);
         } else {
             player.getPacketSender().sendMessage("The jar shatters as you open it.");
         }

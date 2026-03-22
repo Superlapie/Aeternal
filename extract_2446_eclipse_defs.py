@@ -24,6 +24,11 @@ YAMA_JSON = Path("_ext/animations_export_62_itemsYAMA.json")
 NOX_JSON = Path("_ext/NoxAnimations.json")
 
 SEQ_IDS = [
+    # Arceuus spellbook cast/reanimation/thrall sequences.
+    753, 2814, 6621, 7198,
+    8970, 8972, 8987, 8988, 8989, 8990,
+    10792, 13670, 13671,
+    8524, 8525, 8530,
     8139, 8140, 8141, 8142,
     8531, 8532,
     10815, 10818, 10819,
@@ -36,6 +41,7 @@ SEQ_IDS = [
 ]
 SPOT_IDS = [2709, 2710, 2711, 2712, 2795, 2796, 2797, 2798, 2914, 3017, 3030]
 SPOT_IDS += [1757, 1758, 1759, 1760, 1761, 1762]
+SPOT_IDS += [1129, 1288, 1856, 1857, 1858, 1859, 1860, 1861, 1873, 1874, 1875]
 
 
 class Reader:

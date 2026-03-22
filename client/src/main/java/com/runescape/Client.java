@@ -1326,6 +1326,12 @@ public class Client extends GameApplet {
     private SceneGraph scene;
 
     private Sprite[] sideIcons;
+    private static final int SPELLBOOK_TOGGLE_CONFIG = 439;
+    private static final int SPELLBOOK_SIDE_ICON_ANCIENT = 667;
+    private static final int SPELLBOOK_SIDE_ICON_LUNAR = 668;
+    private static final int SPELLBOOK_SIDE_ICON_ARCEUUS = 669;
+    private static final int ARCEUUS_SIDE_ICON_SHIFT_X = -3;
+    private static final int ARCEUUS_SIDE_ICON_SHIFT_Y = -8;
 
     private int menuScreenArea;
 
@@ -8654,6 +8660,15 @@ public class Client extends GameApplet {
                     if (sideIconsId[i] != -1) {
 
                         Sprite sprite = sideIcons[sideIconsId[i]];
+                        if (i == 6) {
+                            sprite = resolveMagicTabIcon(sprite);
+                        }
+                        int drawX = sideIconsX[i] + xOffset;
+                        int drawY = sideIconsY[i] + yOffset;
+                        if (i == 6 && isArceuusSpellbookActive()) {
+                            drawX += ARCEUUS_SIDE_ICON_SHIFT_X;
+                            drawY += ARCEUUS_SIDE_ICON_SHIFT_Y;
+                        }
 
                         if (i == 13) {
 
@@ -8661,7 +8676,7 @@ public class Client extends GameApplet {
 
                         } else {
 
-                            sprite.drawSprite(sideIconsX[i] + xOffset, sideIconsY[i] + yOffset);
+                            sprite.drawSprite(drawX, drawY);
 
                         }
 
@@ -8688,6 +8703,15 @@ public class Client extends GameApplet {
                     if (iconId[i] != -1) {
 
                         Sprite sprite = sideIcons[iconId[i]];
+                        if (iconId[i] == 6) {
+                            sprite = resolveMagicTabIcon(sprite);
+                        }
+                        int drawX = frameWidth - iconX[i];
+                        int drawY = frameHeight - iconY[i];
+                        if (iconId[i] == 6 && isArceuusSpellbookActive()) {
+                            drawX += ARCEUUS_SIDE_ICON_SHIFT_X;
+                            drawY += ARCEUUS_SIDE_ICON_SHIFT_Y;
+                        }
 
                         if (i == 13) {
 
@@ -8695,7 +8719,7 @@ public class Client extends GameApplet {
 
                         } else {
 
-                            sprite.drawSprite(frameWidth - iconX[i], frameHeight - iconY[i]);
+                            sprite.drawSprite(drawX, drawY);
 
                         }
 
@@ -8722,6 +8746,15 @@ public class Client extends GameApplet {
                     if (iconId[i] != -1) {
 
                         Sprite sprite = sideIcons[iconId[i]];
+                        if (iconId[i] == 6) {
+                            sprite = resolveMagicTabIcon(sprite);
+                        }
+                        int drawX = frameWidth - 461 + iconX[i];
+                        int drawY = frameHeight - iconY[i];
+                        if (iconId[i] == 6 && isArceuusSpellbookActive()) {
+                            drawX += ARCEUUS_SIDE_ICON_SHIFT_X;
+                            drawY += ARCEUUS_SIDE_ICON_SHIFT_Y;
+                        }
 
                         if (i == 13) {
 
@@ -8729,7 +8762,7 @@ public class Client extends GameApplet {
 
                         } else {
 
-                            sprite.drawSprite(frameWidth - 461 + iconX[i], frameHeight - iconY[i]);
+                            sprite.drawSprite(drawX, drawY);
 
                         }
 
@@ -8741,6 +8774,38 @@ public class Client extends GameApplet {
 
         }
 
+    }
+
+    private Sprite resolveMagicTabIcon(Sprite fallback) {
+        if (settings == null || settings.length <= SPELLBOOK_TOGGLE_CONFIG) {
+            return fallback;
+        }
+
+        int spellbook = settings[SPELLBOOK_TOGGLE_CONFIG];
+        int spriteId = -1;
+        if (spellbook == 1) {
+            spriteId = SPELLBOOK_SIDE_ICON_ANCIENT;
+        } else if (spellbook == 2) {
+            spriteId = SPELLBOOK_SIDE_ICON_LUNAR;
+        } else if (spellbook == 3) {
+            spriteId = SPELLBOOK_SIDE_ICON_ARCEUUS;
+        }
+
+        if (spriteId == -1) {
+            return fallback;
+        }
+
+        Sprite override = spriteCache.lookup(spriteId);
+        if (override == null || override == Sprite.EMPTY_SPRITE || override.myWidth <= 0 || override.myHeight <= 0) {
+            return fallback;
+        }
+        return override;
+    }
+
+    private boolean isArceuusSpellbookActive() {
+        return settings != null
+                && settings.length > SPELLBOOK_TOGGLE_CONFIG
+                && settings[SPELLBOOK_TOGGLE_CONFIG] == 3;
     }
 
 

@@ -2978,6 +2978,226 @@ public enum CombatSpells {
         public int spellId() {
             return 1;
         }
+    }),
+    GHOSTLY_GRASP(new CombatEffectSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1859).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1859, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 6; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1859, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 28; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(556, 1), new Item(565, 1), new Item(566, 1) }); }
+        @Override
+        public int levelRequired() { return 35; }
+        @Override
+        public int spellId() { return 30633; }
+        @Override
+        public void spellEffect(Mobile cast, Mobile castOn) { CombatFactory.freeze(castOn, 5); }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
+    }),
+    SKELETAL_GRASP(new CombatEffectSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1860).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1860, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 11; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1860, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 42; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(556, 1), new Item(565, 2), new Item(566, 1) }); }
+        @Override
+        public int levelRequired() { return 56; }
+        @Override
+        public int spellId() { return 30637; }
+        @Override
+        public void spellEffect(Mobile cast, Mobile castOn) { CombatFactory.freeze(castOn, 10); }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
+    }),
+    UNDEAD_GRASP(new CombatEffectSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1861).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1861, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 17; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1861, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 58; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(556, 1), new Item(565, 3), new Item(566, 1) }); }
+        @Override
+        public int levelRequired() { return 79; }
+        @Override
+        public int spellId() { return 30641; }
+        @Override
+        public void spellEffect(Mobile cast, Mobile castOn) { CombatFactory.freeze(castOn, 15); }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
+    }),
+    INFERIOR_DEMONBANE(new CombatNormalSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1859).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1859, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 12; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1859, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 36; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(556, 1), new Item(565, 1), new Item(566, 1) }); }
+        @Override
+        public int levelRequired() { return 44; }
+        @Override
+        public int spellId() { return 30645; }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
+    }),
+    SUPERIOR_DEMONBANE(new CombatNormalSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1860).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1860, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 16; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1860, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 52; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(556, 1), new Item(565, 2), new Item(566, 1) }); }
+        @Override
+        public int levelRequired() { return 62; }
+        @Override
+        public int spellId() { return 30649; }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
+    }),
+    GREATER_DEMONBANE(new CombatNormalSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1861).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1861, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 20; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1861, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 65; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(556, 1), new Item(565, 3), new Item(566, 1) }); }
+        @Override
+        public int levelRequired() { return 82; }
+        @Override
+        public int spellId() { return 30653; }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
+    }),
+    LESSER_CORRUPTION(new CombatEffectSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1856).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1856, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 0; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1856, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 70; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(564, 1), new Item(565, 2), new Item(566, 1) }); }
+        @Override
+        public int levelRequired() { return 64; }
+        @Override
+        public int spellId() { return 30657; }
+        @Override
+        public void spellEffect(Mobile cast, Mobile castOn) {
+            if (castOn.isPlayer()) {
+                Player target = castOn.getAsPlayer();
+                int current = target.getSkillManager().getCurrentLevel(Skill.PRAYER);
+                if (current > 0) {
+                    target.getSkillManager().setCurrentLevel(Skill.PRAYER, Math.max(0, current - 1));
+                    target.getSkillManager().updateSkill(Skill.PRAYER);
+                }
+            }
+        }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
+    }),
+    GREATER_CORRUPTION(new CombatEffectSpell() {
+        @Override
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        @Override
+        public Projectile projectile() { return new ProjectileBuilder().setId(1857).create(); }
+        @Override
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1857, GraphicHeight.HIGH)); }
+        @Override
+        public int maximumHit() { return 0; }
+        @Override
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1857, GraphicHeight.HIGH)); }
+        @Override
+        public int baseExperience() { return 85; }
+        @Override
+        public Optional<Item[]> equipmentRequired(Player player) { return Optional.empty(); }
+        @Override
+        public Optional<Item[]> itemsRequired(Player player) { return Optional.of(new Item[] { new Item(564, 2), new Item(565, 3), new Item(566, 2) }); }
+        @Override
+        public int levelRequired() { return 85; }
+        @Override
+        public int spellId() { return 30661; }
+        @Override
+        public void spellEffect(Mobile cast, Mobile castOn) {
+            if (castOn.isPlayer()) {
+                Player target = castOn.getAsPlayer();
+                int current = target.getSkillManager().getCurrentLevel(Skill.PRAYER);
+                if (current > 0) {
+                    target.getSkillManager().setCurrentLevel(Skill.PRAYER, Math.max(0, current - 2));
+                    target.getSkillManager().updateSkill(Skill.PRAYER);
+                }
+            }
+        }
+        @Override
+        public MagicSpellbook getSpellbook() { return MagicSpellbook.ARCEUUS; }
     });
 
     /**

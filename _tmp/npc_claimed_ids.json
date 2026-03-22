@@ -1,0 +1,217 @@
+{
+  "flat_cache": "D:\\CodingProjects\\OSRSRSPS\\_ext\\openrs2-2446-flat\\cache",
+  "match_count": 9,
+  "ids": [
+    10864,
+    10865,
+    10866,
+    10870,
+    10871,
+    10872,
+    10876,
+    10877,
+    10878
+  ],
+  "npcs": {
+    "10864": {
+      "combatLevel": 336,
+      "size": 5,
+      "standAnim": 8137,
+      "walkAnim": 8136,
+      "param74": 180,
+      "param76": 140,
+      "param78": 150,
+      "param79": 150,
+      "param75": 150,
+      "param77": 560,
+      "category": 1245,
+      "name": "Sotetseg",
+      "models": [
+        35403
+      ],
+      "unknownOpcode": 26
+    },
+    "10865": {
+      "combatLevel": 336,
+      "size": 5,
+      "standAnim": 8137,
+      "walkAnim": 8136,
+      "param74": 180,
+      "param76": 140,
+      "param78": 150,
+      "param79": 150,
+      "param75": 150,
+      "param77": 560,
+      "action1": "Attack",
+      "category": 1245,
+      "name": "Sotetseg",
+      "models": [
+        35403
+      ]
+    },
+    "10866": {
+      "clickable": false,
+      "size": 3,
+      "scaleY": 140,
+      "scaleXZ": 140,
+      "lightModifier": 50,
+      "shadowModifier": 50,
+      "standAnim": 8100,
+      "walkAnim": 8100,
+      "degreesToTurn": 0,
+      "priorityRender": true,
+      "category": 1556,
+      "combatLevel": 1,
+      "recol": [
+        [
+          0,
+          929
+        ]
+      ],
+      "models": [
+        35398
+      ]
+    },
+    "10870": {
+      "standAnim": 8090,
+      "walkAnim": 8090,
+      "scaleXZ": 30,
+      "scaleY": 30,
+      "combatLevel": 0,
+      "size": 1,
+      "action0": "Talk-to",
+      "action2": "Metamorphosis",
+      "action3": "Pick-up",
+      "minimapDot": false,
+      "pet": true,
+      "lowPriorityFollowerOps": true,
+      "name": "Lil' Maiden",
+      "models": [
+        42280
+      ],
+      "chatModels": [
+        42288
+      ]
+    },
+    "10871": {
+      "standAnim": 8080,
+      "walkAnim": 9031,
+      "scaleXZ": 25,
+      "scaleY": 25,
+      "combatLevel": 0,
+      "size": 1,
+      "action0": "Talk-to",
+      "action2": "Metamorphosis",
+      "action3": "Pick-up",
+      "minimapDot": false,
+      "pet": true,
+      "lowPriorityFollowerOps": true,
+      "name": "Lil' Bloat",
+      "models": [
+        35404
+      ],
+      "chatModels": [
+        42287
+      ]
+    },
+    "10872": {
+      "standAnim": 8002,
+      "walkAnim": 8003,
+      "scaleXZ": 35,
+      "scaleY": 35,
+      "combatLevel": 0,
+      "size": 1,
+      "action0": "Talk-to",
+      "action2": "Metamorphosis",
+      "action3": "Pick-up",
+      "minimapDot": false,
+      "pet": true,
+      "lowPriorityFollowerOps": true,
+      "name": "Lil' Nylo",
+      "models": [
+        35183
+      ],
+      "chatModels": [
+        42285
+      ]
+    },
+    "10876": {
+      "size": 1,
+      "combatLevel": 0,
+      "walkAnim": 819,
+      "walkBackAnim": 820,
+      "walkLeftAnim": 821,
+      "walkRightAnim": 822,
+      "standAnim": 808,
+      "action0": "Talk-to",
+      "action2": "Trade",
+      "priorityRender": true,
+      "recol": [
+        [
+          8741,
+          12
+        ],
+        [
+          2954,
+          0
+        ],
+        [
+          4888,
+          12
+        ]
+      ],
+      "name": "Mysterious Stranger",
+      "models": [
+        35119
+      ],
+      "chatModels": [
+        39832
+      ]
+    },
+    "10877": {
+      "size": 1,
+      "combatLevel": 0,
+      "walkAnim": 819,
+      "walkBackAnim": 820,
+      "walkLeftAnim": 821,
+      "walkRightAnim": 822,
+      "standAnim": 808,
+      "priorityRender": true,
+      "recol": [
+        [
+          8741,
+          12
+        ],
+        [
+          2954,
+          0
+        ],
+        [
+          4888,
+          12
+        ],
+        [
+          9156,
+          962
+        ]
+      ],
+      "name": "Mysterious Stranger",
+      "models": [
+        35119
+      ],
+      "chatModels": [
+        39832
+      ]
+    },
+    "10878": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 894,
+      "walkAnim": 10792,
+      "clickable": false,
+      "models": [
+        41988
+      ]
+    }
+  }
+}

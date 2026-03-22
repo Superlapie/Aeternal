@@ -1,0 +1,29 @@
+[
+  {
+    "group": 1580,
+    "frame": 0,
+    "sprite_id": 667,
+    "width": 25,
+    "height": 24,
+    "offset_x": 4,
+    "offset_y": 6
+  },
+  {
+    "group": 1581,
+    "frame": 0,
+    "sprite_id": 668,
+    "width": 25,
+    "height": 24,
+    "offset_x": 4,
+    "offset_y": 6
+  },
+  {
+    "group": 1708,
+    "frame": 0,
+    "sprite_id": 669,
+    "width": 25,
+    "height": 24,
+    "offset_x": 4,
+    "offset_y": 6
+  }
+]

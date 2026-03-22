@@ -225,6 +225,51 @@ public final class NpcDefinition {
 
 	private static void applyCustomDefinition(NpcDefinition definition, int id) {
 		switch (id) {
+			case 10884: // Thrall: ghost
+				NpcDefinition ghostBase = lookup(85);
+				definition.modelId = new int[] { 41988 };
+				definition.name = "Ghostly thrall";
+				definition.standAnim = resolvePlayableAnimation(10792, ghostBase.standAnim);
+				definition.walkAnim = resolvePlayableAnimation(10792, ghostBase.walkAnim);
+				definition.turn180AnimIndex = definition.walkAnim;
+				definition.turn90CCWAnimIndex = definition.walkAnim;
+				definition.turn90CWAnimIndex = definition.walkAnim;
+				definition.combatLevel = 0;
+				definition.actions = new String[] { null, null, null, null, null };
+				definition.size = 1;
+				definition.clickable = false;
+				definition.drawMinimapDot = false;
+				break;
+			case 10885: // Thrall: skeleton
+				NpcDefinition skeletonBase = lookup(70);
+				definition.modelId = new int[] { 41989 };
+				definition.name = "Skeletal thrall";
+				definition.standAnim = resolvePlayableAnimation(13670, skeletonBase.standAnim);
+				definition.walkAnim = resolvePlayableAnimation(13671, skeletonBase.walkAnim);
+				definition.turn180AnimIndex = definition.walkAnim;
+				definition.turn90CCWAnimIndex = definition.walkAnim;
+				definition.turn90CWAnimIndex = definition.walkAnim;
+				definition.combatLevel = 0;
+				definition.actions = new String[] { null, null, null, null, null };
+				definition.size = 1;
+				definition.clickable = false;
+				definition.drawMinimapDot = false;
+				break;
+			case 10886: // Thrall: zombie
+				NpcDefinition zombieBase = lookup(26);
+				definition.modelId = new int[] { 41985 };
+				definition.name = "Zombie thrall";
+				definition.standAnim = resolvePlayableAnimation(13675, zombieBase.standAnim);
+				definition.walkAnim = resolvePlayableAnimation(13676, zombieBase.walkAnim);
+				definition.turn180AnimIndex = resolvePlayableAnimation(13679, zombieBase.turn180AnimIndex);
+				definition.turn90CCWAnimIndex = resolvePlayableAnimation(13677, zombieBase.turn90CCWAnimIndex);
+				definition.turn90CWAnimIndex = resolvePlayableAnimation(13678, zombieBase.turn90CWAnimIndex);
+				definition.combatLevel = 0;
+				definition.actions = new String[] { null, null, null, null, null };
+				definition.size = 1;
+				definition.clickable = false;
+				definition.drawMinimapDot = false;
+				break;
 			case 9433:
 				definition.name = "The Nightmare";
 				definition.description = "An ancient evil from the dream realm.".getBytes();

@@ -422,6 +422,7 @@ public class Presetables {
 
 		// Send new spellbook
 		player.getPacketSender().sendTabInterface(6, player.getSpellbook().getInterfaceId());
+		MagicSpellbook.syncClient(player);
 		player.getPacketSender().sendConfig(709, PrayerHandler.canUse(player, PrayerData.PRESERVE, false) ? 1 : 0);
 		player.getPacketSender().sendConfig(711, PrayerHandler.canUse(player, PrayerData.RIGOUR, false) ? 1 : 0);
 		player.getPacketSender().sendConfig(713, PrayerHandler.canUse(player, PrayerData.AUGURY, false) ? 1 : 0);

@@ -1,0 +1,29 @@
+[
+  {
+    "group": 1580,
+    "frame": 0,
+    "width": 25,
+    "height": 24,
+    "offset_x": 4,
+    "offset_y": 6,
+    "file": "g1580_f0_25x24.png"
+  },
+  {
+    "group": 1581,
+    "frame": 0,
+    "width": 25,
+    "height": 24,
+    "offset_x": 4,
+    "offset_y": 6,
+    "file": "g1581_f0_25x24.png"
+  },
+  {
+    "group": 1708,
+    "frame": 0,
+    "width": 25,
+    "height": 24,
+    "offset_x": 4,
+    "offset_y": 6,
+    "file": "g1708_f0_25x24.png"
+  }
+]

@@ -1,0 +1,290 @@
+[
+  {
+    "group": 6200,
+    "frame": 0,
+    "sprite_id": 635,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6201,
+    "frame": 0,
+    "sprite_id": 636,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6202,
+    "frame": 0,
+    "sprite_id": 637,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6203,
+    "frame": 0,
+    "sprite_id": 638,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6204,
+    "frame": 0,
+    "sprite_id": 639,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6205,
+    "frame": 0,
+    "sprite_id": 640,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6206,
+    "frame": 0,
+    "sprite_id": 641,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6207,
+    "frame": 0,
+    "sprite_id": 642,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6208,
+    "frame": 0,
+    "sprite_id": 643,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6209,
+    "frame": 0,
+    "sprite_id": 644,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6210,
+    "frame": 0,
+    "sprite_id": 645,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6211,
+    "frame": 0,
+    "sprite_id": 646,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6212,
+    "frame": 0,
+    "sprite_id": 647,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6213,
+    "frame": 0,
+    "sprite_id": 648,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6214,
+    "frame": 0,
+    "sprite_id": 649,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6215,
+    "frame": 0,
+    "sprite_id": 650,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6216,
+    "frame": 0,
+    "sprite_id": 651,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6217,
+    "frame": 0,
+    "sprite_id": 652,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6218,
+    "frame": 0,
+    "sprite_id": 653,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6219,
+    "frame": 0,
+    "sprite_id": 654,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6220,
+    "frame": 0,
+    "sprite_id": 655,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6221,
+    "frame": 0,
+    "sprite_id": 656,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6222,
+    "frame": 0,
+    "sprite_id": 657,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6223,
+    "frame": 0,
+    "sprite_id": 658,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6224,
+    "frame": 0,
+    "sprite_id": 659,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6225,
+    "frame": 0,
+    "sprite_id": 660,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6226,
+    "frame": 0,
+    "sprite_id": 661,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6227,
+    "frame": 0,
+    "sprite_id": 662,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6228,
+    "frame": 0,
+    "sprite_id": 663,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6229,
+    "frame": 0,
+    "sprite_id": 664,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6230,
+    "frame": 0,
+    "sprite_id": 665,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 6231,
+    "frame": 0,
+    "sprite_id": 666,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "group": 1257,
+    "frame": 0,
+    "sprite_id": 670,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1266,
+    "frame": 0,
+    "sprite_id": 671,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1305,
+    "frame": 0,
+    "sprite_id": 672,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1306,
+    "frame": 0,
+    "sprite_id": 673,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1311,
+    "frame": 0,
+    "sprite_id": 674,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1312,
+    "frame": 0,
+    "sprite_id": 675,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1318,
+    "frame": 0,
+    "sprite_id": 676,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1315,
+    "frame": 0,
+    "sprite_id": 677,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1317,
+    "frame": 0,
+    "sprite_id": 678,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1316,
+    "frame": 0,
+    "sprite_id": 679,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  },
+  {
+    "group": 1310,
+    "frame": 0,
+    "sprite_id": 680,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0
+  }
+]

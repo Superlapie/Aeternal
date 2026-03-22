@@ -13,6 +13,9 @@ import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.hit.PendingHit;
 import com.elvarg.game.content.combat.method.CombatMethod;
+import com.elvarg.game.content.combat.method.impl.npcs.ThrallMagicCombatMethod;
+import com.elvarg.game.content.combat.method.impl.npcs.ThrallMeleeCombatMethod;
+import com.elvarg.game.content.combat.method.impl.npcs.ThrallRangedCombatMethod;
 import com.elvarg.game.definition.NpcDefinition;
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.npc.NPCMovementCoordinator.CoordinateState;
@@ -36,6 +39,9 @@ import static com.elvarg.game.model.movement.MovementQueue.NPC_INTERACT_RADIUS;
  */
 
 public class NPC extends Mobile {
+	private static final CombatMethod THRALL_MAGIC_COMBAT = new ThrallMagicCombatMethod();
+	private static final CombatMethod THRALL_RANGED_COMBAT = new ThrallRangedCombatMethod();
+	private static final CombatMethod THRALL_MELEE_COMBAT = new ThrallMeleeCombatMethod();
 
 	/**
 	 * The npc's id.
@@ -438,6 +444,14 @@ public class NPC extends Mobile {
 	}
 
 	public CombatMethod getCombatMethod() {
+		switch (getId()) {
+			case 10884:
+				return THRALL_MAGIC_COMBAT;
+			case 10885:
+				return THRALL_RANGED_COMBAT;
+			case 10886:
+				return THRALL_MELEE_COMBAT;
+		}
 		// By default, NPCs use Melee combat.
 		// This can be overridden by creating a class in entity.impl.npc.impl
 		return MELEE_COMBAT;

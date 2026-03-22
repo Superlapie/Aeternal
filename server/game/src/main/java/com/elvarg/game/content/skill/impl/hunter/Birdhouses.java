@@ -1,6 +1,7 @@
 package com.elvarg.game.content.skill.impl.hunter;
 
 import com.elvarg.game.content.skill.SkillManager;
+import com.elvarg.game.content.Looting;
 import com.elvarg.game.definition.ItemDefinition;
 import com.elvarg.game.entity.impl.object.GameObject;
 import com.elvarg.game.entity.impl.object.ObjectManager;
@@ -109,7 +110,7 @@ public final class Birdhouses {
         TEAK(6333, 21513, 30562, 30563, 30564, 35, 34, 700, 700),
         MAPLE(1517, 21515, 31827, 31828, 31829, 45, 44, 820, 820),
         MAHOGANY(6332, 21517, 31830, 31831, 31832, 50, 49, 960, 960),
-        YEW(1515, 21519, 31833, 31837, 31838, 60, 59, 1020, 1020),
+        YEW(1515, 21519, 31833, 31834, 31835, 60, 59, 1020, 1020),
         MAGIC(1513, 21521, 31836, 31837, 31838, 75, 74, 1140, 1140),
         REDWOOD(19669, 22192, 31839, 31840, 31841, 90, 89, 1200, 1200);
 
@@ -251,12 +252,12 @@ public final class Birdhouses {
 
         player.performAnimation(INTERACT_ANIM);
         player.getSkillManager().addExperience(Skill.HUNTER, active.tier.hunterXp);
-        player.getInventory().add(CLOCKWORK_ID, 1);
-        player.getInventory().add(RAW_BIRD_MEAT_ID, 10);
-        player.getInventory().add(FEATHER_ID, ThreadLocalRandom.current().nextInt(40, 61));
+        Looting.addOrDrop(player, CLOCKWORK_ID, 1);
+        Looting.addOrDrop(player, RAW_BIRD_MEAT_ID, 10);
+        Looting.addOrDrop(player, FEATHER_ID, ThreadLocalRandom.current().nextInt(40, 61));
         if (ThreadLocalRandom.current().nextInt(100) < 20) {
             int nestId = BIRD_NESTS[ThreadLocalRandom.current().nextInt(BIRD_NESTS.length)];
-            player.getInventory().add(nestId, 1);
+            Looting.addOrDrop(player, nestId, 1);
         }
 
         ObjectManager.register(new GameObject(SPACE_OBJECT_ID, object.getLocation(), object.getType(), object.getFace(), object.getPrivateArea()), true);

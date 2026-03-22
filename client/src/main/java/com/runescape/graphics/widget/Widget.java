@@ -406,6 +406,7 @@ public class Widget {
 		spawnTab();
 		clanChatTab();
 		configureLunar();
+		configureArceuus();
 		quickPrayers();
 		equipmentScreen();
 		equipmentTab();
@@ -3545,6 +3546,100 @@ public class Widget {
 		// Add home button
 		setBounds(19210, 19, 9, child++, Interface);//home
 		setBounds(19211, 2, 50, child++, Interface);
+	}
+
+	public static void configureArceuus() {
+		final int root = 30500;
+		final int title = 30501;
+		final int subtitle = 30502;
+		final int overlay = 30503;
+		final int border = 30504;
+		final int list = 30510;
+
+		Widget tab = addTabInterface(root);
+		tab.totalChildren(7);
+
+		addPixels(overlay, 0x211437, 190, 261, 120, true);
+		addPixels(border, 0x6B48AE, 190, 261, 0, false);
+		addText(title, "Arceuus Spellbook", fonts, 2, 0xCFAEFF, true, true);
+		addText(subtitle, "Necromancy and dark teleports", fonts, 0, 0xB58EE8, true, true);
+
+		tab.child(0, overlay, 0, 0);
+		tab.child(1, border, 0, 0);
+		tab.child(2, title, 95, 6);
+		tab.child(3, subtitle, 95, 20);
+		tab.child(4, list, 8, 38);
+		tab.child(5, 19210, 19, 9);
+		tab.child(6, 19211, 2, 50);
+
+		Widget scroll = addTabInterface(list);
+		String[] names = {
+			"Arceuus Library Teleport", "Draynor Manor Teleport", "Battlefront Teleport", "Mind Altar Teleport", "Respawn Teleport",
+			"Salve Graveyard Teleport", "Fenkenstrain's Castle Teleport", "West Ardougne Teleport", "Harmony Island Teleport", "Cemetery Teleport",
+			"Barrows Teleport", "Ape Atoll Teleport", "Basic Reanimation", "Adept Reanimation", "Expert Reanimation",
+			"Master Reanimation", "Resurrect Crops", "Ghostly Grasp", "Skeletal Grasp", "Undead Grasp",
+			"Inferior Demonbane", "Superior Demonbane", "Greater Demonbane", "Lesser Corruption", "Greater Corruption",
+			"Resurrect Lesser Ghost", "Resurrect Lesser Skeleton", "Resurrect Lesser Zombie", "Resurrect Superior Ghost", "Resurrect Superior Skeleton",
+			"Resurrect Superior Zombie", "Resurrect Greater Ghost", "Resurrect Greater Skeleton", "Resurrect Greater Zombie", "Mark of Darkness",
+			"Ward of Arceuus", "Demonic Offering", "Sinister Offering", "Shadow Veil", "Vile Vigour",
+			"Degrime", "Dark Lure", "Death Charge"
+		};
+		int[] ids = {
+			30517, 30521, 30525, 30529, 30531,
+			30533, 30537, 30541, 30545, 30549,
+			30553, 30557, 30601, 30605, 30609,
+			30613, 30617, 30633, 30637, 30641,
+			30645, 30649, 30653, 30657, 30661,
+			30621, 30625, 30629, 30663, 30667,
+			30671, 30675, 30679, 30683, 30685,
+			30689, 30693, 30697, 30705, 30709,
+			30701, 30713, 30717
+		};
+		int[] spriteIds = {
+			635, 636, 637, 638, 670,
+			639, 640, 641, 642, 643,
+			644, 645, 646, 647, 648,
+			649, 671, 659, 660, 661,
+			662, 663, 664, 665, 666,
+			650, 651, 652, 653, 654,
+			655, 656, 657, 658, 672,
+			673, 674, 675, 677, 678,
+			676, 679, 680
+		};
+
+		scroll.totalChildren(ids.length);
+		final int cols = 5;
+		final int slotX = 33;
+		final int slotY = 27;
+		final int baseX = 6;
+		final int baseY = 4;
+		for (int i = 0; i < ids.length; i++) {
+			addArceuusSpellButton(ids[i], spriteIds[i], names[i]);
+			int row = i / cols;
+			int col = i % cols;
+			scroll.child(i, ids[i], baseX + (col * slotX), baseY + (row * slotY));
+		}
+		scroll.width = 174;
+		scroll.height = 220;
+		int rows = ((ids.length - 1) / cols) + 1;
+		scroll.scrollMax = Math.max(scroll.height, baseY + (rows * slotY) + 24);
+	}
+
+	private static void addArceuusSpellButton(int id, int spriteId, String spellName) {
+		Widget spell = addInterface(id);
+		spell.parent = 30500;
+		spell.type = TYPE_SPRITE;
+		spell.atActionType = OPTION_OK;
+		spell.contentType = 0;
+		spell.hoverType = -1;
+		spell.tooltip = "Cast @gre@" + spellName;
+		spell.defaultText = spellName;
+		spell.spellName = spellName;
+		spell.selectedActionName = "Cast";
+		spell.disabledSprite = Client.spriteCache.lookup(spriteId);
+		spell.enabledSprite = Client.spriteCache.lookup(spriteId);
+		spell.width = 20;
+		spell.height = 20;
 	}
 
 	private static void levelUpInterfaces() {

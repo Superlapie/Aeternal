@@ -1,0 +1,47 @@
+[
+  {
+    "group": 6180,
+    "frame": 0,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g6180_f0_20x20.png"
+  },
+  {
+    "group": 6181,
+    "frame": 0,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g6181_f0_20x20.png"
+  },
+  {
+    "group": 6182,
+    "frame": 0,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g6182_f0_20x20.png"
+  },
+  {
+    "group": 6183,
+    "frame": 0,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g6183_f0_20x20.png"
+  },
+  {
+    "group": 6184,
+    "frame": 0,
+    "width": 20,
+    "height": 20,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g6184_f0_20x20.png"
+  }
+]

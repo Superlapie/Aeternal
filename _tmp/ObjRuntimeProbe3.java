@@ -1,0 +1,4 @@
+import com.runescape.cache.FileArchive;import com.runescape.cache.FileStore;import com.runescape.cache.def.ObjectDefinition;import java.io.*;import java.util.*;
+public class ObjRuntimeProbe3{public static void main(String[]a)throws Exception{File dat=new File("Cache/main_file_cache.dat");if(!dat.exists())dat=new File("Cache/main_file_cache.dat2");try(RandomAccessFile d=new RandomAccessFile(dat,"r");RandomAccessFile i0=new RandomAccessFile("Cache/main_file_cache.idx0","r")){ObjectDefinition.init(new FileArchive(new FileStore(d,i0,1).decompress(2)));}
+int[] ids={7488,7459,11368,11369,2099,9721,9722,11183,11184,11185};for(int id:ids){var o=ObjectDefinition.lookup(id);System.out.println(id+"|"+o.name+"|"+Arrays.toString(o.interactions)+"|"+(o.modelIds==null?"null":Arrays.toString(o.modelIds)));}}
+}

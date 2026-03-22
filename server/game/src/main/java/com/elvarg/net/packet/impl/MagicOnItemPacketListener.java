@@ -1,6 +1,7 @@
 package com.elvarg.net.packet.impl;
 
 import com.elvarg.game.content.combat.magic.EffectSpells.EffectSpell;
+import com.elvarg.game.content.combat.magic.ArceuusSpells;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.*;
 import com.elvarg.net.packet.Packet;
@@ -30,11 +31,14 @@ public class MagicOnItemPacketListener implements PacketExecutor {
                     return;
                 if (player.getInventory().getItems()[slot].getId() != itemId)
                     return;
+                Item item = player.getInventory().getItems()[slot];
+                if (ArceuusSpells.handleMagicOnItem(player, spellId, item)) {
+                    return;
+                }
                 Optional<EffectSpell> spell = EffectSpell.forSpellId(spellId);
                 if (!spell.isPresent()) {
                     return;
                 }
-                Item item = player.getInventory().getItems()[slot];
                 switch (spell.get()) {
                     case LOW_ALCHEMY:
                     case HIGH_ALCHEMY:

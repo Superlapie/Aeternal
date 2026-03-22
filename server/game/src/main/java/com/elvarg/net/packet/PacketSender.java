@@ -487,6 +487,7 @@ public class PacketSender {
 
 			sendTabInterface(tab, interface_);
 		}
+		MagicSpellbook.syncClient(player);
 		return this;
 	}
 

@@ -261,7 +261,8 @@ public class CombatFactory {
 	    }
 
 		if (!target.isRegistered() || !attacker.isRegistered() || attacker.getHitpoints() <= 0
-				|| target.getHitpoints() <= 0 || attacker.isUntargetable()) {
+				|| target.getHitpoints() <= 0 || target.isUntargetable()
+				|| (attacker.isUntargetable() && !isThrall(attacker))) {
 			return false;
 		}
 
@@ -401,6 +402,8 @@ public class CombatFactory {
 		// Here we check if we are already in combat with another entity.
 		// Only check if we aren't in multi.
 		if (!(AreaManager.inMulti(attacker) && AreaManager.inMulti(target))) {
+			boolean thrallAssist = isThrallAssist(attacker, target);
+			boolean ownerThrallAssist = isOwnerThrallOnTarget(attacker, target);
 			if (isBeingAttacked(attacker) && attacker.getCombat().getAttacker() != target
 					&& attacker.getCombat().getAttacker().getHitpoints() > 0
 					|| !attacker.getCombat().getHitQueue().isEmpty(target)) {
@@ -409,8 +412,8 @@ public class CombatFactory {
 			}
 
 			// Here we check if we are already in combat with another entity.
-			if (isBeingAttacked(target) && target.getCombat().getAttacker() != attacker
-					|| !target.getCombat().getHitQueue().isEmpty(attacker)) {
+			if (!thrallAssist && !ownerThrallAssist && (isBeingAttacked(target) && target.getCombat().getAttacker() != attacker
+					|| !target.getCombat().getHitQueue().isEmpty(attacker))) {
 				return CanAttackResponse.ALREADY_UNDER_ATTACK;
 			}
 		}
@@ -468,6 +471,39 @@ public class CombatFactory {
 		}
 
 		return CanAttackResponse.CAN_ATTACK;
+	}
+
+	private static boolean isThrallAssist(Mobile attacker, Mobile target) {
+		if (!isThrall(attacker)) {
+			return false;
+		}
+		NPC npc = attacker.getAsNpc();
+		if (npc.getOwner() == null || target == null) {
+			return false;
+		}
+		Mobile targetAttacker = target.getCombat().getAttacker();
+		return targetAttacker != null && targetAttacker.equals(npc.getOwner());
+	}
+
+	private static boolean isThrall(Mobile attacker) {
+		if (!attacker.isNpc()) {
+			return false;
+		}
+		NPC npc = attacker.getAsNpc();
+		int id = npc.getId();
+		return id == 10884 || id == 10885 || id == 10886;
+	}
+
+	private static boolean isOwnerThrallOnTarget(Mobile attacker, Mobile target) {
+		if (!attacker.isPlayer() || target == null) {
+			return false;
+		}
+		Player owner = attacker.getAsPlayer();
+		NPC pet = owner.getCurrentPet();
+		if (pet == null || !pet.isRegistered() || !isThrall(pet)) {
+			return false;
+		}
+		return pet.getCombat().getTarget() == target;
 	}
 
 	/**
@@ -676,14 +712,17 @@ public class CombatFactory {
 			}
 		}
 
-		// Auto retaliate if needed
-		handleRetaliation(attacker, target);
+		// Thralls should deal damage but never own aggro/singles state.
+		if (!isThrall(attacker)) {
+			// Auto retaliate if needed
+			handleRetaliation(attacker, target);
 
-		// Set under attack
-		target.getCombat().setUnderAttack(attacker);
+			// Set under attack
+			target.getCombat().setUnderAttack(attacker);
 
-		// Add damage to target damage map
-		target.getCombat().addDamage(attacker, qHit.getTotalDamage());
+			// Add damage to target damage map
+			target.getCombat().addDamage(attacker, qHit.getTotalDamage());
+		}
 
 		if (target instanceof PlayerBot) {
 			((PlayerBot) target).getCombatInteraction().takenDamage(qHit.getTotalDamage(), attacker);

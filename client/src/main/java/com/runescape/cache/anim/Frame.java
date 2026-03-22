@@ -37,6 +37,7 @@ public final class Frame {
             10824, // 11060
             4172, // 11464 (voidwaker impact vfx)
             4173, // 11463 (voidwaker special vfx)
+            7987, // 11455 (voidwaker special cast sequence)
             4275, // 11275 (voidwaker special anim)
             4276, // 11240 (voidwaker alt special anim)
             // Araxxor animation groups.

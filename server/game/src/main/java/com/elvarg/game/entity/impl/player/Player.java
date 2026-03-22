@@ -24,6 +24,7 @@ import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.CombatSpecial;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.FightType;
+import com.elvarg.game.content.combat.magic.ArceuusSpells;
 import com.elvarg.game.content.combat.WeaponInterfaces;
 import com.elvarg.game.content.combat.WeaponInterfaces.WeaponInterface;
 import com.elvarg.game.content.combat.bountyhunter.BountyHunter;
@@ -612,6 +613,7 @@ public class Player extends Mobile {
 
 		// Do stuff...
 		Barrows.brotherDespawn(this);
+		ArceuusSpells.cleanupThrall(this);
 		PetHandler.pickup(this, getCurrentPet());
 		getRelations().updateLists(false);
 		BountyHunter.unassign(this);

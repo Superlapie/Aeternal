@@ -1,0 +1,32 @@
+{
+  "flat_cache": "D:\\CodingProjects\\OSRSRSPS\\_ext\\openrs2-2446-flat\\cache",
+  "match_count": 1,
+  "ids": [
+    11718
+  ],
+  "npcs": {
+    "11718": {
+      "category": 1691,
+      "size": 1,
+      "action1": "Attack",
+      "scaleXZ": 30,
+      "scaleY": 30,
+      "walkAnim": 9739,
+      "walkBackAnim": 9740,
+      "walkLeftAnim": 9739,
+      "walkRightAnim": 9739,
+      "standAnim": 9741,
+      "combatLevel": 52,
+      "param77": 2,
+      "param74": 40,
+      "param79": 40,
+      "param78": 40,
+      "param75": 12,
+      "param76": 40,
+      "name": "Baboon Thrall",
+      "models": [
+        46349
+      ]
+    }
+  }
+}

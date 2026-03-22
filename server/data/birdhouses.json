@@ -1,12 +1,23 @@
 [
   {
-    "x": 5835,
+    "x": 5837,
     "y": 5938,
     "z": 0,
     "owner": "Lapie",
     "tier": "MAPLE",
-    "state": "READY",
-    "seededAtMs": 1774118079244,
+    "state": "SEEDED",
+    "seededAtMs": 1774216226679,
+    "face": 0,
+    "type": 10
+  },
+  {
+    "x": 5835,
+    "y": 5938,
+    "z": 0,
+    "owner": "Lapie",
+    "tier": "YEW",
+    "state": "SEEDED",
+    "seededAtMs": 1774215521914,
     "face": 0,
     "type": 10
   }

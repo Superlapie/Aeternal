@@ -1,0 +1,56 @@
+[
+  {
+    "group": 1298,
+    "frame": 0,
+    "width": 80,
+    "height": 80,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g1298_f0_80x80.png"
+  },
+  {
+    "group": 1299,
+    "frame": 0,
+    "width": 80,
+    "height": 80,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g1299_f0_80x80.png"
+  },
+  {
+    "group": 1300,
+    "frame": 0,
+    "width": 80,
+    "height": 80,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g1300_f0_80x80.png"
+  },
+  {
+    "group": 1301,
+    "frame": 0,
+    "width": 80,
+    "height": 80,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g1301_f0_80x80.png"
+  },
+  {
+    "group": 1270,
+    "frame": 0,
+    "width": 80,
+    "height": 80,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g1270_f0_80x80.png"
+  },
+  {
+    "group": 1271,
+    "frame": 0,
+    "width": 80,
+    "height": 80,
+    "offset_x": 0,
+    "offset_y": 0,
+    "file": "g1271_f0_80x80.png"
+  }
+]

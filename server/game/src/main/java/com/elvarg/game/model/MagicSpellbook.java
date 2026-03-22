@@ -12,14 +12,19 @@ import com.elvarg.game.model.teleportation.TeleportType;
 
 public enum MagicSpellbook {
 
-    NORMAL(1151, TeleportType.NORMAL),
-    ANCIENT(12855, TeleportType.ANCIENT),
-    LUNAR(29999, TeleportType.LUNAR);
+    NORMAL(1151, 0, TeleportType.NORMAL),
+    ANCIENT(12855, 1, TeleportType.ANCIENT),
+    LUNAR(29999, 2, TeleportType.LUNAR),
+    ARCEUUS(30500, 3, TeleportType.ARCEUUS);
 
     /**
      * The spellbook's interface id
      */
     private final int interfaceId;
+    /**
+     * Spellbook toggle varp value (config 439).
+     */
+    private final int toggleConfigValue;
     /**
      * The spellbook's teleport type
      */
@@ -31,8 +36,9 @@ public enum MagicSpellbook {
      * @param interfaceId The spellbook's interface id.
      * @param message     The message received upon switching to said spellbook.
      */
-    private MagicSpellbook(int interfaceId, TeleportType teleportType) {
+    private MagicSpellbook(int interfaceId, int toggleConfigValue, TeleportType teleportType) {
         this.interfaceId = interfaceId;
+        this.toggleConfigValue = toggleConfigValue;
         this.teleportType = teleportType;
     }
 
@@ -81,6 +87,16 @@ public enum MagicSpellbook {
 
                 //Send the new spellbook interface to the client side tabs
                         sendTabInterface(6, player.getSpellbook().getInterfaceId());
+        syncClient(player);
+    }
+
+    /**
+     * Syncs active spellbook varps used by modern spellbook UI.
+     */
+    public static void syncClient(Player player) {
+        player.getPacketSender().sendConfig(439, player.getSpellbook().getToggleConfigValue());
+        // Some clients inspect this config for spellbook overlay state too.
+        player.getPacketSender().sendConfig(4070, player.getSpellbook().getToggleConfigValue());
     }
 
     /**
@@ -90,6 +106,10 @@ public enum MagicSpellbook {
      */
     public int getInterfaceId() {
         return interfaceId;
+    }
+
+    public int getToggleConfigValue() {
+        return toggleConfigValue;
     }
 
     /**

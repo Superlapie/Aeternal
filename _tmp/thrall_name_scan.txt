@@ -1,0 +1,53 @@
+557 Zombie monk
+558 Zombie monk
+559 Zombie monk
+560 Zombie monk
+1272 Gardener Ghost
+1784 Zombie
+1785 Skeleton
+1786 Ghost
+1787 Skeleton mage
+2988 Ghost disciple
+2998 Ghost villager
+3000 Ghost shopkeeper
+3001 Ghost innkeeper
+3002 Ghost farmer
+3004 Ghost sailor
+3005 Ghost captain
+3006 Ghost captain
+3007 Ghost guard
+3008 Ghost (?)
+3009 Ghost (?)
+3450 Mysterious ghost
+3451 Mysterious ghost
+3452 Mysterious ghost
+3453 Mysterious ghost
+3454 Mysterious ghost
+3455 Mysterious ghost
+3516 Ghost
+3584 Skeleton
+4318 Skeleton Mage
+5507 Zombie
+5570 Most of a Zombie
+5573 Zombie Head
+5583 Zombie
+6698 Ghost guard
+8208 Mysterious Stranger
+9194 Ghost
+10538 Ghost
+10557 Ancient Ghost
+10558 Ancient Ghost
+10697 Ghost
+10698 Ghost
+10699 Ghost
+10875 Mysterious Stranger
+10876 Mysterious Stranger
+10877 Mysterious Stranger
+11162 Mysterious Stranger
+11205 Ghost guard
+11301 Ghost
+11695 Ghost
+11860 Ghost
+11862 Ghost
+14109 Ghost Cat
+14683 Ghost

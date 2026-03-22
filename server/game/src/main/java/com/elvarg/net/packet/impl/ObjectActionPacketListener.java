@@ -230,6 +230,8 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             break;
 
         case ANCIENT_ALTAR:
+        case DARK_ALTAR:
+        case DARK_ALTAR_2:
             player.performAnimation(new Animation(645));
             player.getDialogueManager().start(new SpellBookDialogue());
             break;

@@ -1,0 +1,167 @@
+{
+  "flat_cache": "D:\\CodingProjects\\OSRSRSPS\\_ext\\openrs2-2446-flat\\cache",
+  "match_count": 12,
+  "ids": [
+    10878,
+    10879,
+    10880,
+    10881,
+    10882,
+    10883,
+    10884,
+    10885,
+    10886,
+    15569,
+    15570,
+    15571
+  ],
+  "npcs": {
+    "10878": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 894,
+      "walkAnim": 10792,
+      "clickable": false,
+      "models": [
+        41988
+      ]
+    },
+    "10879": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 894,
+      "walkAnim": 10792,
+      "clickable": false,
+      "models": [
+        41988
+      ]
+    },
+    "10880": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 894,
+      "walkAnim": 10792,
+      "clickable": false,
+      "models": [
+        41988
+      ]
+    },
+    "10881": {
+      "combatLevel": 0,
+      "category": 1540,
+      "walkAnim": 13671,
+      "standAnim": 13670,
+      "clickable": false,
+      "models": [
+        41989
+      ]
+    },
+    "10882": {
+      "combatLevel": 0,
+      "category": 1540,
+      "walkAnim": 13671,
+      "standAnim": 13670,
+      "clickable": false,
+      "models": [
+        41989
+      ]
+    },
+    "10883": {
+      "combatLevel": 0,
+      "category": 1540,
+      "walkAnim": 13671,
+      "standAnim": 13670,
+      "clickable": false,
+      "models": [
+        41989
+      ]
+    },
+    "10884": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 13675,
+      "walkAnim": 13676,
+      "walkBackAnim": 13679,
+      "walkLeftAnim": 13677,
+      "walkRightAnim": 13678,
+      "clickable": false,
+      "models": [
+        41985
+      ]
+    },
+    "10885": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 13675,
+      "walkAnim": 13676,
+      "walkBackAnim": 13679,
+      "walkLeftAnim": 13677,
+      "walkRightAnim": 13678,
+      "clickable": false,
+      "models": [
+        41985
+      ]
+    },
+    "10886": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 13675,
+      "walkAnim": 13676,
+      "walkBackAnim": 13679,
+      "walkLeftAnim": 13677,
+      "walkRightAnim": 13678,
+      "clickable": false,
+      "models": [
+        41985
+      ]
+    },
+    "15569": {
+      "combatLevel": 0,
+      "category": 1540,
+      "standAnim": 7975,
+      "walkAnim": 7977,
+      "size": 1,
+      "scaleXZ": 18,
+      "scaleY": 18,
+      "lightModifier": 30,
+      "clickable": false,
+      "models": [
+        34586
+      ]
+    },
+    "15570": {
+      "combatLevel": 0,
+      "category": 1540,
+      "walkAnim": 6236,
+      "standAnim": 6236,
+      "shadowModifier": 30,
+      "lightModifier": 30,
+      "size": 1,
+      "scaleXZ": 45,
+      "scaleY": 45,
+      "clickable": false,
+      "models": [
+        24602,
+        24605,
+        24606
+      ]
+    },
+    "15571": {
+      "combatLevel": 0,
+      "category": 1540,
+      "scaleXZ": 40,
+      "scaleY": 40,
+      "size": 1,
+      "shadowModifier": 76,
+      "walkAnim": 10233,
+      "standAnim": 10230,
+      "clickable": false,
+      "models": [
+        49222,
+        49218,
+        49221,
+        49224
+      ]
+    }
+  }
+}

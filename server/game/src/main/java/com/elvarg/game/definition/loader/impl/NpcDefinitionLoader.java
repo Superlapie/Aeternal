@@ -26,6 +26,7 @@ public class NpcDefinitionLoader extends DefinitionLoader {
             NpcDefinition.definitions.put(def.getId(), def);
         }
         ensureAraxxorDefinition();
+        ensureThrallDefinitions();
     }
 
     @Override
@@ -78,4 +79,44 @@ public class NpcDefinitionLoader extends DefinitionLoader {
         f.set(def, value);
     }
 
+    private void ensureThrallDefinitions() {
+        ensureThrallDefinition(10884, "Ghostly thrall", 5540, 5541, 5542);
+        ensureThrallDefinition(10885, "Skeletal thrall", 5485, 5482, 5491);
+        ensureThrallDefinition(10886, "Zombie thrall", 5567, 5568, 5569);
+    }
+
+    private void ensureThrallDefinition(int id, String name, int attackAnim, int defenceAnim, int deathAnim) {
+        if (NpcDefinition.definitions.containsKey(id)) {
+            return;
+        }
+        try {
+            NpcDefinition def = new NpcDefinition();
+            set(def, "id", id);
+            set(def, "name", name);
+            set(def, "examine", "A summoned undead servant.");
+            set(def, "size", 1);
+            set(def, "walkRadius", 0);
+            set(def, "attackable", false);
+            set(def, "retreats", true);
+            set(def, "aggressive", false);
+            set(def, "aggressiveTolerance", false);
+            set(def, "poisonous", false);
+            set(def, "fightsBack", true);
+            set(def, "respawn", 0);
+            set(def, "maxHit", 1);
+            set(def, "hitpoints", 18);
+            set(def, "attackSpeed", 4);
+            set(def, "attackAnim", attackAnim);
+            set(def, "defenceAnim", defenceAnim);
+            set(def, "deathAnim", deathAnim);
+            set(def, "combatLevel", 0);
+            set(def, "stats", new int[]{1, 1, 1, 18, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1});
+            set(def, "slayerLevel", 0);
+            set(def, "combatFollowDistance", 7);
+            NpcDefinition.definitions.put(id, def);
+            System.out.println("Installed fallback NPC definition for thrall (" + id + ").");
+        } catch (Exception e) {
+            System.err.println("Failed to install fallback thrall NPC definition (" + id + "): " + e.getMessage());
+        }
+    }
 }
