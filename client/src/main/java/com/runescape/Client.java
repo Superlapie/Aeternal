@@ -31434,6 +31434,12 @@ public class Client extends GameApplet {
             if (opcode == PacketConstants.SEND_EXP_DROP) {
 
                 int skillId = incoming.readUnsignedByte();
+                // Client XP icon sheet uses Hunter/Construction indices opposite of server skill ordinals.
+                if (skillId == 21) {
+                    skillId = 22;
+                } else if (skillId == 22) {
+                    skillId = 21;
+                }
 
                 int experience = incoming.readInt();
 

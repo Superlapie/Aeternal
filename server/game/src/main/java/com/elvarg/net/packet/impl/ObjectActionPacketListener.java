@@ -568,6 +568,15 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             return false;
         }
 
+        // Stable city gate toggles. These ids are a proven open/close pair in this cache.
+        final int toggledGateId = getStableGateToggleId(object.getId());
+        if (toggledGateId != -1) {
+            GameObject replacement = new GameObject(toggledGateId, object.getLocation(), object.getType(), object.getFace(), object.getPrivateArea());
+            ObjectManager.deregister(object, true);
+            ObjectManager.register(replacement, true);
+            return true;
+        }
+
         final String objectName = object.getDefinition().getName();
         if (objectName != null && (objectName.contains("Door") || objectName.contains("Gate"))) {
             boolean hasOpenOrClose = false;
@@ -615,6 +624,20 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
         }
 
 	return false;
+    }
+
+    private static int getStableGateToggleId(int objectId) {
+        switch (objectId) {
+            case 2786: return 20087;
+            case 2787: return 20088;
+            case 2788: return 20089;
+            case 2789: return 20090;
+            case 20087: return 2786;
+            case 20088: return 2787;
+            case 20089: return 2788;
+            case 20090: return 2789;
+            default: return -1;
+        }
     }
 
     private static void handleFlaxPick(Player player, GameObject object) {

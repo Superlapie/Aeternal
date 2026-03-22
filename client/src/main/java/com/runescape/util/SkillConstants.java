@@ -8,7 +8,7 @@ public final class SkillConstants {
             "Mining", "Strength", "Agility", "Smithing", "Defence", "Herblore",
             "Fishing", "Range", "Thieving", "Cooking", "Prayer", "Crafting",
             "Firemaking", "Magic", "Fletching", "Woodcutting", "Runecrafting",
-            "Slayer", "Farming", "Hunter", "Construction", "-unused"};
+            "Slayer", "Farming", "Construction", "Hunter", "-unused"};
 
     public static final String[] SKILL_NAMES_ORDER = {"Attack", "Defence", "Strength", "Hitpoints", "Ranged",
             "Prayer", "Magic", "Cooking", "Woodcutting", "Fletching",

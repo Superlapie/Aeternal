@@ -2,6 +2,7 @@ package com.elvarg.game;
 
 import com.elvarg.Server;
 import com.elvarg.game.content.minigames.MinigameHandler;
+import com.elvarg.game.content.npc.AreaImplingService;
 import com.elvarg.game.content.npc.NpcSpawnService;
 import com.elvarg.game.entity.impl.MobileList;
 import com.elvarg.game.entity.impl.grounditem.ItemOnGround;
@@ -107,6 +108,7 @@ public class World {
 
 		// Keep NPC spawns region-activated around players.
 		NpcSpawnService.process();
+		AreaImplingService.process();
 
 		// Add pending players..
 		for (int i = 0; i < GameConstants.QUEUED_LOOP_THRESHOLD; i++) {
