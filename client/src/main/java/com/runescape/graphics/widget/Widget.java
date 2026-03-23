@@ -157,6 +157,7 @@ public class Widget {
 	
 	private static final int SPRITE_CACHE_SIZE = 50_000;
 	private static final int WIDGET_CACHE_SIZE = 57000;
+	private static int dynamicWidgetIdCursor = WIDGET_CACHE_SIZE - 1;
 
 	public Widget() {
 	}
@@ -406,7 +407,6 @@ public class Widget {
 		spawnTab();
 		clanChatTab();
 		configureLunar();
-		configureArceuus();
 		quickPrayers();
 		equipmentScreen();
 		equipmentTab();
@@ -437,6 +437,7 @@ public class Widget {
 		nightmareOverlays();
 		OSRSCreationMenu.build();
 		grandExchangeInterfaces();
+		configureArceuus();
 		spriteCache = null;
 		
 		/*int lastNull = -1;
@@ -2182,6 +2183,16 @@ public class Widget {
 		return rsi;
 	}
 
+	private static int allocateDynamicWidgetId() {
+		for (int id = dynamicWidgetIdCursor; id >= 0; id--) {
+			if (interfaceCache[id] == null) {
+				dynamicWidgetIdCursor = id - 1;
+				return id;
+			}
+		}
+		throw new IllegalStateException("No free widget ids left in interface cache.");
+	}
+
 	public static void addText(int id, String text, GameFont[] tda, int idx, int color, boolean centered) {
 		Widget rsi = interfaceCache[id] = new Widget();
 		if (centered)
@@ -3549,6 +3560,8 @@ public class Widget {
 	}
 
 	public static void configureArceuus() {
+		dynamicWidgetIdCursor = WIDGET_CACHE_SIZE - 1;
+
 		final int root = 30500;
 		final int title = 30501;
 		final int subtitle = 30502;
@@ -3557,7 +3570,7 @@ public class Widget {
 		final int list = 30510;
 
 		Widget tab = addTabInterface(root);
-		tab.totalChildren(7);
+		tab.totalChildren(50);
 
 		addPixels(overlay, 0x211437, 190, 261, 120, true);
 		addPixels(border, 0x6B48AE, 190, 261, 0, false);
@@ -3573,73 +3586,229 @@ public class Widget {
 		tab.child(6, 19211, 2, 50);
 
 		Widget scroll = addTabInterface(list);
-		String[] names = {
-			"Arceuus Library Teleport", "Draynor Manor Teleport", "Battlefront Teleport", "Mind Altar Teleport", "Respawn Teleport",
-			"Salve Graveyard Teleport", "Fenkenstrain's Castle Teleport", "West Ardougne Teleport", "Harmony Island Teleport", "Cemetery Teleport",
-			"Barrows Teleport", "Ape Atoll Teleport", "Basic Reanimation", "Adept Reanimation", "Expert Reanimation",
-			"Master Reanimation", "Resurrect Crops", "Ghostly Grasp", "Skeletal Grasp", "Undead Grasp",
-			"Inferior Demonbane", "Superior Demonbane", "Greater Demonbane", "Lesser Corruption", "Greater Corruption",
-			"Resurrect Lesser Ghost", "Resurrect Lesser Skeleton", "Resurrect Lesser Zombie", "Resurrect Superior Ghost", "Resurrect Superior Skeleton",
-			"Resurrect Superior Zombie", "Resurrect Greater Ghost", "Resurrect Greater Skeleton", "Resurrect Greater Zombie", "Mark of Darkness",
-			"Ward of Arceuus", "Demonic Offering", "Sinister Offering", "Shadow Veil", "Vile Vigour",
-			"Degrime", "Dark Lure", "Death Charge"
+		ArceuusSpellDef[] spells = {
+			teleport(30517, 635, "Arceuus Library Teleport", 6, 563, 566, 557),
+			teleport(30521, 636, "Draynor Manor Teleport", 17, 563, 566, 557),
+			teleport(30525, 637, "Battlefront Teleport", 23, 563, 566, 557),
+			teleport(30529, 638, "Mind Altar Teleport", 28, 563, 566, 557),
+			teleport(30531, 670, "Respawn Teleport", 34, 563, 566, 557),
+			teleport(30533, 639, "Salve Graveyard Teleport", 40, 563, 566, 557),
+			teleport(30537, 640, "Fenkenstrain's Castle Teleport", 48, 563, 566, 557),
+			teleport(30541, 641, "West Ardougne Teleport", 61, 563, 566, 557),
+			teleport(30545, 642, "Harmony Island Teleport", 65, 563, 566, 557),
+			teleport(30549, 643, "Cemetery Teleport", 71, 563, 566, 557),
+			teleport(30553, 644, "Barrows Teleport", 83, 563, 566, 557),
+			teleport(30557, 645, "Ape Atoll Teleport", 90, 563, 566, 557),
+			itemSpell(30601, 646, "Basic Reanimation", 16, 556, 4, 561, 2, 566, 1),
+			itemSpell(30605, 647, "Adept Reanimation", 41, 556, 4, 561, 3, 566, 1),
+			itemSpell(30609, 648, "Expert Reanimation", 72, 556, 4, 561, 4, 566, 1),
+			itemSpell(30613, 649, "Master Reanimation", 90, 556, 4, 561, 5, 566, 1),
+			selfSpell(30617, 671, "Resurrect Crops", 78, 565, 8, 561, 12, 566, 2),
+			combatSpell(30633, 659, "Ghostly Grasp", 35, 556, 1, 565, 1, 566, 1),
+			combatSpell(30637, 660, "Skeletal Grasp", 56, 556, 1, 565, 2, 566, 1),
+			combatSpell(30641, 661, "Undead Grasp", 79, 556, 1, 565, 3, 566, 1),
+			combatSpell(30645, 662, "Inferior Demonbane", 44, 556, 1, 565, 1, 566, 1),
+			combatSpell(30649, 663, "Superior Demonbane", 62, 556, 1, 565, 2, 566, 1),
+			combatSpell(30653, 664, "Greater Demonbane", 82, 556, 1, 565, 3, 566, 1),
+			combatSpell(30657, 665, "Lesser Corruption", 64, 564, 1, 565, 2, 566, 1),
+			combatSpell(30661, 666, "Greater Corruption", 85, 564, 2, 565, 3, 566, 2),
+			selfSpell(30621, 650, "Resurrect Lesser Ghost", 52, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30625, 651, "Resurrect Lesser Skeleton", 56, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30629, 652, "Resurrect Lesser Zombie", 60, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30663, 653, "Resurrect Superior Ghost", 76, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30667, 654, "Resurrect Superior Skeleton", 80, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30671, 655, "Resurrect Superior Zombie", 84, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30675, 656, "Resurrect Greater Ghost", 88, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30679, 657, "Resurrect Greater Skeleton", 92, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30683, 658, "Resurrect Greater Zombie", 96, 565, 1, 564, 1, 557, 10, 554, 5),
+			selfSpell(30685, 672, "Mark of Darkness", 59, 565, 1, 566, 1, 564, 1),
+			selfSpell(30689, 673, "Ward of Arceuus", 73, 565, 1, 566, 1, 564, 1),
+			itemSpell(30693, 674, "Demonic Offering", 84, 566, 1, 21880, 1),
+			itemSpell(30697, 675, "Sinister Offering", 92, 565, 1, 21880, 1),
+			selfSpell(30705, 677, "Shadow Veil", 47, 566, 1, 557, 1, 555, 1),
+			selfSpell(30709, 678, "Vile Vigour", 66, 566, 1, 565, 1, 557, 2),
+			itemSpell(30701, 676, "Degrime", 70, 564, 2, 566, 2, 555, 15),
+			selfSpell(30713, 679, "Dark Lure", 50, 566, 1, 564, 1, 557, 1),
+			selfSpell(30717, 680, "Death Charge", 85, 565, 1, 566, 1, 564, 1)
 		};
-		int[] ids = {
-			30517, 30521, 30525, 30529, 30531,
-			30533, 30537, 30541, 30545, 30549,
-			30553, 30557, 30601, 30605, 30609,
-			30613, 30617, 30633, 30637, 30641,
-			30645, 30649, 30653, 30657, 30661,
-			30621, 30625, 30629, 30663, 30667,
-			30671, 30675, 30679, 30683, 30685,
-			30689, 30693, 30697, 30705, 30709,
-			30701, 30713, 30717
-		};
-		int[] spriteIds = {
-			635, 636, 637, 638, 670,
-			639, 640, 641, 642, 643,
-			644, 645, 646, 647, 648,
-			649, 671, 659, 660, 661,
-			662, 663, 664, 665, 666,
-			650, 651, 652, 653, 654,
-			655, 656, 657, 658, 672,
-			673, 674, 675, 677, 678,
-			676, 679, 680
-		};
-
-		scroll.totalChildren(ids.length);
+		scroll.totalChildren(spells.length);
 		final int cols = 5;
 		final int slotX = 33;
 		final int slotY = 27;
 		final int baseX = 6;
 		final int baseY = 4;
-		for (int i = 0; i < ids.length; i++) {
-			addArceuusSpellButton(ids[i], spriteIds[i], names[i]);
+		for (int i = 0; i < spells.length; i++) {
+			ArceuusSpellDef def = spells[i];
+			addArceuusSpellButton(def);
+			addArceuusSpellHover(def);
 			int row = i / cols;
 			int col = i % cols;
-			scroll.child(i, ids[i], baseX + (col * slotX), baseY + (row * slotY));
+			int x = baseX + (col * slotX);
+			int y = baseY + (row * slotY);
+			scroll.child(i, def.id, x, y);
+			tab.child(7 + i, def.id + 1, 0, 38);
 		}
 		scroll.width = 174;
 		scroll.height = 220;
-		int rows = ((ids.length - 1) / cols) + 1;
+		int rows = ((spells.length - 1) / cols) + 1;
 		scroll.scrollMax = Math.max(scroll.height, baseY + (rows * slotY) + 24);
 	}
 
-	private static void addArceuusSpellButton(int id, int spriteId, String spellName) {
+	private static ArceuusSpellDef teleport(int id, int sprite, String name, int level, int... runes) {
+		return new ArceuusSpellDef(id, sprite, name, level, OPTION_OK, 0, "Cast", runes);
+	}
+
+	private static ArceuusSpellDef combatSpell(int id, int sprite, String name, int level, int... runes) {
+		return new ArceuusSpellDef(id, sprite, name, level, OPTION_USABLE, 2, "Cast on", runes);
+	}
+
+	private static ArceuusSpellDef itemSpell(int id, int sprite, String name, int level, int... runes) {
+		return new ArceuusSpellDef(id, sprite, name, level, OPTION_USABLE, 16, "Cast on", runes);
+	}
+
+	private static ArceuusSpellDef selfSpell(int id, int sprite, String name, int level, int... runes) {
+		return new ArceuusSpellDef(id, sprite, name, level, OPTION_OK, 0, "Cast", runes);
+	}
+
+	private static void addArceuusSpellButton(ArceuusSpellDef def) {
+		int id = def.id;
 		Widget spell = addInterface(id);
 		spell.parent = 30500;
 		spell.type = TYPE_SPRITE;
-		spell.atActionType = OPTION_OK;
+		spell.atActionType = def.actionType;
 		spell.contentType = 0;
-		spell.hoverType = -1;
-		spell.tooltip = "Cast @gre@" + spellName;
-		spell.defaultText = spellName;
-		spell.spellName = spellName;
-		spell.selectedActionName = "Cast";
-		spell.disabledSprite = Client.spriteCache.lookup(spriteId);
-		spell.enabledSprite = Client.spriteCache.lookup(spriteId);
+		spell.hoverType = id + 1;
+		spell.tooltip = "Cast @gre@" + def.name;
+		spell.defaultText = def.name;
+		spell.spellName = def.name;
+		spell.selectedActionName = def.selectedAction;
+		spell.spellUsableOn = def.spellUsableOn;
+		spell.disabledSprite = Client.spriteCache.lookup(def.spriteId);
+		spell.enabledSprite = Client.spriteCache.lookup(def.spriteId);
 		spell.width = 20;
 		spell.height = 20;
+
+		int runeCount = def.runeIds.length / 2;
+		spell.valueCompareType = new int[runeCount + 1];
+		spell.requiredValues = new int[runeCount + 1];
+		spell.valueIndexArray = new int[runeCount + 1][];
+		for (int i = 0; i < runeCount; i++) {
+			int runeId = def.runeIds[i * 2];
+			int amount = def.runeIds[(i * 2) + 1];
+			spell.valueCompareType[i] = 3;
+			spell.requiredValues[i] = amount - 1;
+			spell.valueIndexArray[i] = new int[] {4, 3214, runeId, 0};
+		}
+		spell.valueCompareType[runeCount] = 3;
+		spell.requiredValues[runeCount] = def.levelRequired - 1;
+		spell.valueIndexArray[runeCount] = new int[] {1, 6, 0};
+
+	}
+
+	private static void addArceuusSpellHover(ArceuusSpellDef def) {
+		final int hoverId = def.id + 1;
+		final int bgId = allocateDynamicWidgetId();
+		final int titleId = allocateDynamicWidgetId();
+		final int runesLabelId = allocateDynamicWidgetId();
+
+		Widget hover = addInterface(hoverId);
+		hover.parent = def.id;
+		hover.type = TYPE_CONTAINER;
+		hover.opacity = 0;
+		hover.scrollMax = 0;
+		hover.invisible = true;
+		hover.hoverType = -1;
+		hover.width = 190;
+		hover.height = 220;
+
+		int runeCount = def.runeIds.length / 2;
+		setChildren(3 + runeCount, hover);
+		addLunarHoverBox(bgId, 0);
+		setBounds(bgId, 0, 0, 0, hover);
+		addText(titleId, "Level " + def.levelRequired + ": " + def.name, 0xFF981F, true, true, 52, fonts, 1);
+		setBounds(titleId, 90, 5, 1, hover);
+		addText(runesLabelId, "Runes required", 0xAF6A1A, true, true, 52, fonts, 0);
+		setBounds(runesLabelId, 90, 20, 2, hover);
+
+		for (int i = 0; i < runeCount; i++) {
+			int runeId = def.runeIds[i * 2];
+			int amount = def.runeIds[(i * 2) + 1];
+			int lineId = allocateDynamicWidgetId();
+			addArceuusRuneLine(lineId, hoverId, amount, runeId, getRuneName(runeId));
+			setBounds(lineId, 20, 37 + (i * 14), 3 + i, hover);
+		}
+	}
+
+	private static void addArceuusRuneLine(int id, int parent, int runeAmount, int runeId, String runeName) {
+		Widget line = addInterface(id);
+		line.id = id;
+		line.parent = parent;
+		line.type = TYPE_TEXT;
+		line.atActionType = 0;
+		line.contentType = 0;
+		line.width = 150;
+		line.height = 12;
+		line.opacity = 0;
+		line.hoverType = -1;
+		line.valueCompareType = new int[1];
+		line.requiredValues = new int[1];
+		line.valueCompareType[0] = 3;
+		line.requiredValues[0] = runeAmount;
+		line.valueIndexArray = new int[1][4];
+		line.valueIndexArray[0][0] = 4;
+		line.valueIndexArray[0][1] = 3214;
+		line.valueIndexArray[0][2] = runeId;
+		line.valueIndexArray[0][3] = 0;
+		line.centerText = false;
+		line.textDrawingAreas = fonts[0];
+		line.textShadow = true;
+		line.defaultText = "%1/" + runeAmount + " " + runeName;
+		line.secondaryText = "";
+		line.textColor = 12582912;
+		line.secondaryColor = 49152;
+	}
+
+	private static String getRuneName(int runeId) {
+		switch (runeId) {
+			case 554: return "Fire rune";
+			case 555: return "Water rune";
+			case 556: return "Air rune";
+			case 557: return "Earth rune";
+			case 558: return "Mind rune";
+			case 559: return "Body rune";
+			case 560: return "Death rune";
+			case 561: return "Nature rune";
+			case 562: return "Chaos rune";
+			case 563: return "Law rune";
+			case 564: return "Cosmic rune";
+			case 565: return "Blood rune";
+			case 566: return "Soul rune";
+			case 21880: return "Wrath rune";
+			default: return "Rune " + runeId;
+		}
+	}
+
+	private static final class ArceuusSpellDef {
+		private final int id;
+		private final int spriteId;
+		private final String name;
+		private final int levelRequired;
+		private final int actionType;
+		private final int spellUsableOn;
+		private final String selectedAction;
+		private final int[] runeIds;
+
+		private ArceuusSpellDef(int id, int spriteId, String name, int levelRequired, int actionType, int spellUsableOn,
+				String selectedAction, int... runeIds) {
+			this.id = id;
+			this.spriteId = spriteId;
+			this.name = name;
+			this.levelRequired = levelRequired;
+			this.actionType = actionType;
+			this.spellUsableOn = spellUsableOn;
+			this.selectedAction = selectedAction;
+			this.runeIds = runeIds;
+		}
 	}
 
 	private static void levelUpInterfaces() {

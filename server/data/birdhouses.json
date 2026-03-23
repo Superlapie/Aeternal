@@ -5,7 +5,7 @@
     "z": 0,
     "owner": "Lapie",
     "tier": "MAPLE",
-    "state": "SEEDED",
+    "state": "READY",
     "seededAtMs": 1774216226679,
     "face": 0,
     "type": 10
@@ -16,7 +16,7 @@
     "z": 0,
     "owner": "Lapie",
     "tier": "YEW",
-    "state": "SEEDED",
+    "state": "READY",
     "seededAtMs": 1774215521914,
     "face": 0,
     "type": 10

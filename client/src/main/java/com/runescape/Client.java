@@ -13978,7 +13978,7 @@ public class Client extends GameApplet {
 
             //	System.out.println(button + " " + widget.selectedActionName + " " + anInt1137);
 
-            if (spellUsableOn == 16) {
+            if ((spellUsableOn & 16) == 16) {
 
                 setInterfaceTab(3);
 

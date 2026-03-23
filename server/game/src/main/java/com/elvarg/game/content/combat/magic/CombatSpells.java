@@ -3059,15 +3059,15 @@ public enum CombatSpells {
     }),
     INFERIOR_DEMONBANE(new CombatNormalSpell() {
         @Override
-        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8977)); }
         @Override
         public Projectile projectile() { return new ProjectileBuilder().setId(1859).create(); }
         @Override
-        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1859, GraphicHeight.HIGH)); }
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1866, GraphicHeight.HIGH)); }
         @Override
         public int maximumHit() { return 12; }
         @Override
-        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1859, GraphicHeight.HIGH)); }
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1865, GraphicHeight.HIGH)); }
         @Override
         public int baseExperience() { return 36; }
         @Override
@@ -3083,15 +3083,15 @@ public enum CombatSpells {
     }),
     SUPERIOR_DEMONBANE(new CombatNormalSpell() {
         @Override
-        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8977)); }
         @Override
         public Projectile projectile() { return new ProjectileBuilder().setId(1860).create(); }
         @Override
-        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1860, GraphicHeight.HIGH)); }
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1868, GraphicHeight.HIGH)); }
         @Override
         public int maximumHit() { return 16; }
         @Override
-        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1860, GraphicHeight.HIGH)); }
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1867, GraphicHeight.HIGH)); }
         @Override
         public int baseExperience() { return 52; }
         @Override
@@ -3107,15 +3107,15 @@ public enum CombatSpells {
     }),
     GREATER_DEMONBANE(new CombatNormalSpell() {
         @Override
-        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8977)); }
         @Override
         public Projectile projectile() { return new ProjectileBuilder().setId(1861).create(); }
         @Override
-        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1861, GraphicHeight.HIGH)); }
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1870, GraphicHeight.HIGH)); }
         @Override
         public int maximumHit() { return 20; }
         @Override
-        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1861, GraphicHeight.HIGH)); }
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1869, GraphicHeight.HIGH)); }
         @Override
         public int baseExperience() { return 65; }
         @Override
@@ -3131,15 +3131,15 @@ public enum CombatSpells {
     }),
     LESSER_CORRUPTION(new CombatEffectSpell() {
         @Override
-        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8977)); }
         @Override
         public Projectile projectile() { return new ProjectileBuilder().setId(1856).create(); }
         @Override
-        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1856, GraphicHeight.HIGH)); }
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1879, GraphicHeight.HIGH)); }
         @Override
         public int maximumHit() { return 0; }
         @Override
-        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1856, GraphicHeight.HIGH)); }
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1877, GraphicHeight.HIGH)); }
         @Override
         public int baseExperience() { return 70; }
         @Override
@@ -3166,15 +3166,15 @@ public enum CombatSpells {
     }),
     GREATER_CORRUPTION(new CombatEffectSpell() {
         @Override
-        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8972)); }
+        public Optional<Animation> castAnimation() { return Optional.of(new Animation(8977)); }
         @Override
         public Projectile projectile() { return new ProjectileBuilder().setId(1857).create(); }
         @Override
-        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1857, GraphicHeight.HIGH)); }
+        public Optional<Graphic> endGraphic() { return Optional.of(new Graphic(1880, GraphicHeight.HIGH)); }
         @Override
         public int maximumHit() { return 0; }
         @Override
-        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1857, GraphicHeight.HIGH)); }
+        public Optional<Graphic> startGraphic() { return Optional.of(new Graphic(1878, GraphicHeight.HIGH)); }
         @Override
         public int baseExperience() { return 85; }
         @Override

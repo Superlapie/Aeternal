@@ -201,8 +201,11 @@ public final class FlatMapArchiveImportTool {
         byte[] container = Arrays.copyOf(payload, payload.length);
         boolean decrypted = false;
         if (xteaKey != null && shouldAttemptDecrypt(container, type, compressedLength)) {
-            xteaDecryptInPlace(container, 5, container.length - 5, xteaKey);
-            decrypted = true;
+            int decryptLength = encryptedPayloadLength(type, compressedLength, container.length);
+            if (decryptLength > 0) {
+                xteaDecryptInPlace(container, 5, decryptLength, xteaKey);
+                decrypted = true;
+            }
         }
 
         try {
@@ -258,6 +261,24 @@ public final class FlatMapArchiveImportTool {
                 | ((data[off + 1] & 0xff) << 16)
                 | ((data[off + 2] & 0xff) << 8)
                 | (data[off + 3] & 0xff);
+    }
+
+    /**
+     * JS5 group containers may end with a 2-byte version footer that is not XTEA-encrypted.
+     * Decrypt only the encrypted payload segment to avoid corrupting gzip headers/trailers.
+     */
+    private static int encryptedPayloadLength(int type, int compressedLength, int containerLength) {
+        int payloadStart = 5;
+        int expectedDataEnd;
+        if (type == 0) {
+            expectedDataEnd = 5 + compressedLength;
+        } else if (type == 1 || type == 2) {
+            expectedDataEnd = 9 + compressedLength;
+        } else {
+            return 0;
+        }
+        int decryptEnd = Math.min(containerLength, expectedDataEnd);
+        return Math.max(0, decryptEnd - payloadStart);
     }
 
     private static boolean startsWithGzip(byte[] data) {
