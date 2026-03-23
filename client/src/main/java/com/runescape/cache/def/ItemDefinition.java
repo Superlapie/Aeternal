@@ -81,8 +81,8 @@ public final class ItemDefinition {
         totalItems = stream.readUShort();
         // Extend totalItems to include custom moon equipment IDs if needed
         int originalTotalItems = totalItems;
-        if (totalItems < 29013) {
-            totalItems = 29013; // Ensure we have space for moon equipment (28991 / 29000+)
+        if (totalItems < 29804) {
+            totalItems = 29804; // Ensure we have space for custom item ids used in this client.
         }
         streamIndices = new int[totalItems];
         int offset = 2;
@@ -215,6 +215,135 @@ public final class ItemDefinition {
             case 24423:
                 // Harmonised nightmare staff: fallback inventory model while 39070 is missing in this cache.
                 itemDef.inventory_model = 39073;
+                break;
+            case 29577: // Burning claws
+                itemDef.copy(lookup(13652)); // Dragon claws base behaviour.
+                itemDef.name = "Burning claws";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.inventory_model = 53314;
+                itemDef.equipped_model_male_1 = 54064;
+                itemDef.equipped_model_female_1 = 54062;
+                itemDef.equipped_model_male_2 = -1;
+                itemDef.equipped_model_female_2 = -1;
+                itemDef.equipped_model_male_3 = -1;
+                itemDef.equipped_model_female_3 = -1;
+                itemDef.modelZoom = 987;
+                itemDef.rotation_x = 15;
+                itemDef.rotation_y = 349;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = -1;
+                itemDef.translate_yz = 19;
+                itemDef.model_scale_x = 128;
+                itemDef.model_scale_y = 128;
+                itemDef.model_scale_z = 128;
+                itemDef.original_model_colors = null;
+                itemDef.modified_model_colors = null;
+                itemDef.original_model_textures = null;
+                itemDef.modified_model_textures = null;
+                break;
+            case 29580: // Tormented synapse
+                itemDef.copy(lookup(4155)); // Gem-like material base behaviour.
+                itemDef.name = "Tormented synapse";
+                itemDef.actions = new String[5];
+                itemDef.actions[0] = "Inspect";
+                itemDef.inventory_model = 53304;
+                itemDef.modelZoom = 848;
+                itemDef.rotation_x = 2007;
+                itemDef.rotation_y = 451;
+                itemDef.rotation_z = 0;
+                itemDef.translate_x = 0;
+                itemDef.translate_yz = 4;
+                itemDef.light_intensity = 30;
+                itemDef.light_mag = 100;
+                itemDef.model_scale_x = 128;
+                itemDef.model_scale_y = 128;
+                itemDef.model_scale_z = 128;
+                itemDef.original_model_colors = null;
+                itemDef.modified_model_colors = null;
+                itemDef.original_model_textures = null;
+                itemDef.modified_model_textures = null;
+                break;
+            case 29589: // Emberlight
+                itemDef.copy(lookup(19675)); // Arclight base behaviour.
+                itemDef.name = "Emberlight";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.actions[3] = "Revert";
+                itemDef.inventory_model = 53315;
+                itemDef.equipped_model_male_1 = 54054;
+                itemDef.equipped_model_female_1 = 54065;
+                itemDef.equipped_model_male_2 = -1;
+                itemDef.equipped_model_female_2 = -1;
+                itemDef.equipped_model_male_3 = -1;
+                itemDef.equipped_model_female_3 = -1;
+                itemDef.modelZoom = 1619;
+                itemDef.rotation_x = 2003;
+                itemDef.rotation_y = 273;
+                itemDef.rotation_z = 1050;
+                itemDef.translate_x = 1;
+                itemDef.translate_yz = 2;
+                itemDef.model_scale_x = 128;
+                itemDef.model_scale_y = 128;
+                itemDef.model_scale_z = 128;
+                itemDef.original_model_colors = null;
+                itemDef.modified_model_colors = null;
+                itemDef.original_model_textures = null;
+                itemDef.modified_model_textures = null;
+                break;
+            case 29591: // Scorching bow
+                itemDef.copy(lookup(859)); // Magic longbow base behaviour.
+                itemDef.name = "Scorching bow";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.actions[3] = "Revert";
+                itemDef.inventory_model = 53312;
+                itemDef.equipped_model_male_1 = 54040;
+                itemDef.equipped_model_female_1 = 54043;
+                itemDef.equipped_model_male_2 = -1;
+                itemDef.equipped_model_female_2 = -1;
+                itemDef.equipped_model_male_3 = -1;
+                itemDef.equipped_model_female_3 = -1;
+                itemDef.modelZoom = 2138;
+                itemDef.rotation_x = 1034;
+                itemDef.rotation_y = 505;
+                itemDef.rotation_z = 2047;
+                itemDef.translate_x = 1;
+                itemDef.translate_yz = 5;
+                itemDef.model_scale_x = 128;
+                itemDef.model_scale_y = 128;
+                itemDef.model_scale_z = 128;
+                itemDef.original_model_colors = null;
+                itemDef.modified_model_colors = null;
+                itemDef.original_model_textures = null;
+                itemDef.modified_model_textures = null;
+                break;
+            case 29594: // Purging staff
+                itemDef.copy(lookup(11791)); // Staff of the dead base behaviour.
+                itemDef.name = "Purging staff";
+                itemDef.actions = new String[5];
+                itemDef.actions[1] = "Wield";
+                itemDef.actions[3] = "Revert";
+                itemDef.inventory_model = 53313;
+                itemDef.equipped_model_male_1 = 54055;
+                itemDef.equipped_model_female_1 = 54051;
+                itemDef.equipped_model_male_2 = -1;
+                itemDef.equipped_model_female_2 = -1;
+                itemDef.equipped_model_male_3 = -1;
+                itemDef.equipped_model_female_3 = -1;
+                itemDef.modelZoom = 2138;
+                itemDef.rotation_x = 505;
+                itemDef.rotation_y = 646;
+                itemDef.rotation_z = 1071;
+                itemDef.translate_x = -1;
+                itemDef.translate_yz = 1;
+                itemDef.model_scale_x = 128;
+                itemDef.model_scale_y = 128;
+                itemDef.model_scale_z = 128;
+                itemDef.original_model_colors = null;
+                itemDef.modified_model_colors = null;
+                itemDef.original_model_textures = null;
+                itemDef.modified_model_textures = null;
                 break;
 
             case 29010: // Eclipse moon helm

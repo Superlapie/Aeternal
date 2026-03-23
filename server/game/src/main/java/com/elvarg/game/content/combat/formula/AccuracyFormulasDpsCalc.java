@@ -144,6 +144,10 @@ public class AccuracyFormulasDpsCalc {
         }
 
         // Include any target specific gear here if/when supported (ex. salve amulet)
+        if (entity.isPlayer()) {
+            double demonbaneAccMultiplier = CombatFactory.getDemonbaneAccuracyMultiplier(entity.getAsPlayer(), CombatType.MELEE, entity.getCombat().getTarget());
+            attRoll = (int) Math.floor(attRoll * demonbaneAccMultiplier);
+        }
 
         return attRoll;
     }
@@ -301,6 +305,8 @@ public class AccuracyFormulasDpsCalc {
                     && player.getCombatSpecial().getCombatMethod().type() == CombatType.RANGED) {
                 attRoll = (int) Math.floor(attRoll * player.getCombatSpecial().getAccuracyMultiplier());
             }
+            double demonbaneAccMultiplier = CombatFactory.getDemonbaneAccuracyMultiplier(player, CombatType.RANGED, entity.getCombat().getTarget());
+            attRoll = (int) Math.floor(attRoll * demonbaneAccMultiplier);
         }
 
         // Salve amulet/twisted bow bonus if/when added
@@ -380,6 +386,11 @@ public class AccuracyFormulasDpsCalc {
         // imbued salve amulet.
         if (entity.getCombat().getCastSpell() != null) {
             attRoll = (int) Math.floor(attRoll * entity.getCombat().getCastSpell().getAccuracyMultiplier(entity));
+        }
+        if (entity.isPlayer()) {
+            Player player = entity.getAsPlayer();
+            double demonbaneAccMultiplier = CombatFactory.getDemonbaneAccuracyMultiplier(player, CombatType.MAGIC, entity.getCombat().getTarget());
+            attRoll = (int) Math.floor(attRoll * demonbaneAccMultiplier);
         }
 
         return attRoll;

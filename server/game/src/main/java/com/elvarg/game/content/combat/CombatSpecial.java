@@ -17,6 +17,7 @@ import com.elvarg.game.content.combat.method.impl.specials.ArmadylGodswordCombat
 import com.elvarg.game.content.combat.method.impl.specials.BallistaCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.BandosGodswordCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.BarrelchestAnchorCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.BurningClawCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.DarkBowCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.DragonClawCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.DragonDaggerCombatMethod;
@@ -109,6 +110,8 @@ public enum CombatSpecial {
             WeaponInterface.GRANITE_MAUL),
     DRAGON_CLAWS(new int[]{13652}, 50, 1, 1.35,
             new DragonClawCombatMethod(), WeaponInterface.CLAWS),
+    BURNING_CLAWS(new int[]{29577}, 30, 1, 1.35,
+            new BurningClawCombatMethod(), WeaponInterface.CLAWS),
 
     // Ranged
     MAGIC_SHORTBOW(new int[]{861}, 55, 1, 1, new MagicShortbowCombatMethod(),

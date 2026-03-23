@@ -77,6 +77,10 @@ public class CombatFactory {
 	private static final int ECLIPSE_TASSETS = 29007;
 	private static final int ECLIPSE_ATLATL = 29000;
 	private static final int NOXIOUS_HALBERD = 29796;
+	private static final int BURNING_CLAWS = 29577;
+	private static final int EMBERLIGHT = 29589;
+	private static final int SCORCHING_BOW = 29591;
+	private static final int PURGING_STAFF = 29594;
 	private static final int ATLATL_DART = 28991;
 	private static final int ATLATL_DART_ALT = 29002;
 	private static final int SERPENTINE_HELM = 12931;
@@ -195,6 +199,10 @@ public class CombatFactory {
 
 		if (type == CombatType.MELEE) {
 			damage = Misc.inclusive(0, DamageFormulas.calculateMaxMeleeHit(entity));
+			if (entity.isPlayer()) {
+				double demonbaneDamageMultiplier = getDemonbaneDamageMultiplier(entity.getAsPlayer(), type, victim);
+				damage = (int) Math.floor(damage * demonbaneDamageMultiplier);
+			}
 
 			// Do melee effects with the calculated damage..
 			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MELEE]) {
@@ -203,6 +211,10 @@ public class CombatFactory {
 
 		} else if (type == CombatType.RANGED) {
 			damage = Misc.inclusive(0, DamageFormulas.calculateMaxRangedHit(entity));
+			if (entity.isPlayer()) {
+				double demonbaneDamageMultiplier = getDemonbaneDamageMultiplier(entity.getAsPlayer(), type, victim);
+				damage = (int) Math.floor(damage * demonbaneDamageMultiplier);
+			}
 
 			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MISSILES]) {
 				damage *= damageMultiplier;
@@ -210,6 +222,10 @@ public class CombatFactory {
 
 		} else if (type == CombatType.MAGIC) {
 			damage = Misc.inclusive(0, DamageFormulas.getMagicMaxhit(entity));
+			if (entity.isPlayer()) {
+				double demonbaneDamageMultiplier = getDemonbaneDamageMultiplier(entity.getAsPlayer(), type, victim);
+				damage = (int) Math.floor(damage * demonbaneDamageMultiplier);
+			}
 			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MAGIC]) {
 				damage *= damageMultiplier;
 			}
@@ -231,6 +247,50 @@ public class CombatFactory {
 
 		// Return our hitDamage that may have been modified slightly.
 		return hitDamage;
+	}
+
+	public static boolean isDemonicTarget(Mobile target) {
+		if (target == null || !target.isNpc()) {
+			return false;
+		}
+
+		String name = target.getAsNpc().getDefinition().getName();
+		if (name == null) {
+			return false;
+		}
+
+		String lower = name.toLowerCase(Locale.ROOT);
+		return lower.contains("demon");
+	}
+
+	public static double getDemonbaneAccuracyMultiplier(Player player, CombatType type, Mobile target) {
+		if (player == null || !isDemonicTarget(target)) {
+			return 1.0;
+		}
+
+		int weaponId = player.getEquipment().getWeapon().getId();
+		if (type == CombatType.MELEE) {
+			if (weaponId == EMBERLIGHT) {
+				return 1.70;
+			}
+			if (weaponId == BURNING_CLAWS) {
+				return 1.05;
+			}
+		} else if (type == CombatType.RANGED) {
+			if (weaponId == SCORCHING_BOW) {
+				return 1.30;
+			}
+		} else if (type == CombatType.MAGIC) {
+			if (weaponId == PURGING_STAFF) {
+				return 1.50;
+			}
+		}
+
+		return 1.0;
+	}
+
+	public static double getDemonbaneDamageMultiplier(Player player, CombatType type, Mobile target) {
+		return getDemonbaneAccuracyMultiplier(player, type, target);
 	}
 
 
