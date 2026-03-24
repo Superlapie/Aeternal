@@ -32,6 +32,7 @@ import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.grounditem.ItemOnGroundManager;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.npc.NPCMovementCoordinator.CoordinateState;
+import com.elvarg.game.entity.impl.npc.impl.TormentedDemon;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.entity.impl.playerbot.PlayerBot;
 import com.elvarg.game.model.Animation;
@@ -79,7 +80,9 @@ public class CombatFactory {
 	private static final int NOXIOUS_HALBERD = 29796;
 	private static final int BURNING_CLAWS = 29577;
 	private static final int EMBERLIGHT = 29589;
+	private static final int EMBERLIGHT_ALT = 29479;
 	private static final int SCORCHING_BOW = 29591;
+	private static final int SCORCHING_BOW_ALT = 29477;
 	private static final int PURGING_STAFF = 29594;
 	private static final int ATLATL_DART = 28991;
 	private static final int ATLATL_DART_ALT = 29002;
@@ -194,6 +197,11 @@ public class CombatFactory {
 
 		//calculate the multiplier that will be used when calculating protection prayers.
 		double damageMultiplier = entity.isNpc() ? CombatConstants.PRAYER_DAMAGE_REDUCTION_AGAINST_NPCS : CombatConstants.PRAYER_DAMAGE_REDUCTION_AGAINST_PLAYERS;
+		boolean deferProtectionPrayerToHit = entity != null
+				&& victim != null
+				&& entity.isNpc()
+				&& victim.isPlayer()
+				&& TormentedDemon.isTormentedDemon(entity.getAsNpc());
 
 		int damage = 0;
 
@@ -205,7 +213,7 @@ public class CombatFactory {
 			}
 
 			// Do melee effects with the calculated damage..
-			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MELEE]) {
+			if (!deferProtectionPrayerToHit && victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MELEE]) {
 				damage *= damageMultiplier;
 			}
 
@@ -216,7 +224,7 @@ public class CombatFactory {
 				damage = (int) Math.floor(damage * demonbaneDamageMultiplier);
 			}
 
-			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MISSILES]) {
+			if (!deferProtectionPrayerToHit && victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MISSILES]) {
 				damage *= damageMultiplier;
 			}
 
@@ -226,7 +234,7 @@ public class CombatFactory {
 				double demonbaneDamageMultiplier = getDemonbaneDamageMultiplier(entity.getAsPlayer(), type, victim);
 				damage = (int) Math.floor(damage * demonbaneDamageMultiplier);
 			}
-			if (victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MAGIC]) {
+			if (!deferProtectionPrayerToHit && victim.getPrayerActive()[PrayerHandler.PROTECT_FROM_MAGIC]) {
 				damage *= damageMultiplier;
 			}
 
@@ -263,21 +271,40 @@ public class CombatFactory {
 		return lower.contains("demon");
 	}
 
+	private static boolean isTormentedDemonTarget(Mobile target) {
+		return target != null && target.isNpc() && TormentedDemon.isTormentedDemon(target.getAsNpc());
+	}
+
+	private static boolean isEmberlight(int weaponId) {
+		return weaponId == EMBERLIGHT || weaponId == EMBERLIGHT_ALT;
+	}
+
+	private static boolean isScorchingBow(int weaponId) {
+		return weaponId == SCORCHING_BOW || weaponId == SCORCHING_BOW_ALT;
+	}
+
 	public static double getDemonbaneAccuracyMultiplier(Player player, CombatType type, Mobile target) {
 		if (player == null || !isDemonicTarget(target)) {
 			return 1.0;
 		}
 
 		int weaponId = player.getEquipment().getWeapon().getId();
+		boolean tormentedDemon = isTormentedDemonTarget(target);
 		if (type == CombatType.MELEE) {
-			if (weaponId == EMBERLIGHT) {
+			if (isEmberlight(weaponId)) {
+				if (tormentedDemon) {
+					return 1.40;
+				}
 				return 1.70;
 			}
 			if (weaponId == BURNING_CLAWS) {
 				return 1.05;
 			}
 		} else if (type == CombatType.RANGED) {
-			if (weaponId == SCORCHING_BOW) {
+			if (isScorchingBow(weaponId)) {
+				if (tormentedDemon) {
+					return 1.40;
+				}
 				return 1.30;
 			}
 		} else if (type == CombatType.MAGIC) {
@@ -290,6 +317,20 @@ public class CombatFactory {
 	}
 
 	public static double getDemonbaneDamageMultiplier(Player player, CombatType type, Mobile target) {
+		if (player == null || !isDemonicTarget(target)) {
+			return 1.0;
+		}
+
+		int weaponId = player.getEquipment().getWeapon().getId();
+		if (isTormentedDemonTarget(target)) {
+			if (type == CombatType.MELEE && isEmberlight(weaponId)) {
+				return 1.70;
+			}
+			if (type == CombatType.RANGED && isScorchingBow(weaponId)) {
+				return 1.70;
+			}
+		}
+
 		return getDemonbaneAccuracyMultiplier(player, type, target);
 	}
 

@@ -6,6 +6,7 @@ import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.CombatType;
 import com.elvarg.game.content.combat.FightStyle;
 import com.elvarg.game.entity.impl.Mobile;
+import com.elvarg.game.entity.impl.npc.impl.TormentedDemon;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Skill;
 import com.elvarg.game.model.equipment.BonusManager;
@@ -23,6 +24,12 @@ public class AccuracyFormulasDpsCalc {
     }
 
     public static boolean rollAccuracy(Mobile entity, Mobile enemy, CombatType style) {
+        // Tormented Demon shield-down state (13596) grants guaranteed accuracy in this window.
+        if (entity != null && enemy != null && entity.isPlayer() && enemy.isNpc()
+                && TormentedDemon.isShieldDown(enemy.getAsNpc())) {
+            return true;
+        }
+
         int attRoll;
         int defRoll;
         if (style == CombatType.MELEE) {
@@ -376,6 +383,13 @@ public class AccuracyFormulasDpsCalc {
     }
 
     public static int attackMagicRoll(Mobile entity) {
+        if (entity != null && entity.isNpc() && TormentedDemon.isTormentedDemon(entity.getAsNpc())) {
+            // TD magic accuracy from fallback stats can be too low depending on definition data.
+            // Keep it in a reliable OSRS-like range so magic attacks don't degenerate into constant 0s.
+            final int tdEffectiveMagicLevel = 250 + 9;
+            return tdEffectiveMagicLevel * 64;
+        }
+
         int accuracyBonus = (entity.isNpc() ? 0 :
                            entity.getAsPlayer().getBonusManager().getAttackBonus()[BonusManager.ATTACK_MAGIC]);
 

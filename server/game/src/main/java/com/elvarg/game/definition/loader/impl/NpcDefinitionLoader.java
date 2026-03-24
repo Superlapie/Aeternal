@@ -27,6 +27,7 @@ public class NpcDefinitionLoader extends DefinitionLoader {
         }
         ensureAraxxorDefinition();
         ensureThrallDefinitions();
+        ensureTormentedDemonDefinitions();
     }
 
     @Override
@@ -83,6 +84,49 @@ public class NpcDefinitionLoader extends DefinitionLoader {
         ensureThrallDefinition(10884, "Ghostly thrall", 5540, 5541, 5542);
         ensureThrallDefinition(10885, "Skeletal thrall", 5485, 5482, 5491);
         ensureThrallDefinition(10886, "Zombie thrall", 5567, 5568, 5569);
+    }
+
+    private void ensureTormentedDemonDefinitions() {
+        ensureTormentedDemonDefinition(13593);
+        ensureTormentedDemonDefinition(13594);
+        ensureTormentedDemonDefinition(13595);
+        ensureTormentedDemonDefinition(13596);
+        ensureTormentedDemonDefinition(13597);
+    }
+
+    private void ensureTormentedDemonDefinition(int id) {
+        if (NpcDefinition.definitions.containsKey(id)) {
+            return;
+        }
+        try {
+            NpcDefinition def = new NpcDefinition();
+            set(def, "id", id);
+            set(def, "name", "Tormented Demon");
+            set(def, "examine", "A demon wracked with infernal torment.");
+            set(def, "size", 2);
+            set(def, "walkRadius", 6);
+            set(def, "attackable", true);
+            set(def, "retreats", true);
+            set(def, "aggressive", true);
+            set(def, "aggressiveTolerance", false);
+            set(def, "poisonous", false);
+            set(def, "fightsBack", true);
+            set(def, "respawn", 35);
+            set(def, "maxHit", 40);
+            set(def, "hitpoints", 600);
+            set(def, "attackSpeed", 5);
+            set(def, "attackAnim", 11387);
+            set(def, "defenceAnim", 11388);
+            set(def, "deathAnim", 11366);
+            set(def, "combatLevel", 450);
+            set(def, "stats", new int[]{290, 290, 285, 600, 285, 0, 0, 0, 0, 0, 250, 250, 250, 250, 250, 0, 0, 0});
+            set(def, "slayerLevel", 0);
+            set(def, "combatFollowDistance", 16);
+            NpcDefinition.definitions.put(id, def);
+            System.out.println("Installed fallback NPC definition for Tormented Demon (" + id + ").");
+        } catch (Exception e) {
+            System.err.println("Failed to install fallback Tormented Demon NPC definition (" + id + "): " + e.getMessage());
+        }
     }
 
     private void ensureThrallDefinition(int id, String name, int attackAnim, int defenceAnim, int deathAnim) {

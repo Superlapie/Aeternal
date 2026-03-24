@@ -21,6 +21,7 @@ import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.npc.NPCMovementCoordinator.CoordinateState;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Direction;
+import com.elvarg.game.model.Flag;
 import com.elvarg.game.model.Ids;
 import com.elvarg.game.model.Location;
 import com.elvarg.game.model.areas.AreaManager;
@@ -439,8 +440,11 @@ public class NPC extends Mobile {
 	}
 
 	public void setHeadIcon(int headIcon) {
+		if (this.headIcon == headIcon) {
+			return;
+		}
 		this.headIcon = headIcon;
-		// getUpdateFlag().flag(Flag.NPC_APPEARANCE);
+		getUpdateFlag().flag(Flag.APPEARANCE);
 	}
 
 	public CombatMethod getCombatMethod() {

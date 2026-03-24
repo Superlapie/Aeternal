@@ -44,6 +44,7 @@ import com.elvarg.game.definition.PlayerBotDefinition;
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.npc.NpcAggression;
+import com.elvarg.game.entity.impl.npc.impl.TormentedDemon;
 import com.elvarg.game.entity.impl.playerbot.PlayerBot;
 import com.elvarg.game.model.Animation;
 import com.elvarg.game.model.Appearance;
@@ -1701,6 +1702,13 @@ public class Player extends Mobile {
 		
 		if (attacker.isNpc()) {
 			NPC npc = attacker.getAsNpc();
+			if (TormentedDemon.isTormentedDemon(npc)) {
+				int protectPrayer = PrayerHandler.getProtectingPrayer(hit.getCombatType());
+				if (protectPrayer >= 0 && PrayerHandler.isActivated(this, protectPrayer)) {
+					hit.setTotalDamage(0);
+				}
+				return hit;
+			}
 			if (npc.getId() == NpcIdentifiers.TZTOK_JAD) {
 				if (PrayerHandler.isActivated(this, PrayerHandler.getProtectingPrayer(hit.getCombatType()))) {
 					hit.setTotalDamage(0);

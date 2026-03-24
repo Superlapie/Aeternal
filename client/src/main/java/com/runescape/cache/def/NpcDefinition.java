@@ -360,6 +360,21 @@ public final class NpcDefinition {
 				definition.clickable = true;
 				definition.drawMinimapDot = false;
 				break;
+			case 13593:
+			case 13594:
+			case 13595:
+			case 13596:
+			case 13597:
+			case 13599:
+			case 13600:
+			case 13601:
+			case 13602:
+			case 13603:
+			case 13604:
+			case 13605:
+			case 13606:
+				applyTormentedDemonDefinition(definition, id);
+				break;
 			default:
 				definition.name = "Unknown";
 				definition.actions = new String[7];
@@ -381,6 +396,58 @@ public final class NpcDefinition {
 			return fallback;
 		}
 		return preferred;
+	}
+
+	private static void applyTormentedDemonDefinition(NpcDefinition definition, int id) {
+		definition.name = "Tormented Demon";
+		definition.description = "A demon wracked with infernal torment.".getBytes();
+		definition.size = 3;
+		definition.combatLevel = 450;
+		definition.actions = new String[] { null, "Attack", null, null, null };
+		definition.modelId = new int[] { tormentedDemonModelFor(id) };
+		definition.standAnim = resolvePlayableAnimation(11391, 808);
+		definition.walkAnim = resolvePlayableAnimation(11390, 819);
+		definition.turn180AnimIndex = definition.walkAnim;
+		definition.turn90CCWAnimIndex = definition.walkAnim;
+		definition.turn90CWAnimIndex = definition.walkAnim;
+		definition.lightModifier = 10;
+		definition.shadowModifier = 25;
+		definition.headIcon = tormentedDemonHeadIconFor(id);
+		definition.clickable = true;
+	}
+
+	private static int tormentedDemonModelFor(int id) {
+		switch (id) {
+			case 13596:
+			case 13602:
+			case 13606:
+				return 53287;
+			case 13593:
+			case 13594:
+			case 13595:
+			case 13597:
+			case 13599:
+			case 13600:
+			case 13601:
+			case 13603:
+			case 13604:
+			case 13605:
+			default:
+				return 53285;
+		}
+	}
+
+	private static int tormentedDemonHeadIconFor(int id) {
+		switch (id) {
+			case 13593: // Protect from melee
+				return 0;
+			case 13594: // Protect from missiles
+				return 1;
+			case 13595: // Protect from magic
+				return 2;
+			default:
+				return -1;
+		}
 	}
 
 	private static int[] nightmareModelIdsFor(int id) {

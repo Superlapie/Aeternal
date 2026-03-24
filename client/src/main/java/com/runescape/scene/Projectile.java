@@ -33,11 +33,7 @@ public final class Projectile extends Renderable {
     private int tiltAngle;
 
     public Projectile(int initialSlope, int endHeight, int creationCycle, int destructionCycle, int initialDistance, int startZ, int startHeight, int y, int x, int target, int gfxMoving) {
-        int resolvedGfx = gfxMoving;
-        if (resolvedGfx >= Graphic.cache.length || resolvedGfx < 0) {
-            resolvedGfx = 0;
-        }
-        projectileGFX = Graphic.cache[resolvedGfx];
+        projectileGFX = resolveGraphic(gfxMoving);
         projectileZ = startZ;
         projectileX = x;
         projectileY = y;
@@ -49,6 +45,24 @@ public final class Projectile extends Renderable {
         this.target = target;
         this.endHeight = endHeight;
         started = false;
+    }
+
+    private static Graphic resolveGraphic(int id) {
+        if (Graphic.cache == null || Graphic.cache.length == 0) {
+            return null;
+        }
+        if (id >= 0 && id < Graphic.cache.length && Graphic.cache[id] != null) {
+            return Graphic.cache[id];
+        }
+        if (Graphic.cache[0] != null) {
+            return Graphic.cache[0];
+        }
+        for (Graphic graphic : Graphic.cache) {
+            if (graphic != null) {
+                return graphic;
+            }
+        }
+        return null;
     }
 
     public void calculateIncrements(int currentCycle, int targetY, int targetCenterHeight, int targetX) {
@@ -71,6 +85,9 @@ public final class Projectile extends Renderable {
     }
 
     public Model getRotatedModel() {
+        if (projectileGFX == null) {
+            return null;
+        }
         Model modelGfx = projectileGFX.getModel();
         if (modelGfx == null) {
             return null;
@@ -95,6 +112,9 @@ public final class Projectile extends Renderable {
     }
 
     public void progressCycles(int cyclesMissed) {
+        if (projectileGFX == null) {
+            return;
+        }
         started = true;
         xPos += xIncrement * (double) cyclesMissed;
         yPos += yIncrement * (double) cyclesMissed;

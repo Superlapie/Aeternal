@@ -45,7 +45,10 @@ public final class Frame {
             6513, 6514, 6515, 6516, 6517, 6518, 6519, 6520, 9476,
             // Yama combat body animation groups (classic fallback set).
             6715, 6718, 6719, 6720, 6722, 6725, 6727, 6730, 6731, 6733,
-            11307
+            11307,
+            // Tormented Demon (WGS / 2446) body, projectile, and shield/VFX animation groups.
+            3868, 4109, 4110, 4112, 4113, 4115, 4116, 4117, 5763, 6671, 6672, 6673, 6674, 6678, 6679, 6681,
+            6689, 6691, 6694, 6712, 6735, 6737, 6738, 6739, 7964, 7969, 7973, 9808, 9827, 9829
     ));
     private static final Map<Integer, int[]> animArchiveFiles = new HashMap<>();
     private static final Map<Integer, int[]> skeletonArchiveFiles = new HashMap<>();
