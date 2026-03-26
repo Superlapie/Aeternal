@@ -21,12 +21,15 @@ OUT_DIR = Path("client/Cache")
 ATLATL_JSON = Path("_ext/animations_export_8_itemsATLATL.json")
 VOIDWAKER_JSON = Path("_ext/animations_export_4_itemsVOIDWAKER.json")
 YAMA_JSON = Path("_ext/animations_export_62_itemsYAMA.json")
-NOX_JSON = Path("_ext/NoxAnimations.json")
 
 SEQ_IDS = [
     # Arceuus spellbook cast/reanimation/thrall sequences.
     753, 2814, 6621, 7198,
-    8970, 8972, 8987, 8988, 8989, 8990,
+    8970, 8972, 8977, 8987, 8988, 8989, 8990, 8993, 8994, 8996, 8997,
+    10501,
+    9135,
+    # Tormented synapse weapon/player+vfx sequences.
+    11132, 11133, 11134, 11135, 11136, 11137, 11138, 11139, 11140, 11141,
     10792, 13670, 13671,
     8524, 8525, 8530,
     8139, 8140, 8141, 8142,
@@ -42,6 +45,8 @@ SEQ_IDS = [
 SPOT_IDS = [2709, 2710, 2711, 2712, 2795, 2796, 2797, 2798, 2914, 3017, 3030]
 SPOT_IDS += [1757, 1758, 1759, 1760, 1761, 1762]
 SPOT_IDS += [1129, 1288, 1856, 1857, 1858, 1859, 1860, 1861, 1873, 1874, 1875]
+SPOT_IDS += [1865, 1866, 1867, 1868, 1869, 1870, 1877, 1878, 1879, 1880, 1950]
+SPOT_IDS += [2806, 2807, 2808, 2809, 2810, 2811, 2812, 2813, 2814, 2908]
 
 
 class Reader:
@@ -222,7 +227,6 @@ def main() -> None:
     write_json_backed_sequences(ATLATL_JSON)
     write_json_backed_sequences(VOIDWAKER_JSON)
     write_json_backed_sequences(YAMA_JSON)
-    write_json_backed_sequences(NOX_JSON)
 
 
 def write_json_backed_sequences(json_path: Path) -> None:

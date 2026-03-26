@@ -16,6 +16,7 @@ public class BossTeleportCommand implements Command {
     private static final Location SARADOMIN = new Location(2908, 5265, 0);
     private static final Location ZAMORAK = new Location(2925, 5334, 2);
     private static final Location ARMADYL = new Location(2839, 5296, 2);
+    private static final Location DEMONIC_GORILLAS = new Location(2140, 5651, 0);
 
     @Override
     public void execute(Player player, String command, String[] parts) {
@@ -28,6 +29,7 @@ public class BossTeleportCommand implements Command {
             case "sara" -> SARADOMIN;
             case "zammy", "zamorak" -> ZAMORAK;
             case "arma", "armadyl" -> ARMADYL;
+            case "dg", "demonic" -> DEMONIC_GORILLAS;
             default -> null;
         };
 

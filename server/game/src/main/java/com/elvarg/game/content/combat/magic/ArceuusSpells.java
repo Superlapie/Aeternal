@@ -113,6 +113,7 @@ public final class ArceuusSpells {
     private static final String WARD_OF_ARCEUUS_ATTR = "ward_of_arceuus_expire_at";
     private static final String SHADOW_VEIL_ATTR = "shadow_veil_expire_at";
     private static final String DEATH_CHARGE_ATTR = "death_charge_expire_at";
+    private static final int PURGING_STAFF = 29594;
 
     private record TeleportSpell(int level, Location location, int experience, Item[] runes) {}
     private record ReanimationSpell(int level, int experience, Item[] runes, int[] allowedHeads, CastVisual visual) {}
@@ -619,7 +620,11 @@ public final class ArceuusSpells {
         switch (spellId) {
             case RESURRECT_CROPS -> player.getPacketSender().sendMessage("Your resurrection magic revitalises nearby crops.");
             case MARK_OF_DARKNESS -> {
-                player.setAttribute(MARK_OF_DARKNESS_ATTR, now + 60_000L);
+                long duration = 60_000L;
+                if (player.getEquipment().hasAt(com.elvarg.game.model.container.impl.Equipment.WEAPON_SLOT, PURGING_STAFF)) {
+                    duration *= 5L;
+                }
+                player.setAttribute(MARK_OF_DARKNESS_ATTR, now + duration);
                 player.getPacketSender().sendMessage("You are cloaked in Mark of Darkness.");
             }
             case WARD_OF_ARCEUUS -> {
@@ -764,5 +769,13 @@ public final class ArceuusSpells {
 
     private static Location playerSpawnOrDefault() {
         return GameConstants.DEFAULT_LOCATION.clone();
+    }
+
+    public static boolean hasActiveMarkOfDarkness(Player player) {
+        if (player == null) {
+            return false;
+        }
+        long expiresAt = (long) player.getAttribute(MARK_OF_DARKNESS_ATTR, 0L);
+        return expiresAt > System.currentTimeMillis();
     }
 }

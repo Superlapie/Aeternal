@@ -17,6 +17,7 @@ import com.elvarg.game.content.combat.formula.DamageFormulas;
 import com.elvarg.game.content.combat.hit.HitDamage;
 import com.elvarg.game.content.combat.hit.HitMask;
 import com.elvarg.game.content.combat.hit.PendingHit;
+import com.elvarg.game.content.combat.magic.ArceuusSpells;
 import com.elvarg.game.content.combat.magic.CombatSpell;
 import com.elvarg.game.content.combat.magic.TridentData;
 import com.elvarg.game.content.combat.method.CombatMethod;
@@ -80,10 +81,11 @@ public class CombatFactory {
 	private static final int NOXIOUS_HALBERD = 29796;
 	private static final int BURNING_CLAWS = 29577;
 	private static final int EMBERLIGHT = 29589;
-	private static final int EMBERLIGHT_ALT = 29479;
 	private static final int SCORCHING_BOW = 29591;
-	private static final int SCORCHING_BOW_ALT = 29477;
 	private static final int PURGING_STAFF = 29594;
+	private static final int INFERIOR_DEMONBANE_SPELL_ID = 30645;
+	private static final int SUPERIOR_DEMONBANE_SPELL_ID = 30649;
+	private static final int GREATER_DEMONBANE_SPELL_ID = 30653;
 	private static final int ATLATL_DART = 28991;
 	private static final int ATLATL_DART_ALT = 29002;
 	private static final int SERPENTINE_HELM = 12931;
@@ -276,11 +278,21 @@ public class CombatFactory {
 	}
 
 	private static boolean isEmberlight(int weaponId) {
-		return weaponId == EMBERLIGHT || weaponId == EMBERLIGHT_ALT;
+		return weaponId == EMBERLIGHT;
 	}
 
 	private static boolean isScorchingBow(int weaponId) {
-		return weaponId == SCORCHING_BOW || weaponId == SCORCHING_BOW_ALT;
+		return weaponId == SCORCHING_BOW;
+	}
+
+	private static boolean isDemonbaneSpell(CombatSpell spell) {
+		if (spell == null) {
+			return false;
+		}
+		int spellId = spell.spellId();
+		return spellId == INFERIOR_DEMONBANE_SPELL_ID
+				|| spellId == SUPERIOR_DEMONBANE_SPELL_ID
+				|| spellId == GREATER_DEMONBANE_SPELL_ID;
 	}
 
 	public static double getDemonbaneAccuracyMultiplier(Player player, CombatType type, Mobile target) {
@@ -289,12 +301,8 @@ public class CombatFactory {
 		}
 
 		int weaponId = player.getEquipment().getWeapon().getId();
-		boolean tormentedDemon = isTormentedDemonTarget(target);
 		if (type == CombatType.MELEE) {
 			if (isEmberlight(weaponId)) {
-				if (tormentedDemon) {
-					return 1.40;
-				}
 				return 1.70;
 			}
 			if (weaponId == BURNING_CLAWS) {
@@ -302,15 +310,19 @@ public class CombatFactory {
 			}
 		} else if (type == CombatType.RANGED) {
 			if (isScorchingBow(weaponId)) {
-				if (tormentedDemon) {
-					return 1.40;
-				}
 				return 1.30;
 			}
 		} else if (type == CombatType.MAGIC) {
-			if (weaponId == PURGING_STAFF) {
-				return 1.50;
+			CombatSpell spell = player.getCombat().getSelectedSpell();
+			if (!isDemonbaneSpell(spell)) {
+				return 1.0;
 			}
+
+			boolean marked = ArceuusSpells.hasActiveMarkOfDarkness(player);
+			if (weaponId == PURGING_STAFF) {
+				return marked ? 1.80 : 1.40;
+			}
+			return marked ? 1.40 : 1.20;
 		}
 
 		return 1.0;
@@ -322,13 +334,23 @@ public class CombatFactory {
 		}
 
 		int weaponId = player.getEquipment().getWeapon().getId();
-		if (isTormentedDemonTarget(target)) {
-			if (type == CombatType.MELEE && isEmberlight(weaponId)) {
-				return 1.70;
+		if (type == CombatType.MELEE && isEmberlight(weaponId)) {
+			return 1.70;
+		}
+		if (type == CombatType.RANGED && isScorchingBow(weaponId)) {
+			return 1.30;
+		}
+		if (type == CombatType.MAGIC) {
+			CombatSpell spell = player.getCombat().getSelectedSpell();
+			if (!isDemonbaneSpell(spell)) {
+				return 1.0;
 			}
-			if (type == CombatType.RANGED && isScorchingBow(weaponId)) {
-				return 1.70;
+
+			boolean marked = ArceuusSpells.hasActiveMarkOfDarkness(player);
+			if (weaponId == PURGING_STAFF) {
+				return marked ? 1.50 : 1.0;
 			}
+			return marked ? 1.25 : 1.0;
 		}
 
 		return getDemonbaneAccuracyMultiplier(player, type, target);

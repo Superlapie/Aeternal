@@ -244,7 +244,9 @@ public class DamageFormulas {
         maxHit += 320;
         maxHit /= 640;
 
-        // Extra gear bonus if/when supported (ex. tbow/salve)
+        if (TwistedBowData.isTwistedBowEquipped(player) && player.getCombat().getTarget() != null) {
+            maxHit *= TwistedBowData.rangedDamageMultiplier(player, player.getCombat().getTarget());
+        }
 
         if (player.isSpecialActivated() && player.getCombatSpecial().getCombatMethod().type() == CombatType.RANGED) {
             maxHit *= player.getCombatSpecial().getStrengthMultiplier();

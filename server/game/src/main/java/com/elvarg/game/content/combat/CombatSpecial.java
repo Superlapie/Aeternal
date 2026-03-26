@@ -28,12 +28,15 @@ import com.elvarg.game.content.combat.method.impl.specials.DragonMaceCombatMetho
 import com.elvarg.game.content.combat.method.impl.specials.DragonScimitarCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.DragonWarhammerCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.EldritchNightmareStaffCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.EmberlightCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.GraniteMaulCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.MagicShortbowCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.MorrigansJavelinCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.NoxiousHalberdCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.PurgingStaffCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.SaradominGodswordCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.SaradominSwordCombatMethod;
+import com.elvarg.game.content.combat.method.impl.specials.ScorchingBowCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ShoveCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.StatiusWarhammerCombatMethod;
 import com.elvarg.game.content.combat.method.impl.specials.ToxicBlowpipeCombatMethod;
@@ -67,6 +70,8 @@ public enum CombatSpecial {
             WeaponInterface.WARHAMMER),
     DRAGON_SCIMITAR(new int[]{4587}, 55, 1.00, 1.25,
             new DragonScimitarCombatMethod(), WeaponInterface.SCIMITAR),
+    EMBERLIGHT(new int[]{29589}, 50, 1.00, 1.00,
+            new EmberlightCombatMethod(), WeaponInterface.SCIMITAR),
     DRAGON_LONGSWORD(new int[]{1305},
             25, 1.15, 1.25, new DragonLongswordCombatMethod(), WeaponInterface.LONGSWORD),
     DRAGON_MACE(
@@ -118,6 +123,8 @@ public enum CombatSpecial {
             WeaponInterface.SHORTBOW),
     DARK_BOW(new int[]{11235}, 55, 1.5, 1.0, new DarkBowCombatMethod(),
             WeaponInterface.DARK_BOW),
+    SCORCHING_BOW(new int[]{29591}, 25, 1, 1,
+            new ScorchingBowCombatMethod(), WeaponInterface.LONGBOW),
     ARMADYL_CROSSBOW(new int[]{11785}, 50, 1, 2.0,
             new ArmadylCrossbowCombatMethod(), WeaponInterface.CROSSBOW),
     ZARYTE_CROSSBOW(new int[]{26374}, 75, 1, 2.0,
@@ -136,6 +143,8 @@ public enum CombatSpecial {
                              new VolatileNightmareStaffCombatMethod(), WeaponInterface.STAFF),
     ELDRITCH_NIGHTMARE_STAFF(new int[]{24425, 24510}, 55, 1, 1.5,
                              new EldritchNightmareStaffCombatMethod(), WeaponInterface.STAFF),
+    PURGING_STAFF(new int[]{29594}, 25, 1, 1,
+            new PurgingStaffCombatMethod(), WeaponInterface.STAFF),
     ;
 
     public static final Set<Integer> SPECIAL_ATTACK_WEAPON_IDS = Arrays.stream(CombatSpecial.values()).flatMap(cs -> Arrays.stream(cs.getIdentifiers()).boxed()).collect(Collectors.toSet());

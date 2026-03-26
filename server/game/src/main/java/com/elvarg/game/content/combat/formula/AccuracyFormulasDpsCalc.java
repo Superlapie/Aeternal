@@ -314,6 +314,10 @@ public class AccuracyFormulasDpsCalc {
             }
             double demonbaneAccMultiplier = CombatFactory.getDemonbaneAccuracyMultiplier(player, CombatType.RANGED, entity.getCombat().getTarget());
             attRoll = (int) Math.floor(attRoll * demonbaneAccMultiplier);
+
+            if (TwistedBowData.isTwistedBowEquipped(player) && entity.getCombat().getTarget() != null) {
+                attRoll = (int) Math.floor(attRoll * TwistedBowData.rangedAccuracyMultiplier(player, entity.getCombat().getTarget()));
+            }
         }
 
         // Salve amulet/twisted bow bonus if/when added

@@ -21,12 +21,13 @@ public final class Animation {
     private static final boolean VERBOSE_ANIM_LOGS = Boolean.getBoolean("client.verboseAnimLogs");
     private static final Set<Integer> ALLOWED_2446_OVERRIDES = new HashSet<>(Arrays.asList(
             753, 2814, 6621, 7198,
-            8970, 8972, 8987, 8988, 8989, 8990,
+            8970, 8972, 8977, 8987, 8988, 8989, 8990, 8993, 8994, 8996, 8997,
             8524, 8525, 8530,
             8139, 8140, 8141, 8142,
             8531, 8532,
             10640, 10641,
             10913, 10918, 10919, 10920, 10954,
+            11132, 11133, 11134, 11135, 11136, 11137, 11138, 11139, 11140, 11141,
             10815, 10818, 10819,
             11051, 11052, 11053, 11055,
             11057, 11058, 11059, 11060, 11061, 11062, 11063, 11064,
@@ -41,7 +42,7 @@ public final class Animation {
             12138, 12149, 12152, 12169, 12170, 12171, 12172, 12173, 12174, 12175,
             12176, 12196,
             12142, 12144, 12145, 12146, 12147, 12148, 12156, 12160, 12161,
-            10792, 13670, 13671,
+            9135, 10501, 10792, 13670, 13671,
             13675, 13676, 13677, 13678, 13679,
             // Yama true ids from 2446 export are retained as slots; these entries are
             // skeletal/maya in this client and may fallback if not directly playable.
@@ -49,6 +50,9 @@ public final class Animation {
     ));
     private static final Set<Integer> NIGHTMARE_STAFF_SEQUENCE_IDS = new HashSet<>(Arrays.asList(
             8139, 8140, 8141, 8142, 8531, 8532
+    ));
+    private static final Set<Integer> STRIP_HAND_OVERRIDES_SEQUENCE_IDS = new HashSet<>(Arrays.asList(
+            11133
     ));
     private static final Set<Integer> OPCODE14_USHORT_2446 = new HashSet<>(Arrays.asList(
             10954,
@@ -277,6 +281,7 @@ public final class Animation {
                     decode2446Sequence(id, override, new Buffer(data));
                     remapLowFrameGroupsToAliases(override, id);
                     sanitizeNightmareStaffSequence(override, id);
+                    sanitizeHandOverrideSequence(override, id);
                 } catch (Exception ex) {
                     System.out.println("Failed loading 2446 sequence override " + id + ": " + ex.getMessage());
                     continue;
@@ -535,6 +540,16 @@ public final class Animation {
         animation.playerOffhand = -1;
     }
 
+    private static void sanitizeHandOverrideSequence(Animation animation, int id) {
+        if (animation == null || !STRIP_HAND_OVERRIDES_SEQUENCE_IDS.contains(id)) {
+            return;
+        }
+        // Some 2446 weapon specials ship with replacement hand models that are not present in this client.
+        // Strip them so the weapon remains visible rather than disappearing.
+        animation.playerMainhand = -1;
+        animation.playerOffhand = -1;
+    }
+
     private void decode(Buffer buffer) {        
         while(true) {
             final int opcode = buffer.readUnsignedByte();
@@ -620,6 +635,10 @@ public final class Animation {
                 }
             } else if (opcode == 18 || opcode == 19 || opcode == 35) {
                 // Newer cache feature flags with no payload for this client.
+            } else if (opcode == 40) {
+                // 2446 sequence metadata table (fixed 40-byte payload in these entries).
+                // Not required for classic frame playback in this client.
+                buffer.currentPosition = Math.min(buffer.currentPosition + 40, buffer.payload.length);
             } else {
                 if (VERBOSE_ANIM_LOGS && loggedUnknownOpcodes.add(opcode)) {
                     System.out.println("seq invalid opcode: " + opcode + " (resyncing entry)");
