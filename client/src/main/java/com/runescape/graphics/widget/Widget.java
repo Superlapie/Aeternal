@@ -655,19 +655,19 @@ public class Widget {
 			addText(currentRateId, "", fonts, 0, 0x8df58d, false, true);
 			setBounds(itemId, 0, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 3, child++, scroll);
 			setBounds(nameId, 38, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 2, child++, scroll);
-			setBounds(baseRateId, 38, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 14, child++, scroll);
-			setBounds(currentRateId, 242, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 14, child++, scroll);
+			setBounds(baseRateId, 230, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 14, child++, scroll);
+			setBounds(currentRateId, 350, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 14, child++, scroll);
 		}
 
 		int childId = 0;
 		main.child(childId++, backgroundId, 18, 20);
 		main.child(childId++, borderId, 19, 21);
-		main.child(childId++, titleId, 246, 16);
+		main.child(childId++, titleId, 246, 21);
 		main.child(childId++, multiplierId, 246, 34);
-		main.child(childId++, infoId, 28, 56);
+		main.child(childId++, infoId, 246, 56);
 		main.child(childId++, itemHeaderId, 42, 82);
-		main.child(childId++, baseHeaderId, 244, 82);
-		main.child(childId++, currentHeaderId, 362, 82);
+		main.child(childId++, baseHeaderId, 258, 82);
+		main.child(childId++, currentHeaderId, 378, 82);
 		main.child(childId++, closeId, 467, 20);
 		main.child(childId, scrollId, 28, 102);
 

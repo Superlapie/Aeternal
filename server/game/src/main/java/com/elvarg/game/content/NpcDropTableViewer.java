@@ -39,9 +39,7 @@ public class NpcDropTableViewer {
         boolean wearingRingOfWealth = isWearingRingOfWealth(player);
 
         ExactDropChanceCalculator baseCalculator = new ExactDropChanceCalculator(definition, baseMultiplier, wearingRingOfWealth);
-        ExactDropChanceCalculator currentCalculator = new ExactDropChanceCalculator(definition, currentMultiplier, wearingRingOfWealth);
-
-        List<DropRow> rows = buildRows(definition, baseCalculator, currentCalculator);
+        List<DropRow> rows = buildRows(definition, baseCalculator, currentMultiplier);
 
         System.out.println("[DROPDBG][SERVER] openDropTable player=" + player.getUsername()
                 + " npcDefId=" + definitionId + " rows=" + rows.size()
@@ -88,18 +86,18 @@ public class NpcDropTableViewer {
 
     private static List<DropRow> buildRows(NpcDropDefinition definition,
                                            ExactDropChanceCalculator baseCalculator,
-                                           ExactDropChanceCalculator currentCalculator) {
+                                           double currentMultiplier) {
         List<DropRow> rows = new ArrayList<>();
 
-        appendAlwaysDrops(rows, definition.getAlwaysDrops(), baseCalculator, currentCalculator);
+        appendAlwaysDrops(rows, definition.getAlwaysDrops(), baseCalculator, currentMultiplier);
         if (definition.getRdtChance() > 0) {
-            appendRdtDrops(rows, definition, baseCalculator, currentCalculator);
+            appendRdtDrops(rows, definition, baseCalculator, currentMultiplier);
         }
-        appendSpecialDrops(rows, definition.getSpecialDrops(), baseCalculator, currentCalculator);
-        appendTableDrops(rows, definition.getCommonDrops(), DropTable.COMMON, baseCalculator, currentCalculator);
-        appendTableDrops(rows, definition.getUncommonDrops(), DropTable.UNCOMMON, baseCalculator, currentCalculator);
-        appendTableDrops(rows, definition.getRareDrops(), DropTable.RARE, baseCalculator, currentCalculator);
-        appendTableDrops(rows, definition.getVeryRareDrops(), DropTable.VERY_RARE, baseCalculator, currentCalculator);
+        appendSpecialDrops(rows, definition.getSpecialDrops(), baseCalculator, currentMultiplier);
+        appendTableDrops(rows, definition.getCommonDrops(), DropTable.COMMON, baseCalculator, currentMultiplier);
+        appendTableDrops(rows, definition.getUncommonDrops(), DropTable.UNCOMMON, baseCalculator, currentMultiplier);
+        appendTableDrops(rows, definition.getRareDrops(), DropTable.RARE, baseCalculator, currentMultiplier);
+        appendTableDrops(rows, definition.getVeryRareDrops(), DropTable.VERY_RARE, baseCalculator, currentMultiplier);
 
         return rows;
     }
@@ -107,7 +105,7 @@ public class NpcDropTableViewer {
     private static void appendAlwaysDrops(List<DropRow> rows,
                                           NPCDrop[] drops,
                                           ExactDropChanceCalculator baseCalculator,
-                                          ExactDropChanceCalculator currentCalculator) {
+                                          double currentMultiplier) {
         if (drops == null) {
             return;
         }
@@ -120,33 +118,35 @@ public class NpcDropTableViewer {
     private static void appendRdtDrops(List<DropRow> rows,
                                        NpcDropDefinition definition,
                                        ExactDropChanceCalculator baseCalculator,
-                                       ExactDropChanceCalculator currentCalculator) {
+                                       double currentMultiplier) {
         int rdtLength = RDT.values().length;
         for (int slot = 0; slot < rdtLength; slot++) {
             RDT rdt = RDT.values()[slot];
+            double base = baseCalculator.probabilityForRdt(rdt);
             rows.add(new DropRow(
                     rdt.getItemId(),
                     itemName(rdt.getItemId()),
-                    baseCalculator.probabilityForRdt(rdt),
-                    currentCalculator.probabilityForRdt(rdt)));
+                    base,
+                    scaleByMultiplier(base, currentMultiplier)));
         }
     }
 
     private static void appendSpecialDrops(List<DropRow> rows,
                                            NPCDrop[] drops,
                                            ExactDropChanceCalculator baseCalculator,
-                                           ExactDropChanceCalculator currentCalculator) {
+                                           double currentMultiplier) {
         if (drops == null) {
             return;
         }
 
         for (int index = 0; index < drops.length; index++) {
             NPCDrop drop = drops[index];
+            double base = baseCalculator.probabilityForSpecial(index);
             rows.add(new DropRow(
                     drop.getItemId(),
                     itemName(drop.getItemId()),
-                    baseCalculator.probabilityForSpecial(index),
-                    currentCalculator.probabilityForSpecial(index)));
+                    base,
+                    scaleByMultiplier(base, currentMultiplier)));
         }
     }
 
@@ -154,18 +154,19 @@ public class NpcDropTableViewer {
                                          NPCDrop[] drops,
                                          DropTable table,
                                          ExactDropChanceCalculator baseCalculator,
-                                         ExactDropChanceCalculator currentCalculator) {
+                                         double currentMultiplier) {
         if (drops == null) {
             return;
         }
 
         for (int index = 0; index < drops.length; index++) {
             NPCDrop drop = drops[index];
+            double base = baseCalculator.probabilityForTable(table, index);
             rows.add(new DropRow(
                     drop.getItemId(),
                     itemName(drop.getItemId()),
-                    baseCalculator.probabilityForTable(table, index),
-                    currentCalculator.probabilityForTable(table, index)));
+                    base,
+                    scaleByMultiplier(base, currentMultiplier)));
         }
     }
 
@@ -190,8 +191,29 @@ public class NpcDropTableViewer {
             return "Never";
         }
 
-        double oneIn = 1.0D / probability;
-        return String.format(Locale.US, "1 in %,.2f (%.6f%%)", oneIn, probability * 100.0D);
+        long oneIn = Math.max(1L, (long) Math.ceil(1.0D / probability));
+        return String.format(Locale.US, "1/%,d (%s)", oneIn, formatPercent(probability));
+    }
+
+    private static String formatPercent(double probability) {
+        double percent = probability * 100.0D;
+        if (percent >= 1.0D) {
+            return String.format(Locale.US, "%.2f%%", percent);
+        }
+        if (percent >= 0.1D) {
+            return String.format(Locale.US, "%.3f%%", percent);
+        }
+        return String.format(Locale.US, "%.4f%%", percent);
+    }
+
+    private static double scaleByMultiplier(double baseProbability, double multiplier) {
+        if (baseProbability <= 0.0D) {
+            return 0.0D;
+        }
+        if (baseProbability >= 1.0D) {
+            return 1.0D;
+        }
+        return Math.min(1.0D, baseProbability * Math.max(0.1D, multiplier));
     }
 
     private static final class DropRow {
