@@ -1617,8 +1617,6 @@ public class Client extends GameApplet {
     private int anInt1187;
 
     private int overlayInterfaceId;
-    private int lastDebugOpenInterfaceId = Integer.MIN_VALUE;
-    private int lastDebugOverlayInterfaceId = Integer.MIN_VALUE;
 
     private int[] anIntArray1190;
 
@@ -14722,11 +14720,6 @@ public class Client extends GameApplet {
             Npc npc = npcs[clicked];
 
             if (npc != null) {
-                NpcDefinition def = npc.desc;
-                String npcName = def != null ? def.name : "null";
-                int npcId = def != null ? def.id : -1;
-                System.out.println("[DROPDBG][CLIENT] action=3001 npcIndex=" + clicked + " npcId=" + npcId + " name=" + npcName);
-
                 crossX = super.saveClickX;
 
                 crossY = super.saveClickY;
@@ -25016,23 +25009,6 @@ public class Client extends GameApplet {
         if (openInterfaceId != -1) {
 
             try {
-                if (openInterfaceId != lastDebugOpenInterfaceId || overlayInterfaceId != lastDebugOverlayInterfaceId) {
-                    Widget open = (openInterfaceId >= 0 && openInterfaceId < Widget.interfaceCache.length)
-                            ? Widget.interfaceCache[openInterfaceId] : null;
-                    Widget overlay = (overlayInterfaceId >= 0 && overlayInterfaceId < Widget.interfaceCache.length)
-                            ? Widget.interfaceCache[overlayInterfaceId] : null;
-                    System.out.println("[DROPDBG][CLIENT] drawState openInterfaceId=" + openInterfaceId
-                            + " openType=" + (open != null ? open.type : -1)
-                            + " openChildren=" + (open != null && open.children != null ? open.children.length : -1)
-                            + " overlayInterfaceId=" + overlayInterfaceId
-                            + " overlayType=" + (overlay != null ? overlay.type : -1)
-                            + " overlayChildren=" + (overlay != null && overlay.children != null ? overlay.children.length : -1)
-                            + " fullscreenInterfaceID=" + fullscreenInterfaceID
-                            + " openChildIds=" + debugChildIds(open));
-                    lastDebugOpenInterfaceId = openInterfaceId;
-                    lastDebugOverlayInterfaceId = overlayInterfaceId;
-                }
-
                 processWidgetAnimations(tickDelta, openInterfaceId);
 
                 int w = 512, h = 334;
@@ -31365,34 +31341,6 @@ public class Client extends GameApplet {
 
     }
 
-    private static boolean isDropTableDebugFrame(int id) {
-        if (id >= 62000 && id <= 62450) {
-            return true;
-        }
-        return id >= 56721 && id <= 57050;
-    }
-
-    private static String debugChildIds(Widget widget) {
-        if (widget == null || widget.children == null || widget.children.length == 0) {
-            return "[]";
-        }
-        int limit = Math.min(widget.children.length, 16);
-        StringBuilder builder = new StringBuilder("[");
-        for (int i = 0; i < limit; i++) {
-            if (i > 0) {
-                builder.append(',');
-            }
-            builder.append(widget.children[i]);
-        }
-        if (widget.children.length > limit) {
-            builder.append("...");
-        }
-        builder.append(']');
-        return builder.toString();
-    }
-
-
-
     /**
 
      * Displays an interface over the sidebar area.
@@ -33359,8 +33307,6 @@ public class Client extends GameApplet {
                 int rawSidebarOverlayInterfaceId = incoming.readUShort();
                 int mainInterfaceId = Widget.remapInterfaceId(rawMainInterfaceId);
                 int sidebarOverlayInterfaceId = Widget.remapInterfaceId(rawSidebarOverlayInterfaceId);
-                System.out.println("[DROPDBG][CLIENT] pkt=248 rawMain=" + rawMainInterfaceId + " main=" + mainInterfaceId
-                        + " rawSidebar=" + rawSidebarOverlayInterfaceId + " sidebar=" + sidebarOverlayInterfaceId);
 
                 if (backDialogueId != -1) {
 
@@ -33572,9 +33518,6 @@ public class Client extends GameApplet {
                 int scale = incoming.readUShort();
 
                 int item = incoming.readUShort();
-                if (isDropTableDebugFrame(rawWidget) || isDropTableDebugFrame(widget)) {
-                    System.out.println("[DROPDBG][CLIENT] pkt=246 raw=" + rawWidget + " remap=" + widget + " item=" + item + " scale=" + scale);
-                }
 
                 if (item == 65535) {
 
@@ -33686,9 +33629,6 @@ public class Client extends GameApplet {
                     String text = incoming.readString();
 
                     int id = incoming.readInt();
-                    if (isDropTableDebugFrame(id) || id == 3824 || id == 3822) {
-                        System.out.println("[DROPDBG][CLIENT] pkt=126 id=" + id + " text=" + text);
-                    }
 
 
 
@@ -34070,7 +34010,6 @@ public class Client extends GameApplet {
 
                 int rawInterfaceId = incoming.readUShort();
                 int interfaceId = Widget.remapInterfaceId(rawInterfaceId);
-                System.out.println("[DROPDBG][CLIENT] pkt=97 raw=" + rawInterfaceId + " remap=" + interfaceId);
 
                 resetAnimation(interfaceId);
 

@@ -7,12 +7,10 @@ import com.elvarg.game.content.combat.method.impl.npcs.DemonicGorillaCombatMetho
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.player.Player;
-import com.elvarg.game.model.Animation;
 import com.elvarg.game.model.Ids;
 import com.elvarg.game.model.Location;
-import com.elvarg.util.Misc;
 
-@Ids({7144, 7145, 7146, 7147, 7149})
+@Ids({7144, 7145, 7146, 7147, 7148, 7149, 7152})
 public class DemonicGorilla extends NPC {
 
     public static final int PROTECT_MELEE_ID = 7144;
@@ -20,8 +18,6 @@ public class DemonicGorilla extends NPC {
     public static final int PROTECT_MAGIC_ID = 7146;
     public static final int NO_PRAYER_ID = 7147;
 
-    private static final int ROAR_ANIMATION = 7222;
-    private static final int TAKE_DAMAGE_ANIMATION = 7228;
     private static final int PRAYER_DAMAGE_THRESHOLD = 50;
 
     private final CombatMethod combatMethod = new DemonicGorillaCombatMethod();
@@ -57,7 +53,6 @@ public class DemonicGorilla extends NPC {
         }
 
         int damage = modified.getTotalDamage();
-        performAnimation(new Animation(TAKE_DAMAGE_ANIMATION));
         damageByStyle[indexFor(combatType)] += damage;
 
         if (damageByStyle[indexFor(combatType)] >= PRAYER_DAMAGE_THRESHOLD) {

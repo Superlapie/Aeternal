@@ -28,6 +28,7 @@ public class NpcDefinitionLoader extends DefinitionLoader {
         ensureAraxxorDefinition();
         ensureThrallDefinitions();
         ensureTormentedDemonDefinitions();
+        ensureDemonicGorillaDefinitions();
     }
 
     @Override
@@ -92,6 +93,23 @@ public class NpcDefinitionLoader extends DefinitionLoader {
         ensureTormentedDemonDefinition(13595);
         ensureTormentedDemonDefinition(13596);
         ensureTormentedDemonDefinition(13597);
+    }
+
+    private void ensureDemonicGorillaDefinitions() {
+        int[] ids = {7144, 7145, 7146, 7147, 7148, 7149, 7152};
+        for (int id : ids) {
+            NpcDefinition def = NpcDefinition.definitions.get(id);
+            if (def == null) {
+                continue;
+            }
+
+            try {
+                set(def, "defenceAnim", 7224);
+                set(def, "deathAnim", 7229);
+            } catch (Exception e) {
+                System.err.println("Failed to correct demonic gorilla NPC definition (" + id + "): " + e.getMessage());
+            }
+        }
     }
 
     private void ensureTormentedDemonDefinition(int id) {

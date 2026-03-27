@@ -41,10 +41,6 @@ public class NpcDropTableViewer {
         ExactDropChanceCalculator baseCalculator = new ExactDropChanceCalculator(definition, baseMultiplier, wearingRingOfWealth);
         List<DropRow> rows = buildRows(definition, baseCalculator, currentMultiplier);
 
-        System.out.println("[DROPDBG][SERVER] openDropTable player=" + player.getUsername()
-                + " npcDefId=" + definitionId + " rows=" + rows.size()
-                + " interfaceId=" + INTERFACE_ID + " scrollId=" + SCROLL_ID);
-
         player.getPacketSender().sendInterfaceRemoval();
         player.getPacketSender().sendInterface(INTERFACE_ID);
         player.getPacketSender().sendString(INTERFACE_ID + 4, String.format(Locale.US, "Your drop-rate multiplier: x%.2f", currentMultiplier));

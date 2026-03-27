@@ -166,11 +166,6 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
         }
 
         if (opcode == PacketConstants.DROP_TABLE_NPC_OPCODE) {
-            int currentDefId = npc.getCurrentDefinition() != null ? npc.getCurrentDefinition().getId() : -1;
-            String currentDefName = npc.getCurrentDefinition() != null ? npc.getCurrentDefinition().getName() : "null";
-            System.out.println("[DROPDBG][SERVER] DROP_TABLE opcode=220 npcIndex=" + index + " npcId=" + npc.getId()
-                    + " currentDefId=" + currentDefId + " currentDefName=" + currentDefName
-                    + " player=" + player.getUsername());
             int definitionId = npc.getCurrentDefinition() != null ? npc.getCurrentDefinition().getId() : npc.getId();
             NpcDropDefinition definition = NpcDropDefinition.get(definitionId).orElse(null);
             if (definition == null) {

@@ -671,9 +671,6 @@ public class Widget {
 		main.child(childId++, closeId, 467, 20);
 		main.child(childId, scrollId, 28, 102);
 
-		System.out.println("[DROPDBG][CLIENT] Built drop table remap root " + NPC_DROP_TABLE_VIEWER_ID + " -> " + mainId
-				+ " scroll " + (NPC_DROP_TABLE_VIEWER_ID + 10) + " -> " + scrollId
-				+ " firstRow " + NPC_DROP_TABLE_VIEWER_ITEM_START + " -> " + itemRowIds[0]);
 	}
 
 	private static void nightmareOverlays() {

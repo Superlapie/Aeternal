@@ -357,12 +357,6 @@ public class PacketSender {
 			return this;
 		}
 
-		if (id == 62000 || id == 56721 || id == 3824 || id == 3822) {
-			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-			String caller = stack.length > 2 ? stack[2].toString() : "unknown";
-			System.out.println("[DROPDBG][SERVER] sendInterface player=" + player.getUsername() + " id=" + id + " caller=" + caller);
-		}
-
 		PacketBuilder out = new PacketBuilder(97);
 		out.putShort(id);
 		player.getSession().write(out);
