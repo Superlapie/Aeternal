@@ -80119,6 +80119,158 @@
   },
   {
     "npcIds": [
+      13593,
+      13594,
+      13595,
+      13596,
+      13597
+    ],
+    "rdtChance": 64,
+    "alwaysDrops": [
+      {
+        "itemId": 25778,
+        "minAmount": 1,
+        "maxAmount": 1
+      }
+    ],
+    "commonDrops": [
+      {
+        "itemId": 1127,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 1215,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 1392,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 1201,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 562,
+        "minAmount": 25,
+        "maxAmount": 100
+      },
+      {
+        "itemId": 892,
+        "minAmount": 65,
+        "maxAmount": 125
+      },
+      {
+        "itemId": 566,
+        "minAmount": 50,
+        "maxAmount": 75
+      },
+      {
+        "itemId": 19584,
+        "minAmount": 266,
+        "maxAmount": 1238
+      }
+    ],
+    "uncommonDrops": [
+      {
+        "itemId": 213,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 217,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 215,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 2485,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 211,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 207,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 3051,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 219,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 5295,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 5300,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 5304,
+        "minAmount": 1,
+        "maxAmount": 1
+      }
+    ],
+    "rareDrops": [
+      {
+        "itemId": 73,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 570,
+        "minAmount": 5,
+        "maxAmount": 7
+      },
+      {
+        "itemId": 19586,
+        "minAmount": 1,
+        "maxAmount": 1
+      },
+      {
+        "itemId": 19610,
+        "minAmount": 1,
+        "maxAmount": 1
+      }
+    ],
+    "specialDrops": [
+      {
+        "itemId": 29580,
+        "minAmount": 1,
+        "maxAmount": 1,
+        "chance": 500
+      },
+      {
+        "itemId": 29577,
+        "minAmount": 1,
+        "maxAmount": 1,
+        "chance": 250000
+      }
+    ]
+  },
+  {
+    "npcIds": [
       7152
     ],
     "rdtChance": 64,
