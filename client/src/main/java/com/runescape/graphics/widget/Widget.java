@@ -18,6 +18,8 @@ import com.runescape.entity.model.Model;
 import com.runescape.io.Buffer;
 import com.runescape.model.content.Keybinding;
 import com.runescape.util.StringUtils;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Previously known as RSInterface, which is a class used to create and show
@@ -52,6 +54,18 @@ public class Widget {
 	public static final int TYPE_ADJUSTABLE_CONFIG = 17;
 	public static final int TYPE_BOX = 18;
 	public static final int TYPE_MAP = 19;
+	private static final int NPC_DROP_TABLE_VIEWER_ID = 62000;
+	private static final int NPC_DROP_TABLE_VIEWER_ITEM_START = 62011;
+	private static final int NPC_DROP_TABLE_VIEWER_NAME_START = 62111;
+	private static final int NPC_DROP_TABLE_VIEWER_BASE_RATE_START = 62211;
+	private static final int NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START = 62311;
+	private static final int LEGACY_NPC_DROP_TABLE_VIEWER_ID = 56721;
+	private static final int LEGACY_NPC_DROP_TABLE_VIEWER_ITEM_START = 56732;
+	private static final int LEGACY_NPC_DROP_TABLE_VIEWER_NAME_START = 56832;
+	private static final int LEGACY_NPC_DROP_TABLE_VIEWER_BASE_RATE_START = 56932;
+	private static final int LEGACY_NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START = 57032;
+	private static final int NPC_DROP_TABLE_VIEWER_MAX_ROWS = 100;
+	private static final int NPC_DROP_TABLE_VIEWER_ROW_HEIGHT = 30;
 	public static final int BEGIN_READING_PRAYER_INTERFACE = 6;// Amount of total custom prayers we've added
 	public static final int CUSTOM_PRAYER_HOVERS = 3; // Amount of custom prayer hovers we've added
 	public static final int PRAYER_INTERFACE_CHILDREN = 80 + BEGIN_READING_PRAYER_INTERFACE + CUSTOM_PRAYER_HOVERS;
@@ -156,10 +170,77 @@ public class Widget {
 	private int anInt256;
 	
 	private static final int SPRITE_CACHE_SIZE = 50_000;
-	private static final int WIDGET_CACHE_SIZE = 57000;
+	private static final int WIDGET_CACHE_SIZE = 70000;
 	private static int dynamicWidgetIdCursor = WIDGET_CACHE_SIZE - 1;
+	private static final Map<Integer, Integer> widgetIdRemaps = new HashMap<>();
 
 	public Widget() {
+	}
+
+	public static int remapInterfaceId(int id) {
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_ID && id <= LEGACY_NPC_DROP_TABLE_VIEWER_ID + 10) {
+			id = NPC_DROP_TABLE_VIEWER_ID + (id - LEGACY_NPC_DROP_TABLE_VIEWER_ID);
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_ITEM_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_ITEM_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			id = NPC_DROP_TABLE_VIEWER_ITEM_START + (id - LEGACY_NPC_DROP_TABLE_VIEWER_ITEM_START);
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_NAME_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_NAME_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			id = NPC_DROP_TABLE_VIEWER_NAME_START + (id - LEGACY_NPC_DROP_TABLE_VIEWER_NAME_START);
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_BASE_RATE_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_BASE_RATE_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			id = NPC_DROP_TABLE_VIEWER_BASE_RATE_START + (id - LEGACY_NPC_DROP_TABLE_VIEWER_BASE_RATE_START);
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			id = NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START + (id - LEGACY_NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START);
+		}
+		Integer remapped = widgetIdRemaps.get(id);
+		if (remapped != null) {
+			return remapped;
+		}
+		return id;
+	}
+
+	private static void registerWidgetRemap(int virtualId, int realId) {
+		widgetIdRemaps.put(virtualId, realId);
+	}
+
+	private static int requireWidgetRemap(int virtualId) {
+		Integer remapped = widgetIdRemaps.get(virtualId);
+		return remapped != null ? remapped : virtualId;
+	}
+
+	public static boolean isDropTableVirtualId(int id) {
+		if (id >= NPC_DROP_TABLE_VIEWER_ID && id <= NPC_DROP_TABLE_VIEWER_ID + 10) {
+			return true;
+		}
+		if (id >= NPC_DROP_TABLE_VIEWER_ITEM_START && id < NPC_DROP_TABLE_VIEWER_ITEM_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		if (id >= NPC_DROP_TABLE_VIEWER_NAME_START && id < NPC_DROP_TABLE_VIEWER_NAME_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		if (id >= NPC_DROP_TABLE_VIEWER_BASE_RATE_START && id < NPC_DROP_TABLE_VIEWER_BASE_RATE_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		if (id >= NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START && id < NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_ID && id <= LEGACY_NPC_DROP_TABLE_VIEWER_ID + 10) {
+			return true;
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_ITEM_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_ITEM_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_NAME_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_NAME_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_BASE_RATE_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_BASE_RATE_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		if (id >= LEGACY_NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START && id < LEGACY_NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START + NPC_DROP_TABLE_VIEWER_MAX_ROWS) {
+			return true;
+		}
+		return false;
 	}
 
 	public static void load(FileArchive interfaceArchive, GameFont[] fonts, FileArchive graphics, RSFont[] newFonts) {
@@ -438,6 +519,7 @@ public class Widget {
 		OSRSCreationMenu.build();
 		grandExchangeInterfaces();
 		configureArceuus();
+		npcDropTableViewer();
 		spriteCache = null;
 		
 		/*int lastNull = -1;
@@ -499,6 +581,99 @@ public class Widget {
 			addItemOnInterface(itemFrameId + i, 42560, new String[] {});
 			widget.child(childId++, itemFrameId + i, x, y);
 		}
+	}
+
+	private static void npcDropTableViewer() {
+		final int mainId = allocateDynamicWidgetId();
+		final int backgroundId = allocateDynamicWidgetId();
+		final int borderId = allocateDynamicWidgetId();
+		final int titleId = allocateDynamicWidgetId();
+		final int multiplierId = allocateDynamicWidgetId();
+		final int infoId = allocateDynamicWidgetId();
+		final int itemHeaderId = allocateDynamicWidgetId();
+		final int baseHeaderId = allocateDynamicWidgetId();
+		final int currentHeaderId = allocateDynamicWidgetId();
+		final int closeId = allocateDynamicWidgetId();
+		final int scrollId = allocateDynamicWidgetId();
+
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID, mainId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 1, backgroundId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 2, borderId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 3, titleId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 4, multiplierId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 5, infoId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 6, itemHeaderId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 7, baseHeaderId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 8, currentHeaderId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 9, closeId);
+		registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ID + 10, scrollId);
+
+		int[] itemRowIds = new int[NPC_DROP_TABLE_VIEWER_MAX_ROWS];
+		int[] nameRowIds = new int[NPC_DROP_TABLE_VIEWER_MAX_ROWS];
+		int[] baseRowIds = new int[NPC_DROP_TABLE_VIEWER_MAX_ROWS];
+		int[] currentRowIds = new int[NPC_DROP_TABLE_VIEWER_MAX_ROWS];
+		for (int row = 0; row < NPC_DROP_TABLE_VIEWER_MAX_ROWS; row++) {
+			itemRowIds[row] = allocateDynamicWidgetId();
+			nameRowIds[row] = allocateDynamicWidgetId();
+			baseRowIds[row] = allocateDynamicWidgetId();
+			currentRowIds[row] = allocateDynamicWidgetId();
+			registerWidgetRemap(NPC_DROP_TABLE_VIEWER_ITEM_START + row, itemRowIds[row]);
+			registerWidgetRemap(NPC_DROP_TABLE_VIEWER_NAME_START + row, nameRowIds[row]);
+			registerWidgetRemap(NPC_DROP_TABLE_VIEWER_BASE_RATE_START + row, baseRowIds[row]);
+			registerWidgetRemap(NPC_DROP_TABLE_VIEWER_CURRENT_RATE_START + row, currentRowIds[row]);
+		}
+
+		Widget main = addInterface(mainId);
+		main.totalChildren(10);
+
+		addPixels(backgroundId, 0x1f1810, 472, 292, 0, true);
+		addPixels(borderId, 0x5a5245, 470, 290, 0, false);
+		addText(titleId, "NPC Drop Table", fonts, 2, 0xff981f, true, true);
+		addText(multiplierId, "", fonts, 1, 0x7be08c, true, true);
+		addText(infoId, "Base roll and your effective roll are shown below.", fonts, 0, 0xffcc66, true, true);
+		addText(itemHeaderId, "Item", fonts, 1, 0xff981f, false, true);
+		addText(baseHeaderId, "Base roll", fonts, 1, 0xff981f, false, true);
+		addText(currentHeaderId, "Current roll", fonts, 1, 0xff981f, false, true);
+		closeButton(closeId, 142, 143);
+
+		Widget scroll = addInterface(scrollId);
+		scroll.type = TYPE_CONTAINER;
+		scroll.width = 432;
+		scroll.height = 198;
+		scroll.scrollMax = NPC_DROP_TABLE_VIEWER_ROW_HEIGHT * NPC_DROP_TABLE_VIEWER_MAX_ROWS;
+		setChildren(NPC_DROP_TABLE_VIEWER_MAX_ROWS * 4, scroll);
+
+		int child = 0;
+		for (int row = 0; row < NPC_DROP_TABLE_VIEWER_MAX_ROWS; row++) {
+			int itemId = itemRowIds[row];
+			int nameId = nameRowIds[row];
+			int baseRateId = baseRowIds[row];
+			int currentRateId = currentRowIds[row];
+			addItemOnInterface(itemId, scrollId, new String[] {});
+			addText(nameId, "", fonts, 1, 0xffffff, false, true);
+			addText(baseRateId, "", fonts, 0, 0xffb347, false, true);
+			addText(currentRateId, "", fonts, 0, 0x8df58d, false, true);
+			setBounds(itemId, 0, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 3, child++, scroll);
+			setBounds(nameId, 38, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 2, child++, scroll);
+			setBounds(baseRateId, 38, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 14, child++, scroll);
+			setBounds(currentRateId, 242, row * NPC_DROP_TABLE_VIEWER_ROW_HEIGHT + 14, child++, scroll);
+		}
+
+		int childId = 0;
+		main.child(childId++, backgroundId, 18, 20);
+		main.child(childId++, borderId, 19, 21);
+		main.child(childId++, titleId, 246, 16);
+		main.child(childId++, multiplierId, 246, 34);
+		main.child(childId++, infoId, 28, 56);
+		main.child(childId++, itemHeaderId, 42, 82);
+		main.child(childId++, baseHeaderId, 244, 82);
+		main.child(childId++, currentHeaderId, 362, 82);
+		main.child(childId++, closeId, 467, 20);
+		main.child(childId, scrollId, 28, 102);
+
+		System.out.println("[DROPDBG][CLIENT] Built drop table remap root " + NPC_DROP_TABLE_VIEWER_ID + " -> " + mainId
+				+ " scroll " + (NPC_DROP_TABLE_VIEWER_ID + 10) + " -> " + scrollId
+				+ " firstRow " + NPC_DROP_TABLE_VIEWER_ITEM_START + " -> " + itemRowIds[0]);
 	}
 
 	private static void nightmareOverlays() {
@@ -3560,8 +3735,6 @@ public class Widget {
 	}
 
 	public static void configureArceuus() {
-		dynamicWidgetIdCursor = WIDGET_CACHE_SIZE - 1;
-
 		final int root = 30500;
 		final int title = 30501;
 		final int subtitle = 30502;
@@ -4344,4 +4517,5 @@ public class Widget {
 		System.arraycopy(childX, 0, widget.childX, 0, childX.length);
 		System.arraycopy(childY, 0, widget.childY, 0, childY.length);
 	}
+
 }

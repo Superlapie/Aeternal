@@ -241,6 +241,8 @@ public final class ResourceProvider implements Runnable {
         }
         System.out.println("Loaded: " + file_amounts[3] + " maps");
 
+        preseedMissingMapArchives(client);
+
         data = archive.readFile("midi_index");
         stream = new Buffer(data);
         j1 = data.length;
@@ -260,6 +262,38 @@ public final class ResourceProvider implements Runnable {
         clientInstance = client;
         running = true;
         clientInstance.startRunnable(this, 2);
+    }
+
+    private void preseedMissingMapArchives(Client client) {
+        if (client == null || client.indices == null || client.indices.length <= 4 || client.indices[4] == null) {
+            return;
+        }
+
+        FileStore mapStore = client.indices[4];
+        Set<Integer> checked = new HashSet<>();
+        int seeded = 0;
+
+        for (int archiveId : mapFiles) {
+            if (archiveId < 0 || !checked.add(archiveId)) {
+                continue;
+            }
+            if (mapStore.decompress(archiveId) == null && missingMapArchives.add(archiveId)) {
+                seeded++;
+            }
+        }
+
+        for (int archiveId : landscapes) {
+            if (archiveId < 0 || !checked.add(archiveId)) {
+                continue;
+            }
+            if (mapStore.decompress(archiveId) == null && missingMapArchives.add(archiveId)) {
+                seeded++;
+            }
+        }
+
+        if (seeded > 0) {
+            System.out.println("Preloaded " + seeded + " known missing map archives from idx4.");
+        }
     }
 
     public void disable() {

@@ -356,6 +356,11 @@ public class PacketSender {
         buffer.writeLEShortA(npcIndex);
     }
 
+    public void sendNPCDropTable(int npcIndex) {
+        buffer.writeOpcode(220);
+        buffer.writeLEShortA(npcIndex);
+    }
+
     public void sendObjectOption1(int x, int id, int y) {
         buffer.writeOpcode(132);
         buffer.writeLEShortA(x);

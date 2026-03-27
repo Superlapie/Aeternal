@@ -3,6 +3,7 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.Server;
 import com.elvarg.game.content.bosses.nightmare.NightmareEncounter;
 import com.elvarg.game.World;
+import com.elvarg.game.content.NpcDropTableViewer;
 import com.elvarg.game.content.PetHandler;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.magic.CombatSpell;
@@ -11,6 +12,7 @@ import com.elvarg.game.content.combat.method.CombatMethod;
 import com.elvarg.game.content.quests.QuestHandler;
 import com.elvarg.game.content.skill.skillable.impl.Fishing;
 import com.elvarg.game.content.skill.skillable.impl.Thieving.Pickpocketing;
+import com.elvarg.game.definition.NpcDropDefinition;
 import com.elvarg.game.entity.impl.npc.NPC;
 import com.elvarg.game.entity.impl.npc.impl.Barricades;
 import com.elvarg.game.entity.impl.player.Player;
@@ -132,6 +134,8 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
             } else if (isGrandExchangeClerk(npc.getId())) {
                 // GE interaction should still work from a stale interface state.
                 player.getPacketSender().sendInterfaceRemoval();
+            } else if (opcode == PacketConstants.DROP_TABLE_NPC_OPCODE) {
+                player.getPacketSender().sendInterfaceRemoval();
             } else {
             // Nightmare can be entered via the teleport UI path. If that interface was not
             // dismissed yet, allow this interaction once and clear it.
@@ -158,6 +162,23 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 
         if (isSanctuaryNightmareTrigger(npc)) {
             WalkToTask.submit(player, npc, () -> NightmareEncounter.enter(player, npc.getLocation().clone()));
+            return;
+        }
+
+        if (opcode == PacketConstants.DROP_TABLE_NPC_OPCODE) {
+            int currentDefId = npc.getCurrentDefinition() != null ? npc.getCurrentDefinition().getId() : -1;
+            String currentDefName = npc.getCurrentDefinition() != null ? npc.getCurrentDefinition().getName() : "null";
+            System.out.println("[DROPDBG][SERVER] DROP_TABLE opcode=220 npcIndex=" + index + " npcId=" + npc.getId()
+                    + " currentDefId=" + currentDefId + " currentDefName=" + currentDefName
+                    + " player=" + player.getUsername());
+            int definitionId = npc.getCurrentDefinition() != null ? npc.getCurrentDefinition().getId() : npc.getId();
+            NpcDropDefinition definition = NpcDropDefinition.get(definitionId).orElse(null);
+            if (definition == null) {
+                player.getPacketSender().sendMessage("This NPC does not have a drop table.");
+                return;
+            }
+
+            NpcDropTableViewer.open(player, npc);
             return;
         }
 

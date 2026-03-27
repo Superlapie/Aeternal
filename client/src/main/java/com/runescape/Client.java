@@ -77,6 +77,7 @@ import com.runescape.model.ChatCrown;
 import com.runescape.model.ChatMessage;
 
 import com.runescape.model.EffectTimer;
+import com.runescape.util.NpcDropTableLookup;
 
 import com.runescape.model.content.Keybinding;
 
@@ -1616,6 +1617,8 @@ public class Client extends GameApplet {
     private int anInt1187;
 
     private int overlayInterfaceId;
+    private int lastDebugOpenInterfaceId = Integer.MIN_VALUE;
+    private int lastDebugOverlayInterfaceId = Integer.MIN_VALUE;
 
     private int[] anIntArray1190;
 
@@ -14714,6 +14717,30 @@ public class Client extends GameApplet {
 
         }
 
+        if (action == 3001) {
+
+            Npc npc = npcs[clicked];
+
+            if (npc != null) {
+                NpcDefinition def = npc.desc;
+                String npcName = def != null ? def.name : "null";
+                int npcId = def != null ? def.id : -1;
+                System.out.println("[DROPDBG][CLIENT] action=3001 npcIndex=" + clicked + " npcId=" + npcId + " name=" + npcName);
+
+                crossX = super.saveClickX;
+
+                crossY = super.saveClickY;
+
+                crossType = 2;
+
+                crossIndex = 0;
+
+                packetSender.sendNPCDropTable(clicked);
+
+            }
+
+        }
+
 
 
         // Clicking "Examine" option on an npc
@@ -20942,6 +20969,22 @@ public class Client extends GameApplet {
 
             menuActionRow++;
 
+            if (entityDef != null && NpcDropTableLookup.hasDropTable(entityDef.id)) {
+
+                menuActionText[menuActionRow] = "Drop Table @yel@" + s;
+
+                menuActionTypes[menuActionRow] = 5001;
+
+                selectedMenuActions[menuActionRow] = i;
+
+                firstMenuAction[menuActionRow] = k;
+
+                secondMenuAction[menuActionRow] = j;
+
+                menuActionRow++;
+
+            }
+
         }
 
     }
@@ -24973,6 +25016,22 @@ public class Client extends GameApplet {
         if (openInterfaceId != -1) {
 
             try {
+                if (openInterfaceId != lastDebugOpenInterfaceId || overlayInterfaceId != lastDebugOverlayInterfaceId) {
+                    Widget open = (openInterfaceId >= 0 && openInterfaceId < Widget.interfaceCache.length)
+                            ? Widget.interfaceCache[openInterfaceId] : null;
+                    Widget overlay = (overlayInterfaceId >= 0 && overlayInterfaceId < Widget.interfaceCache.length)
+                            ? Widget.interfaceCache[overlayInterfaceId] : null;
+                    System.out.println("[DROPDBG][CLIENT] drawState openInterfaceId=" + openInterfaceId
+                            + " openType=" + (open != null ? open.type : -1)
+                            + " openChildren=" + (open != null && open.children != null ? open.children.length : -1)
+                            + " overlayInterfaceId=" + overlayInterfaceId
+                            + " overlayType=" + (overlay != null ? overlay.type : -1)
+                            + " overlayChildren=" + (overlay != null && overlay.children != null ? overlay.children.length : -1)
+                            + " fullscreenInterfaceID=" + fullscreenInterfaceID
+                            + " openChildIds=" + debugChildIds(open));
+                    lastDebugOpenInterfaceId = openInterfaceId;
+                    lastDebugOverlayInterfaceId = overlayInterfaceId;
+                }
 
                 processWidgetAnimations(tickDelta, openInterfaceId);
 
@@ -31290,6 +31349,7 @@ public class Client extends GameApplet {
      */
 
     public void sendString(String text, int index) {
+        index = Widget.remapInterfaceId(index);
 
         if (Widget.interfaceCache[index] == null) {
 
@@ -31303,6 +31363,32 @@ public class Client extends GameApplet {
 
         }
 
+    }
+
+    private static boolean isDropTableDebugFrame(int id) {
+        if (id >= 62000 && id <= 62450) {
+            return true;
+        }
+        return id >= 56721 && id <= 57050;
+    }
+
+    private static String debugChildIds(Widget widget) {
+        if (widget == null || widget.children == null || widget.children.length == 0) {
+            return "[]";
+        }
+        int limit = Math.min(widget.children.length, 16);
+        StringBuilder builder = new StringBuilder("[");
+        for (int i = 0; i < limit; i++) {
+            if (i > 0) {
+                builder.append(',');
+            }
+            builder.append(widget.children[i]);
+        }
+        if (widget.children.length > limit) {
+            builder.append("...");
+        }
+        builder.append(']');
+        return builder.toString();
     }
 
 
@@ -31900,7 +31986,7 @@ public class Client extends GameApplet {
 
             if (opcode == PacketConstants.CLEAN_ITEMS_OF_INTERFACE) {
 
-                int id = incoming.readUShort();
+                int id = Widget.remapInterfaceId(incoming.readUShort());
 
                 Widget widget = Widget.interfaceCache[id];
 
@@ -33268,9 +33354,13 @@ public class Client extends GameApplet {
 
             if (opcode == PacketConstants.SEND_DUO_INTERFACE) { //Send Duo Interface: Main + Sidebar
 
-                int mainInterfaceId = incoming.readUShortA();
+                int rawMainInterfaceId = incoming.readUShortA();
 
-                int sidebarOverlayInterfaceId = incoming.readUShort();
+                int rawSidebarOverlayInterfaceId = incoming.readUShort();
+                int mainInterfaceId = Widget.remapInterfaceId(rawMainInterfaceId);
+                int sidebarOverlayInterfaceId = Widget.remapInterfaceId(rawSidebarOverlayInterfaceId);
+                System.out.println("[DROPDBG][CLIENT] pkt=248 rawMain=" + rawMainInterfaceId + " main=" + mainInterfaceId
+                        + " rawSidebar=" + rawSidebarOverlayInterfaceId + " sidebar=" + sidebarOverlayInterfaceId);
 
                 if (backDialogueId != -1) {
 
@@ -33291,6 +33381,10 @@ public class Client extends GameApplet {
                 openInterfaceId = mainInterfaceId;
 
                 overlayInterfaceId = sidebarOverlayInterfaceId;
+
+                if (mainInterfaceId != 15244) {
+                    fullscreenInterfaceID = -1;
+                }
 
                 tabAreaAltered = true;
 
@@ -33472,11 +33566,15 @@ public class Client extends GameApplet {
 
             if (opcode == PacketConstants.SEND_ITEM_TO_INTERFACE) {
 
-                int widget = incoming.readLEUShort();
+                int rawWidget = incoming.readLEUShort();
+                int widget = Widget.remapInterfaceId(rawWidget);
 
                 int scale = incoming.readUShort();
 
                 int item = incoming.readUShort();
+                if (isDropTableDebugFrame(rawWidget) || isDropTableDebugFrame(widget)) {
+                    System.out.println("[DROPDBG][CLIENT] pkt=246 raw=" + rawWidget + " remap=" + widget + " item=" + item + " scale=" + scale);
+                }
 
                 if (item == 65535) {
 
@@ -33588,6 +33686,9 @@ public class Client extends GameApplet {
                     String text = incoming.readString();
 
                     int id = incoming.readInt();
+                    if (isDropTableDebugFrame(id) || id == 3824 || id == 3822) {
+                        System.out.println("[DROPDBG][CLIENT] pkt=126 id=" + id + " text=" + text);
+                    }
 
 
 
@@ -33967,7 +34068,9 @@ public class Client extends GameApplet {
 
             if (opcode == PacketConstants.SEND_NON_WALKABLE_INTERFACE) {
 
-                int interfaceId = incoming.readUShort();
+                int rawInterfaceId = incoming.readUShort();
+                int interfaceId = Widget.remapInterfaceId(rawInterfaceId);
+                System.out.println("[DROPDBG][CLIENT] pkt=97 raw=" + rawInterfaceId + " remap=" + interfaceId);
 
                 resetAnimation(interfaceId);
 
@@ -33993,6 +34096,16 @@ public class Client extends GameApplet {
 
                     updateChatbox = true;
 
+                }
+
+                // Ensure no stale fullscreen interface overlays this modal interface.
+                if (fullscreenInterfaceID != -1 && interfaceId != 15244) {
+                    fullscreenInterfaceID = -1;
+                }
+
+                // A modal root should not stack with an older walkable root.
+                if (openWalkableInterface != -1) {
+                    openWalkableInterface = -1;
                 }
 
                 if (interfaceId == 15244) {
@@ -34156,6 +34269,8 @@ public class Client extends GameApplet {
                 }
 
                 openInterfaceId = -1;
+                fullscreenInterfaceID = -1;
+                openWalkableInterface = -1;
 
                 continuedDialogue = false;
 
@@ -34169,7 +34284,7 @@ public class Client extends GameApplet {
 
 
 
-                int interfaceId = incoming.readUShort();
+                int interfaceId = Widget.remapInterfaceId(incoming.readUShort());
 
                 Widget widget = Widget.interfaceCache[interfaceId];
 
