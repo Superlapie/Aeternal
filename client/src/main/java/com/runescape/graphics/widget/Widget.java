@@ -520,6 +520,7 @@ public class Widget {
 		grandExchangeInterfaces();
 		configureArceuus();
 		npcDropTableViewer();
+		commandGuide();
 		spriteCache = null;
 		
 		/*int lastNull = -1;
@@ -671,6 +672,70 @@ public class Widget {
 		main.child(childId++, closeId, 467, 20);
 		main.child(childId, scrollId, 28, 102);
 
+	}
+
+	private static void commandGuide() {
+		final int rootId = 60100;
+		final int backgroundId = 60113;
+		final int borderId = 60114;
+		final int titleId = 60101;
+		final int subtitleId = 60102;
+		final int countId = 60103;
+		final int groupInfoId = 60104;
+		final int closeId = 60112;
+		final int scrollId = 60115;
+		final int[] groupButtonIds = { 60105, 60106, 60107, 60108, 60109, 60110, 60111 };
+		final String[] groupLabels = { "All", "General", "Travel", "Donator", "Staff", "Owner", "Dev" };
+
+		Widget root = addInterface(rootId);
+		root.totalChildren(18);
+
+		addPixels(backgroundId, 0x17130f, 492, 318, 0, true);
+		addPixels(borderId, 0x6d5b35, 490, 316, 0, false);
+		addPixels(60116, 0x241c14, 104, 286, 0, true);
+		addPixels(60117, 0x3d3120, 1, 286, 0, true);
+		addPixels(60118, 0x3d3120, 1, 286, 0, true);
+		addText(titleId, "Command Guide", fonts, 2, 0xffcc66, true, true);
+		addText(subtitleId, "Simple access to every command you can use.", fonts, 0, 0xd7c59a, true, true);
+		addText(countId, "0 commands available", fonts, 1, 0x8df58d, true, true);
+		addText(groupInfoId, "Selected group: All", fonts, 0, 0xffffff, true, true);
+		closeButton(closeId, 142, 143);
+
+		for (int i = 0; i < groupButtonIds.length; i++) {
+			addHoverText(groupButtonIds[i], groupLabels[i], "Switch group", fonts, 1, 0xffffff, false, true, 110, 0xffcc66);
+		}
+
+		Widget scroll = addInterface(scrollId);
+		scroll.type = TYPE_CONTAINER;
+		scroll.width = 336;
+		scroll.height = 232;
+		scroll.scrollMax = 128 * 20;
+		scroll.totalChildren(128);
+
+		for (int i = 0; i < 128; i++) {
+			int rowId = 60120 + i;
+			addHoverText(rowId, "", "View syntax", fonts, 1, 0xffe6b3, false, true, 304, 0xffffff);
+			setBounds(rowId, 0, i * 20, i, scroll);
+		}
+
+		root.child(0, backgroundId, 14, 16);
+		root.child(1, borderId, 15, 17);
+		root.child(2, 60116, 130, 46);
+		root.child(3, 60117, 125, 52);
+		root.child(4, 60118, 15, 52);
+		root.child(5, titleId, 258, 22);
+		root.child(6, subtitleId, 258, 38);
+		root.child(7, countId, 258, 55);
+		root.child(8, groupInfoId, 258, 71);
+		root.child(9, closeId, 475, 21);
+
+		int buttonY = 96;
+		for (int i = 0; i < groupButtonIds.length; i++) {
+			root.child(10 + i, groupButtonIds[i], 24, buttonY);
+			buttonY += 28;
+		}
+
+		root.child(17, scrollId, 130, 86);
 	}
 
 	private static void nightmareOverlays() {

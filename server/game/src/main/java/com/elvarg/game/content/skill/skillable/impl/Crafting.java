@@ -82,7 +82,7 @@ public class Crafting extends ItemIdentifiers {
         G7(new Item(DIAMOND), new Item(UNCUT_DIAMOND), 43, 108, new AnimationLoop(new Animation(886), 3)),
         G8(new Item(DRAGONSTONE), new Item(UNCUT_DRAGONSTONE), 55, 138, new AnimationLoop(new Animation(885), 3)),
         G9(new Item(ONYX), new Item(UNCUT_ONYX), 67, 168, new AnimationLoop(new Animation(885), 3)),
-        G10(new Item(ZENYTE), new Item(UNCUT_ZENYTE), 89, 200, new AnimationLoop(new Animation(885), 3)),;
+        G10(new Item(ZENYTE), new Item(UNCUT_ZENYTE), 89, 50, new AnimationLoop(new Animation(885), 3)),;
 
         static Map<Integer, CraftableGem> map = new HashMap<Integer, CraftableGem>();
 

@@ -15,6 +15,7 @@ import com.elvarg.game.content.skill.skillable.impl.Firemaking;
 import com.elvarg.game.content.skill.skillable.impl.Fletching;
 import com.elvarg.game.content.skill.skillable.impl.Herblore;
 import com.elvarg.game.content.skill.skillable.impl.Crafting;
+import com.elvarg.game.content.TormentedSynapseCrafting;
 import com.elvarg.game.content.skill.skillable.impl.Cooking.Cookable;
 import com.elvarg.game.content.skill.skillable.impl.Firemaking.LightableLog;
 import com.elvarg.game.content.skill.skillable.impl.Prayer.AltarOffering;
@@ -78,6 +79,10 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
 
         //Crafting
         if (Crafting.craftGem(player, used.getId(), usedWith.getId())) {
+            return;
+        }
+
+        if (TormentedSynapseCrafting.handleItemOnItem(player, used.getId(), usedWith.getId())) {
             return;
         }
 
@@ -268,6 +273,10 @@ public class UseItemPacketListener extends ItemIdentifiers implements PacketExec
                 player.getPacketSender().sendCreationMenu(new CreationMenu("How many would you like to make?", Arrays.asList(ItemIdentifiers.CANNONBALL), (productId, amount) -> {
                     Smelting.startSmelting(player, SmeltingData.CANNONBALL, amount);
                 }));
+                return;
+            }
+
+            if (TormentedSynapseCrafting.handleItemOnObject(player, item, resolvedObject.getId())) {
                 return;
             }
 

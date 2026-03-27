@@ -14,6 +14,7 @@ import com.elvarg.game.content.quests.QuestHandler;
 import com.elvarg.game.content.skill.impl.smithing.Smelting;
 import com.elvarg.game.content.sound.Music;
 import com.elvarg.game.entity.impl.player.Player;
+import com.elvarg.game.model.commands.CommandInterface;
 import com.elvarg.game.model.container.impl.Bank;
 import com.elvarg.game.model.dialogues.DialogueOption;
 import com.elvarg.game.model.equipment.BonusManager;
@@ -155,6 +156,10 @@ public class ButtonClickPacketListener implements PacketExecutor {
 		}
 
 		if (player.getGrandExchange().handleButton(button)) {
+			return;
+		}
+
+		if (CommandInterface.handleButton(player, button)) {
 			return;
 		}
 

@@ -1,6 +1,6 @@
 package com.elvarg.game.model.commands;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.elvarg.Server;
@@ -8,7 +8,7 @@ import com.elvarg.game.model.commands.impl.*;
 
 public class CommandManager {
 
-    public static final Map<String, Command> commands = new HashMap<String, Command>();
+    public static final Map<String, Command> commands = new LinkedHashMap<String, Command>();
 
     private static void put(Command command, String... keys) {
         for (String key : keys) {

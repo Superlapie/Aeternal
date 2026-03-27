@@ -78,6 +78,9 @@ public class PlayerSave {
     private Presetable[] presets;
     private int questPoints;
     private Map<Integer, Integer> questProgress;
+    private boolean emberlightCrafted;
+    private boolean scorchingBowCrafted;
+    private boolean purgingStaffCrafted;
 
     public String getPasswordHashWithSalt() {
         return passwordHashWithSalt;
@@ -551,6 +554,30 @@ public class PlayerSave {
         this.questProgress = questProgress;
     }
 
+    public boolean isEmberlightCrafted() {
+        return emberlightCrafted;
+    }
+
+    public void setEmberlightCrafted(boolean emberlightCrafted) {
+        this.emberlightCrafted = emberlightCrafted;
+    }
+
+    public boolean isScorchingBowCrafted() {
+        return scorchingBowCrafted;
+    }
+
+    public void setScorchingBowCrafted(boolean scorchingBowCrafted) {
+        this.scorchingBowCrafted = scorchingBowCrafted;
+    }
+
+    public boolean isPurgingStaffCrafted() {
+        return purgingStaffCrafted;
+    }
+
+    public void setPurgingStaffCrafted(boolean purgingStaffCrafted) {
+        this.purgingStaffCrafted = purgingStaffCrafted;
+    }
+
     public void applyToPlayer(Player player) {
         player.setPasswordHashWithSalt(this.passwordHashWithSalt);
         player.setDiscordLogin(this.isDiscordLogin);
@@ -617,6 +644,9 @@ public class PlayerSave {
         player.getQuickPrayers().setPrayers(this.quickPrayers);
         player.setQuestPoints(this.questPoints);
         player.setQuestProgress(this.questProgress);
+        player.setEmberlightCrafted(this.emberlightCrafted);
+        player.setScorchingBowCrafted(this.scorchingBowCrafted);
+        player.setPurgingStaffCrafted(this.purgingStaffCrafted);
 
         if (this.presets != null) {
             player.setPresets(this.presets);
@@ -708,6 +738,9 @@ public class PlayerSave {
         playerSave.quickPrayers = player.getQuickPrayers().getPrayers();
         playerSave.questPoints = player.getQuestPoints();
         playerSave.questProgress = player.getQuestProgress();
+        playerSave.emberlightCrafted = player.isEmberlightCrafted();
+        playerSave.scorchingBowCrafted = player.isScorchingBowCrafted();
+        playerSave.purgingStaffCrafted = player.isPurgingStaffCrafted();
 
         playerSave.friends = player.getRelations().getFriendList();
         playerSave.ignores = player.getRelations().getIgnoreList();

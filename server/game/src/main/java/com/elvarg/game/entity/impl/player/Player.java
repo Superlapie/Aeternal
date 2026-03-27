@@ -59,6 +59,7 @@ import com.elvarg.game.model.Item;
 import com.elvarg.game.model.Location;
 import com.elvarg.game.model.MagicSpellbook;
 import com.elvarg.game.model.PlayerInteractingOption;
+import com.elvarg.game.model.commands.CommandInterface;
 import com.elvarg.game.model.PlayerRelations;
 import com.elvarg.game.model.PlayerStatus;
 import com.elvarg.game.model.SecondsTimer;
@@ -174,6 +175,10 @@ public class Player extends Mobile {
 
 	private int questPoints;
 	private Map<Integer, Integer> questProgress = new HashMap<Integer, Integer>();
+	private boolean emberlightCrafted;
+	private boolean scorchingBowCrafted;
+	private boolean purgingStaffCrafted;
+	private transient CommandInterface.CommandGroup commandsInterfaceGroup = CommandInterface.CommandGroup.ALL;
 	// Skilling
 	private Optional<Skillable> skill = Optional.empty();
 	private CreationMenu creationMenu;
@@ -1828,6 +1833,14 @@ public class Player extends Mobile {
 		return this.questProgress;
 	}
 
+	public CommandInterface.CommandGroup getCommandsInterfaceGroup() {
+		return commandsInterfaceGroup == null ? CommandInterface.CommandGroup.ALL : commandsInterfaceGroup;
+	}
+
+	public void setCommandsInterfaceGroup(CommandInterface.CommandGroup commandsInterfaceGroup) {
+		this.commandsInterfaceGroup = commandsInterfaceGroup == null ? CommandInterface.CommandGroup.ALL : commandsInterfaceGroup;
+	}
+
 	public int getQuestPoints() {
 		return this.questPoints;
 	}
@@ -1841,6 +1854,30 @@ public class Player extends Mobile {
 			return;
 		}
 		this.questProgress = questProgress;
+	}
+
+	public boolean isEmberlightCrafted() {
+		return emberlightCrafted;
+	}
+
+	public void setEmberlightCrafted(boolean emberlightCrafted) {
+		this.emberlightCrafted = emberlightCrafted;
+	}
+
+	public boolean isScorchingBowCrafted() {
+		return scorchingBowCrafted;
+	}
+
+	public void setScorchingBowCrafted(boolean scorchingBowCrafted) {
+		this.scorchingBowCrafted = scorchingBowCrafted;
+	}
+
+	public boolean isPurgingStaffCrafted() {
+		return purgingStaffCrafted;
+	}
+
+	public void setPurgingStaffCrafted(boolean purgingStaffCrafted) {
+		this.purgingStaffCrafted = purgingStaffCrafted;
 	}
 
 	public int castlewarsKills, castlewarsDeaths, castlewarsIdleTime;
