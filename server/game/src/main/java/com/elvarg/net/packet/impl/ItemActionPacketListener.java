@@ -2,6 +2,7 @@ package com.elvarg.net.packet.impl;
 
 import com.elvarg.game.GameConstants;
 import com.elvarg.game.content.Food;
+import com.elvarg.game.content.ClueScrolls;
 import com.elvarg.game.content.Gambling;
 import com.elvarg.game.content.DragonstoneJewellery;
 import com.elvarg.game.content.ImbuedHeart;
@@ -113,7 +114,15 @@ public class ItemActionPacketListener implements PacketExecutor {
 			return;
 		}
 
-		switch (itemId) {
+		if (ClueScrolls.readBeginnerClue(player, itemId)) {
+			return;
+		}
+
+		if (ClueScrolls.openBeginnerRewardCasket(player, itemId)) {
+			return;
+		}
+
+        switch (itemId) {
 			case ItemIdentifiers.IMBUED_HEART:
 			case ItemIdentifiers.IMBUED_HEART_2:
 				ImbuedHeart.invigorate(player);

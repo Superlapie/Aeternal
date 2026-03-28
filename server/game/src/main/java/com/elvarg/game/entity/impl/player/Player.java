@@ -178,6 +178,7 @@ public class Player extends Mobile {
 	private boolean emberlightCrafted;
 	private boolean scorchingBowCrafted;
 	private boolean purgingStaffCrafted;
+	private ClueScrolls.BeginnerClueStep beginnerClueStep = ClueScrolls.BeginnerClueStep.NONE;
 	private transient CommandInterface.CommandGroup commandsInterfaceGroup = CommandInterface.CommandGroup.ALL;
 	// Skilling
 	private Optional<Skillable> skill = Optional.empty();
@@ -1878,6 +1879,21 @@ public class Player extends Mobile {
 
 	public void setPurgingStaffCrafted(boolean purgingStaffCrafted) {
 		this.purgingStaffCrafted = purgingStaffCrafted;
+	}
+
+	public ClueScrolls.BeginnerClueStep getBeginnerClueStep() {
+		return beginnerClueStep == null ? ClueScrolls.BeginnerClueStep.NONE : beginnerClueStep;
+	}
+
+	public void setBeginnerClueStep(ClueScrolls.BeginnerClueStep beginnerClueStep) {
+		if (beginnerClueStep == null
+				|| beginnerClueStep == ClueScrolls.BeginnerClueStep.STATUE_BECKON
+				|| beginnerClueStep == ClueScrolls.BeginnerClueStep.GOSSIP_HINT
+				|| beginnerClueStep == ClueScrolls.BeginnerClueStep.GOSSIP_HORVIK) {
+			this.beginnerClueStep = ClueScrolls.BeginnerClueStep.NONE;
+			return;
+		}
+		this.beginnerClueStep = beginnerClueStep;
 	}
 
 	public int castlewarsKills, castlewarsDeaths, castlewarsIdleTime;

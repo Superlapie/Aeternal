@@ -18,7 +18,13 @@ public class Emotes {
     public static boolean doEmote(Player player, int button) {
         EmoteData data = EmoteData.forId(button);
         if (data != null) {
-            animation(player, data.animation, data.graphic);
+            if (!animation(player, data.animation, data.graphic)) {
+                return false;
+            }
+
+            if (button == EmoteData.GOBLIN_BOW.button) {
+                ClueScrolls.handleBeginnerEmote(player, button);
+            }
             return true;
         }
 
@@ -62,10 +68,10 @@ public class Emotes {
         return false;
     }
 
-    private static void animation(Player player, Animation anim, Graphic graphic) {
+    private static boolean animation(Player player, Animation anim, Graphic graphic) {
         if (CombatFactory.inCombat(player)) {
             player.getPacketSender().sendMessage("You cannot do this right now.");
-            return;
+            return false;
         }
 
         //Stop skilling..
@@ -78,6 +84,7 @@ public class Emotes {
             player.performAnimation(anim);
         if (graphic != null)
             player.performGraphic(graphic);
+        return true;
     }
 
     private enum EmoteData {

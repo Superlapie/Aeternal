@@ -5,6 +5,7 @@ import com.elvarg.game.content.bosses.nightmare.NightmareEncounter;
 import com.elvarg.game.World;
 import com.elvarg.game.content.NpcDropTableViewer;
 import com.elvarg.game.content.PetHandler;
+import com.elvarg.game.content.ClueScrolls;
 import com.elvarg.game.content.combat.CombatFactory;
 import com.elvarg.game.content.combat.magic.CombatSpell;
 import com.elvarg.game.content.combat.magic.CombatSpells;
@@ -268,6 +269,10 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 				return;
 			}
 
+            if (ClueScrolls.handleNpcInteraction(player, npc)) {
+                return;
+            }
+
             // Some client/menu configs route Master Farmer "Pickpocket" as first-click.
             // Fallback it to pickpocket handling so this NPC remains thievable.
             if (npc.getId() == MASTER_FARMER || npc.getId() == 3258 || npc.getId() == 5730
@@ -352,7 +357,11 @@ public class NPCOptionPacketListener extends NpcIdentifiers implements PacketExe
 				return;
 			}
 
-            if (Fishing.handleNpcInteraction(player, npc, 2)) {
+			if (Fishing.handleNpcInteraction(player, npc, 2)) {
+                return;
+            }
+
+            if (ClueScrolls.handleNpcInteraction(player, npc)) {
                 return;
             }
 

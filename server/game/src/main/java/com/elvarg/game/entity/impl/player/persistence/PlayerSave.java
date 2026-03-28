@@ -1,5 +1,6 @@
 package com.elvarg.game.entity.impl.player.persistence;
 
+import com.elvarg.game.content.ClueScrolls;
 import com.elvarg.game.content.PrayerHandler;
 import com.elvarg.game.content.combat.FightType;
 import com.elvarg.game.content.presets.Presetable;
@@ -81,6 +82,7 @@ public class PlayerSave {
     private boolean emberlightCrafted;
     private boolean scorchingBowCrafted;
     private boolean purgingStaffCrafted;
+    private ClueScrolls.BeginnerClueStep beginnerClueStep;
 
     public String getPasswordHashWithSalt() {
         return passwordHashWithSalt;
@@ -578,6 +580,14 @@ public class PlayerSave {
         this.purgingStaffCrafted = purgingStaffCrafted;
     }
 
+    public ClueScrolls.BeginnerClueStep getBeginnerClueStep() {
+        return beginnerClueStep;
+    }
+
+    public void setBeginnerClueStep(ClueScrolls.BeginnerClueStep beginnerClueStep) {
+        this.beginnerClueStep = beginnerClueStep;
+    }
+
     public void applyToPlayer(Player player) {
         player.setPasswordHashWithSalt(this.passwordHashWithSalt);
         player.setDiscordLogin(this.isDiscordLogin);
@@ -647,6 +657,7 @@ public class PlayerSave {
         player.setEmberlightCrafted(this.emberlightCrafted);
         player.setScorchingBowCrafted(this.scorchingBowCrafted);
         player.setPurgingStaffCrafted(this.purgingStaffCrafted);
+        player.setBeginnerClueStep(this.beginnerClueStep == null ? ClueScrolls.BeginnerClueStep.NONE : this.beginnerClueStep);
 
         if (this.presets != null) {
             player.setPresets(this.presets);
@@ -741,6 +752,7 @@ public class PlayerSave {
         playerSave.emberlightCrafted = player.isEmberlightCrafted();
         playerSave.scorchingBowCrafted = player.isScorchingBowCrafted();
         playerSave.purgingStaffCrafted = player.isPurgingStaffCrafted();
+        playerSave.beginnerClueStep = player.getBeginnerClueStep();
 
         playerSave.friends = player.getRelations().getFriendList();
         playerSave.ignores = player.getRelations().getIgnoreList();
