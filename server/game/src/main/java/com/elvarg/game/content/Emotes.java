@@ -22,6 +22,9 @@ public class Emotes {
                 return false;
             }
 
+            if (button == EmoteData.THINK.button) {
+                ClueScrolls.handleEasyThinkEmote(player, button);
+            }
             if (button == EmoteData.GOBLIN_BOW.button) {
                 ClueScrolls.handleBeginnerEmote(player, button);
             }

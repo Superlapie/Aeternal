@@ -42,6 +42,10 @@ public class ItemActionPacketListener implements PacketExecutor {
 		int itemId = packet.readShort();
 		int slot = packet.readShort();
 
+		if (ClueScrolls.handleEasyMemoryBoardClick(player, interfaceId, itemId, slot)) {
+			return;
+		}
+
 		if (slot < 0 || slot > player.getInventory().capacity())
 			return;
 		if (player.getInventory().getItems()[slot].getId() != itemId)
@@ -118,7 +122,15 @@ public class ItemActionPacketListener implements PacketExecutor {
 			return;
 		}
 
+		if (ClueScrolls.readEasyClue(player, itemId)) {
+			return;
+		}
+
 		if (ClueScrolls.openBeginnerRewardCasket(player, itemId)) {
+			return;
+		}
+
+		if (ClueScrolls.openEasyRewardCasket(player, itemId)) {
 			return;
 		}
 

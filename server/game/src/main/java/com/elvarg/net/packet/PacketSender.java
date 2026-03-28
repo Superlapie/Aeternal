@@ -3,6 +3,7 @@ package com.elvarg.net.packet;
 import java.util.List;
 
 import com.elvarg.game.GameConstants;
+import com.elvarg.game.content.ClueScrolls;
 import com.elvarg.game.entity.impl.Mobile;
 import com.elvarg.game.entity.impl.grounditem.ItemOnGround;
 import com.elvarg.game.entity.impl.object.GameObject;
@@ -584,6 +585,9 @@ public class PacketSender {
 		player.setTeleportInterfaceOpen(false);
 		player.setPortalNexusInterfaceOpen(false);
 		player.getAppearance().setCanChangeAppearance(false);
+		if (player.getEasyClueSession() != null) {
+			ClueScrolls.cancelEasyClueSession(player);
+		}
 		player.getSession().write(new PacketBuilder(219));
 		return this;
 	}

@@ -520,6 +520,7 @@ public class Widget {
 		grandExchangeInterfaces();
 		configureArceuus();
 		npcDropTableViewer();
+		auburyRuneMemoryGame();
 		commandGuide();
 		spriteCache = null;
 		
@@ -1133,6 +1134,98 @@ public class Widget {
 		results.width = 470;
 		results.height = 75;
 		results.scrollMax = 1600;
+	}
+
+	private static void auburyRuneMemoryGame() {
+		final int rootId = 56700;
+		final int backgroundId = 56701;
+		final int borderId = 56702;
+		final int titleId = 56703;
+		final int textId = 56704;
+		final int roundId = 56705;
+		final int statusId = 56706;
+		final int flashSlotId = 56710;
+		final int[] selectionSlotIds = { 56711, 56712, 56713, 56714 };
+		final int[] successOverlayIds = { 56750, 56751, 56752, 56753 };
+		final int[] failureOverlayIds = { 56754, 56755, 56756, 56757 };
+		final int[] selectionButtonIds = { 56740, 56741, 56742, 56743 };
+		final int closeId = 56720;
+
+		Widget root = addInterface(rootId);
+		root.totalChildren(24);
+		root.width = 512;
+		root.height = 334;
+
+		addPixels(backgroundId, 0x1a1410, 320, 210, 0, true);
+		addPixels(borderId, 0x6f5b3a, 318, 208, 0, false);
+		addText(titleId, "Aubury's Rune Memory", fonts, 2, 0xffd37e, true, true);
+		addText(textId, "Watch the runes, then repeat the order.", fonts, 0, 0xd4c4a1, true, true);
+		addText(roundId, "Round 1 of 2", fonts, 1, 0xffffff, true, true);
+		addText(statusId, "Memorize the runes.", fonts, 0, 0xbababa, true, true);
+		addItemOnInterface(flashSlotId, rootId, new String[] {});
+		for (int slotId : selectionSlotIds) {
+			addItemOnInterface(slotId, rootId, new String[] { "Select" });
+		}
+		for (int overlayId : successOverlayIds) {
+			addFlashOverlay(overlayId, 32, 32, 0x1e8c39, 120);
+		}
+		for (int overlayId : failureOverlayIds) {
+			addFlashOverlay(overlayId, 32, 32, 0x992121, 120);
+		}
+		for (int buttonId : selectionButtonIds) {
+			addInvisibleHoverButton(buttonId, 32, 32, "Select");
+		}
+		closeButton(closeId, 142, 143);
+
+		root.child(0, backgroundId, 96, 57);
+		root.child(1, borderId, 97, 58);
+		root.child(2, titleId, 256, 66);
+		root.child(3, textId, 256, 82);
+		root.child(4, roundId, 256, 100);
+		root.child(5, statusId, 256, 114);
+		root.child(6, flashSlotId, 240, 126);
+		root.child(7, selectionSlotIds[0], 184, 155);
+		root.child(8, selectionSlotIds[1], 236, 155);
+		root.child(9, selectionSlotIds[2], 288, 155);
+		root.child(10, selectionSlotIds[3], 340, 155);
+		root.child(11, closeId, 392, 64);
+		root.child(12, successOverlayIds[0], 184, 155);
+		root.child(13, successOverlayIds[1], 236, 155);
+		root.child(14, successOverlayIds[2], 288, 155);
+		root.child(15, successOverlayIds[3], 340, 155);
+		root.child(16, failureOverlayIds[0], 184, 155);
+		root.child(17, failureOverlayIds[1], 236, 155);
+		root.child(18, failureOverlayIds[2], 288, 155);
+		root.child(19, failureOverlayIds[3], 340, 155);
+		root.child(20, selectionButtonIds[0], 184, 155);
+		root.child(21, selectionButtonIds[1], 236, 155);
+		root.child(22, selectionButtonIds[2], 288, 155);
+		root.child(23, selectionButtonIds[3], 340, 155);
+	}
+
+	private static void addFlashOverlay(int id, int width, int height, int color, int alpha) {
+		addPixels(id, color, width, height, alpha, true);
+		Widget overlay = interfaceCache[id];
+		if (overlay != null) {
+			overlay.hidden = true;
+			overlay.invisible = true;
+		}
+	}
+
+	private static void addInvisibleHoverButton(int id, int width, int height, String tooltip) {
+		Widget tab = addTabInterface(id);
+		tab.id = id;
+		tab.parent = id;
+		tab.type = 5;
+		tab.atActionType = OPTION_OK;
+		tab.contentType = 0;
+		tab.opacity = 0;
+		tab.hoverType = -1;
+		tab.disabledSprite = Sprite.EMPTY_SPRITE;
+		tab.enabledSprite = Sprite.EMPTY_SPRITE;
+		tab.width = width;
+		tab.height = height;
+		tab.tooltip = tooltip;
 	}
 
 	private static void addStaffSpecialBar() {

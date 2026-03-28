@@ -179,6 +179,7 @@ public class Player extends Mobile {
 	private boolean scorchingBowCrafted;
 	private boolean purgingStaffCrafted;
 	private ClueScrolls.BeginnerClueStep beginnerClueStep = ClueScrolls.BeginnerClueStep.NONE;
+	private transient ClueScrolls.EasyClueSession easyClueSession;
 	private transient CommandInterface.CommandGroup commandsInterfaceGroup = CommandInterface.CommandGroup.ALL;
 	// Skilling
 	private Optional<Skillable> skill = Optional.empty();
@@ -622,6 +623,10 @@ public class Player extends Mobile {
 		Barrows.brotherDespawn(this);
 		ArceuusSpells.cleanupThrall(this);
 		PetHandler.pickup(this, getCurrentPet());
+		if (easyClueSession != null) {
+			TaskManager.cancelTasks(easyClueSession);
+			easyClueSession = null;
+		}
 		getRelations().updateLists(false);
 		BountyHunter.unassign(this);
 		ClanChatManager.leave(this, false);
@@ -1894,6 +1899,14 @@ public class Player extends Mobile {
 			return;
 		}
 		this.beginnerClueStep = beginnerClueStep;
+	}
+
+	public ClueScrolls.EasyClueSession getEasyClueSession() {
+		return easyClueSession;
+	}
+
+	public void setEasyClueSession(ClueScrolls.EasyClueSession easyClueSession) {
+		this.easyClueSession = easyClueSession;
 	}
 
 	public int castlewarsKills, castlewarsDeaths, castlewarsIdleTime;
