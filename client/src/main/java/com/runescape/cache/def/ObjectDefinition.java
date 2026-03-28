@@ -104,6 +104,27 @@ public final class ObjectDefinition {
         objectDef.type = id;
         objectDef.reset();
         objectDef.readValues(stream);
+
+        if (id == 10230) {
+            objectDef.type = 10230;
+            objectDef.name = "Kings' ladder";
+            objectDef.description = null;
+            objectDef.modelIds = new int[] { 4567 };
+            objectDef.modelTypes = null;
+            objectDef.objectSizeX = 1;
+            objectDef.objectSizeY = 1;
+            objectDef.interactions = new String[] { "Standard", "Slayer", null, "Peek", null };
+            objectDef.childrenIDs = null;
+            objectDef.varbit = -1;
+            objectDef.varp = -1;
+            objectDef.isInteractive = true;
+            objectDef.solid = false;
+            objectDef.impenetrable = false;
+            objectDef.castsShadow = false;
+            objectDef.delayShading = true;
+            objectDef.supportItems = 1;
+        }
+
         if (!isValidAnimationId(objectDef.animation)) {
             if (objectDef.animation != -1
                     && invalidAnimationLogCount < INVALID_ANIMATION_LOG_LIMIT
@@ -221,7 +242,6 @@ public final class ObjectDefinition {
             objectDef.interactions[0] = "Go Through";
             objectDef.name = "Passage";
         }
-
         switch (id) {
             case 10638:
                 objectDef.isInteractive = true;

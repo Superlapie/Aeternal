@@ -3,6 +3,7 @@ package com.elvarg.net.packet.impl;
 import com.elvarg.Server;
 import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.DepositBox;
+import com.elvarg.game.content.WaterbirthDungeon;
 import com.elvarg.game.content.bosses.zulrah.ZulrahEncounter;
 import com.elvarg.game.content.bosses.vorkath.VorkathEncounter;
 import com.elvarg.game.content.combat.CombatSpecial;
@@ -170,6 +171,12 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             break;
         case KBD_LADDER_UP:
             TeleportHandler.teleport(player, new Location(3017, 3850), TeleportType.LADDER_UP, false);
+            break;
+        case KINGS_LADDER_2:
+            TeleportHandler.teleport(player, WaterbirthDungeon.KINGS_LAIR_LOCATION, TeleportType.LADDER_DOWN, false);
+            break;
+        case KINGS_LADDER:
+            TeleportHandler.teleport(player, WaterbirthDungeon.KINGS_LADDER_ENTRANCE_LOCATION, TeleportType.LADDER_UP, false);
             break;
         case KBD_ENTRANCE_LEVER:
             if (!player.getCombat().getTeleBlockTimer().finished()) {
@@ -403,6 +410,11 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             return;
         }
 		switch (object.getId()) {
+        case KINGS_LADDER_2:
+            int count = WaterbirthDungeon.countPlayersInKingsLair();
+            player.getPacketSender().sendMessage("There " + (count == 1 ? "is" : "are") + " " + count
+                    + " player" + (count == 1 ? "" : "s") + " in the Dagannoth Kings lair.");
+            break;
         case PORTAL_51:
             //DialogueManager.sendStatement(player, "Construction will be avaliable in the future.");
             break;
@@ -435,11 +447,19 @@ public class ObjectActionPacketListener extends ObjectIdentifiers implements Pac
             return;
         }
 
+        switch (object.getId()) {
+        case KINGS_LADDER_2:
+            int peekCount = WaterbirthDungeon.countPlayersInKingsLair();
+            player.getPacketSender().sendMessage("There " + (peekCount == 1 ? "is" : "are") + " " + peekCount
+                    + " player" + (peekCount == 1 ? "" : "s") + " in the Dagannoth Kings lair.");
+            return;
+        }
+
         if (openBankIfBankObject(player, object.getDefinition())) {
             return;
         }
 
-	    switch (object.getId()) {
+        switch (object.getId()) {
         case PORTAL_51:
             //DialogueManager.sendStatement(player, "Construction will be avaliable in the future.");
             break;

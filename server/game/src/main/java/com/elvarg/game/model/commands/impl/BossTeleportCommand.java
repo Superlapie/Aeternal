@@ -1,6 +1,7 @@
 package com.elvarg.game.model.commands.impl;
 
 import com.elvarg.game.GameConstants;
+import com.elvarg.game.content.WaterbirthDungeon;
 import com.elvarg.game.entity.impl.player.Player;
 import com.elvarg.game.model.Location;
 import com.elvarg.game.model.commands.Command;
@@ -10,7 +11,7 @@ public class BossTeleportCommand implements Command {
 
     private static final Location HOME = GameConstants.DEFAULT_LOCATION;
     private static final Location ZULRAH = new Location(2202, 3056, 0);
-    private static final Location DAGANNOTH_KINGS = new Location(1912, 4367, 0);
+    private static final Location DAGANNOTH_KINGS = WaterbirthDungeon.KINGS_LADDER_ENTRANCE_LOCATION;
     private static final Location VORKATH = new Location(2272, 4052, 0);
     private static final Location BANDOS = new Location(2864, 5354, 2);
     private static final Location SARADOMIN = new Location(2908, 5265, 0);
@@ -36,6 +37,7 @@ public class BossTeleportCommand implements Command {
         if (destination == null) {
             return;
         }
+
         if (!TeleportHandler.checkReqs(player, destination)) {
             return;
         }

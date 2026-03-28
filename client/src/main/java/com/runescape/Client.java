@@ -2010,7 +2010,7 @@ public class Client extends GameApplet {
 
         anIntArray969 = new int[256];
 
-        settings = new int[2000];
+        settings = new int[20000];
 
         aBoolean972 = false;
 

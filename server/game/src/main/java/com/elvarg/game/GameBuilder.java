@@ -7,6 +7,7 @@ import com.elvarg.game.collision.RegionManager;
 import com.elvarg.game.content.clan.ClanChatManager;
 import com.elvarg.game.content.grandexchange.GrandExchangeManager;
 import com.elvarg.game.content.minigames.MinigameHandler;
+import com.elvarg.game.content.WaterbirthDungeon;
 import com.elvarg.game.content.skill.cache.CacheSkillObjectLoader;
 import com.elvarg.game.content.skill.impl.hunter.Birdhouses;
 import com.elvarg.game.content.skill.mining.MiningSpawnService;
@@ -78,6 +79,7 @@ public class GameBuilder {
         tasks.add(new NpcSpawnDefinitionLoader());
         tasks.add(new GroundItemDefinitionLoader());
         tasks.add(MinigameHandler::init);
+        tasks.add(WaterbirthDungeon::initialize);
         
         // Initialize cache-driven skill objects (must be after object definitions are loaded)
         tasks.add(CacheSkillObjectLoader::initialize);

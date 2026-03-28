@@ -101,6 +101,27 @@ public final class ObjectDefinition extends ObjectIdentifiers {
         objectDef.id = id;
         objectDef.reset();
         objectDef.readValues(stream);
+
+        if (id == 10230) {
+            objectDef.id = 10230;
+            objectDef.name = "Kings' ladder";
+            objectDef.description = null;
+            objectDef.modelIds = new int[] { 4567 };
+            objectDef.modelTypes = null;
+            objectDef.objectSizeX = 1;
+            objectDef.objectSizeY = 1;
+            objectDef.interactions = new String[] { "Standard", "Slayer", null, "Peek", null };
+            objectDef.childrenIDs = null;
+            objectDef.varbit = -1;
+            objectDef.varp = -1;
+            objectDef.isInteractive = true;
+            objectDef.solid = false;
+            objectDef.impenetrable = false;
+            objectDef.castsShadow = false;
+            objectDef.delayShading = true;
+            objectDef.supportItems = 1;
+        }
+
         if (objectDef.id > 14500) {
             if (objectDef.delayShading) {
                 objectDef.delayShading = false;
