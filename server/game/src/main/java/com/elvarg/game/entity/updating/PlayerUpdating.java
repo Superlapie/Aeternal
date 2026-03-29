@@ -1412,10 +1412,6 @@ public class PlayerUpdating {
 
 		properties.put(target.getRights().ordinal());
 
-		properties.putString(target.getLoyaltyTitle());
-
-
-
 		out.put(properties.buffer().writerIndex(), ValueType.C);
 
 		out.putBytes(properties.buffer());
